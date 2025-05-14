@@ -1,0 +1,18 @@
+{
+  "$schema": "https://wails.io/schemas/config.v2.json",
+  "name": "Viktor",
+  "outputfilename": "viktor",
+  "frontend:install": "bun install",
+  "frontend:build": "bun run build",
+  "frontend:dev:watcher": "bun dev",
+  "frontend:dev:serverUrl": "auto",
+  "author": {
+    "name": "Johannes Kirchenr",
+    "email": "johannes.kirchner@computer-extra.de"
+  },
+  "info": {
+    "companyName": "Computer Extra GmbH",
+    "productName": "Viktor",
+    "productVersion": "0.0.1"
+  }
+}
