@@ -1,5 +1,5 @@
-import type { sagedb } from "../wailsjs/go/models";
-import { GetKundeWithKundennummer, SearchSage } from "../wailsjs/go/main/App";
+import type { sagedb } from "@wails/go/models";
+import { GetKundeWithKundennummer, SearchSage } from "@wails/go/main/App";
 
 const Get = async (kundennummer: string): Promise<sagedb.User | undefined> => {
   const user = await GetKundeWithKundennummer(kundennummer);

@@ -1,5 +1,5 @@
-import type { archive } from "../wailsjs/go/models";
-import { SearchArchive, DownloadArchive } from "../wailsjs/go/main/App";
+import type { archive } from "@wails/go/models";
+import { SearchArchive, DownloadArchive } from "@wails/go/main/App";
 
 const Search = async (
   searchTerm: string

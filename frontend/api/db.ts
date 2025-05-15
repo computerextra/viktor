@@ -1,4 +1,4 @@
-import type { db } from "../wailsjs/go/models";
+import type { db } from "@wails/go/models";
 import {
   Create as APICreate,
   Update as APIUpdate,
@@ -6,7 +6,7 @@ import {
   Einkaufsliste as APIEinkauf,
   Geburtstagsliste as APIGeburtstag,
   Delete as APIDelete,
-} from "../wailsjs/go/main/App";
+} from "@wails/go/main/App";
 
 type Models =
   | "Ansprechpartner"
