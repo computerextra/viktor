@@ -10,30 +10,29 @@ func (a *App) Update(model db.Model, params any, idString *string, idInt *int) b
 	return a.db.Update(model, params, idString, idInt) == nil
 }
 
-func (a *App) Read(model db.Model, idString *string, idInt *int) any {
-	res, err := a.db.Read(model, idString, idInt)
+func (a *App) Read(model db.Model, idString *string, idInt *int) (results any) {
+	results, err := a.db.Read(model, idString, idInt)
 	if err != nil {
 		return nil
-	} else {
-		return res
 	}
+	return results
 }
 
 func (a *App) Einkaufsliste() []db.MitarbeiterModel {
-	res, err := a.db.GetEinkaufsListe()
+	results, err := a.db.GetEinkaufsListe()
 	if err != nil {
 		return nil
 	}
-	return res
+	return results
 }
 
 func (a *App) Geburtstagsliste() *db.GeburtstagsListe {
-	res, err := a.db.GetGeburtstagsListe()
+	result, err := a.db.GetGeburtstagsListe()
 	if err != nil {
 		return nil
 	}
 
-	return res
+	return result
 }
 
 func (a *App) Delete(model db.Model, idString *string, idInt *int) bool {

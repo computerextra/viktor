@@ -1,3 +1,24 @@
+export namespace archive {
+	
+	export class ArchiveResult {
+	    Id: number;
+	    Title: string;
+	    Body: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new ArchiveResult(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Id = source["Id"];
+	        this.Title = source["Title"];
+	        this.Body = source["Body"];
+	    }
+	}
+
+}
+
 export namespace db {
 	
 	export class Geburtstag {
@@ -153,6 +174,61 @@ export namespace db {
 		    }
 		    return a;
 		}
+	}
+
+}
+
+export namespace sagedb {
+	
+	export class SearchResult {
+	    SG_Adressen_PK: number;
+	    Suchbegriff?: string;
+	    KundNr?: string;
+	    LiefNr?: string;
+	    Homepage?: string;
+	    Telefon1?: string;
+	    Telefon2?: string;
+	    Mobiltelefon1?: string;
+	    Mobiltelefon2?: string;
+	    EMail1?: string;
+	    EMail2?: string;
+	    KundUmsatz?: number;
+	    LiefUmsatz?: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new SearchResult(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.SG_Adressen_PK = source["SG_Adressen_PK"];
+	        this.Suchbegriff = source["Suchbegriff"];
+	        this.KundNr = source["KundNr"];
+	        this.LiefNr = source["LiefNr"];
+	        this.Homepage = source["Homepage"];
+	        this.Telefon1 = source["Telefon1"];
+	        this.Telefon2 = source["Telefon2"];
+	        this.Mobiltelefon1 = source["Mobiltelefon1"];
+	        this.Mobiltelefon2 = source["Mobiltelefon2"];
+	        this.EMail1 = source["EMail1"];
+	        this.EMail2 = source["EMail2"];
+	        this.KundUmsatz = source["KundUmsatz"];
+	        this.LiefUmsatz = source["LiefUmsatz"];
+	    }
+	}
+	export class User {
+	    Name?: string;
+	    Vorname?: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new User(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Name = source["Name"];
+	        this.Vorname = source["Vorname"];
+	    }
 	}
 
 }

@@ -6,7 +6,10 @@ import (
 	"net/http"
 	"os"
 	"time"
+
+	"viktor/archive"
 	"viktor/db"
+	"viktor/sagedb"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
@@ -14,6 +17,8 @@ import (
 type App struct {
 	ctx        context.Context
 	db         *db.Database
+	archive    *archive.Archive
+	sage       *sagedb.SageDB
 	config     *Config
 	requestCtx context.CancelFunc
 }
@@ -26,6 +31,8 @@ func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
 	a.config = NewConfig()
 	a.db = db.NewDatabase(a.config.Folder.Upload)
+	a.archive = archive.NewArchive(a.config.Database.Url)
+	a.sage = sagedb.NewSage(a.config.Sage.Server, a.config.Sage.Database, a.config.Sage.User, a.config.Sage.Password, a.config.Sage.Port)
 
 	runtime.EventsOn(ctx, "cancelRequest", func(_ ...any) {
 		if a.requestCtx != nil {

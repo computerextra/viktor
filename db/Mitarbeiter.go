@@ -361,3 +361,7 @@ func (d Database) GetEinkaufsListe() ([]MitarbeiterModel, error) {
 
 	return ma, nil
 }
+
+// TODO: Skip Einkauf
+// TODO: Delete Einkauf
+// TODO: Mail Senden für Abrechnung

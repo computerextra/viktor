@@ -35,7 +35,7 @@ func main() {
 			// app.initFile("restmate_jar.json", "jar")
 			app.startup(ctx)
 		},
-		Bind: []interface{}{
+		Bind: []any{
 			app,
 		},
 	})

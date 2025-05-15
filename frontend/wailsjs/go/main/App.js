@@ -10,6 +10,10 @@ export function Delete(arg1, arg2, arg3) {
   return window['go']['main']['App']['Delete'](arg1, arg2, arg3);
 }
 
+export function DownloadArchive(arg1) {
+  return window['go']['main']['App']['DownloadArchive'](arg1);
+}
+
 export function Einkaufsliste() {
   return window['go']['main']['App']['Einkaufsliste']();
 }
@@ -18,8 +22,20 @@ export function Geburtstagsliste() {
   return window['go']['main']['App']['Geburtstagsliste']();
 }
 
+export function GetKundeWithKundennummer(arg1) {
+  return window['go']['main']['App']['GetKundeWithKundennummer'](arg1);
+}
+
 export function Read(arg1, arg2, arg3) {
   return window['go']['main']['App']['Read'](arg1, arg2, arg3);
+}
+
+export function SearchArchive(arg1) {
+  return window['go']['main']['App']['SearchArchive'](arg1);
+}
+
+export function SearchSage(arg1) {
+  return window['go']['main']['App']['SearchSage'](arg1);
 }
 
 export function Update(arg1, arg2, arg3, arg4) {
