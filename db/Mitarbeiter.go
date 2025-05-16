@@ -1,5 +1,7 @@
 package db
 
+// TODO: Datenbank abfragen gehen alle nicht!!!!!!!
+
 import (
 	"database/sql"
 	"sort"

@@ -1,5 +1,7 @@
 package main
 
+// TODO: Datenbank abfragen gehen alle nicht!!!!!!!
+
 import (
 	"fmt"
 	"viktor/db"
