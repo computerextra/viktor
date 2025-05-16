@@ -233,3 +233,22 @@ export namespace sagedb {
 
 }
 
+export namespace userdata {
+	
+	export class UserData {
+	    Name?: string;
+	    Mail?: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new UserData(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Name = source["Name"];
+	        this.Mail = source["Mail"];
+	    }
+	}
+
+}
+

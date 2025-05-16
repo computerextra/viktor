@@ -19,14 +19,15 @@
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "erasableSyntaxOnly": true,
+    "erasableSyntaxOnly": false,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
       "@wails/*": ["./wailsjs/*"],
-      "@api/*": ["./api/*"]
+      "@api/*": ["./api/*"],
+      "@hooks/*": ["./hooks/*"]
     }
   },
   "include": ["src"]

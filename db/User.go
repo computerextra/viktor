@@ -20,6 +20,26 @@ type UserParams struct {
 	Active   bool   `json:"Active"`
 }
 
+func (d Database) GetUserByMail(mail string) (*UserModel, error) {
+	db, err := sql.Open("sqlite3", d.ConnectionString)
+	if err != nil {
+		return nil, err
+	}
+	defer db.Close()
+	stmt, err := db.Prepare("SELECT * FROM User WHERE Email=?")
+	if err != nil {
+		return nil, err
+	}
+	defer stmt.Close()
+
+	var ap UserModel
+	err = stmt.QueryRow(mail).Scan(&ap)
+	if err != nil {
+		return nil, err
+	}
+	return &ap, nil
+}
+
 // CRUD
 func (d Database) createUser(params UserParams) error {
 	db, err := sql.Open("sqlite3", d.ConnectionString)

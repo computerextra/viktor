@@ -10,6 +10,7 @@ import (
 	"viktor/archive"
 	"viktor/db"
 	"viktor/sagedb"
+	"viktor/userdata"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
@@ -20,6 +21,7 @@ type App struct {
 	archive    *archive.Archive
 	sage       *sagedb.SageDB
 	config     *Config
+	userdata   *userdata.UserData
 	requestCtx context.CancelFunc
 }
 
@@ -33,6 +35,7 @@ func (a *App) startup(ctx context.Context) {
 	a.db = db.NewDatabase(a.config.Folder.Upload)
 	a.archive = archive.NewArchive(a.config.Database.Url)
 	a.sage = sagedb.NewSage(a.config.Sage.Server, a.config.Sage.Database, a.config.Sage.User, a.config.Sage.Password, a.config.Sage.Port)
+	a.userdata = userdata.NewUserdata()
 
 	runtime.EventsOn(ctx, "cancelRequest", func(_ ...any) {
 		if a.requestCtx != nil {
@@ -40,6 +43,10 @@ func (a *App) startup(ctx context.Context) {
 			a.requestCtx = nil
 		}
 	})
+}
+
+func (a *App) Reload() {
+	runtime.WindowReload(a.ctx)
 }
 
 func (a *App) UploadImage(mitarbeiterId string, imageNr int) bool {
@@ -127,4 +134,44 @@ func (a *App) UploadImage(mitarbeiterId string, imageNr int) bool {
 	}
 
 	return a.db.Update("Mitarbeiter", params, &mitarbeiterId, nil) == nil
+}
+
+func (a *App) Login(mail, password string) *userdata.UserData {
+	if len(mail) < 3 {
+		return nil
+	}
+	if len(password) < 3 {
+		return nil
+	}
+	user, err := a.db.GetUserByMail(mail)
+	if err != nil {
+		return nil
+	}
+	if user.Password != password {
+		return nil
+	}
+	ma, err := a.db.Read("Mitarbeiter", &user.MitarbeiterId, nil)
+	if err != nil {
+		return nil
+	}
+	m, ok := ma.(db.MitarbeiterModel)
+	if !ok {
+		return nil
+	}
+	data, err := a.userdata.Login(m.Name, mail, m.Id)
+	if err != nil {
+		return nil
+	}
+	a.userdata = data
+
+	return a.userdata
+}
+
+func (a *App) Logout() bool {
+	a.userdata = nil
+	return a.userdata.Logout() == nil
+}
+
+func (a *App) CheckSession() *userdata.UserData {
+	return a.userdata
 }

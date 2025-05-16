@@ -11,6 +11,7 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
       "@wails": path.resolve(__dirname, "./wailsjs"),
       "@api": path.resolve(__dirname, "./api"),
+      "@hooks": path.resolve(__dirname, "./hooks"),
     },
   },
 });

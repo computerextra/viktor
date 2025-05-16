@@ -9,7 +9,8 @@
     "paths": {
       "@/*": ["./src/*"],
       "@wails/*": ["./wailsjs/*"],
-      "@api/*": ["./api/*"]
+      "@api/*": ["./api/*"],
+      "@hooks/*": ["./hooks/*"]
     }
   }
 }
