@@ -1,9 +1,17 @@
 package main
 
-import "viktor/db"
+import (
+	"fmt"
+	"viktor/db"
+)
 
 func (a *App) Create(model db.Model, params any) bool {
-	return a.db.Create(model, params) == nil
+	err := a.db.Create(model, params)
+	if err != nil {
+		fmt.Println(err)
+		return false
+	}
+	return true
 }
 
 func (a *App) Update(model db.Model, params any, idString *string, idInt *int) bool {

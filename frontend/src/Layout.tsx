@@ -110,7 +110,7 @@ export default function Layout() {
             )}
           </div>
         </header>
-        <div>
+        <div className="pt-2">
           <Outlet />
         </div>
       </SidebarInset>

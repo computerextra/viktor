@@ -1,12 +1,12 @@
-import type { db } from "@wails/go/models";
 import {
   Create as APICreate,
-  Update as APIUpdate,
-  Read as APIRead,
+  Delete as APIDelete,
   Einkaufsliste as APIEinkauf,
   Geburtstagsliste as APIGeburtstag,
-  Delete as APIDelete,
+  Read as APIRead,
+  Update as APIUpdate,
 } from "@wails/go/main/App";
+import type { db } from "@wails/go/models";
 
 type Models =
   | "Ansprechpartner"
@@ -37,7 +37,7 @@ interface Lieferant extends LieferantParams {
   Id: string;
 }
 
-type MitarbeiterParams = {
+export interface MitarbeiterParams {
   Name: string;
   Short?: string;
   Gruppenwahl?: string;
@@ -63,7 +63,7 @@ type MitarbeiterParams = {
   Bild1Date?: Date;
   Bild2Date?: Date;
   Bild3Date?: Date;
-};
+}
 
 interface UserParams {
   Password: string;
@@ -83,7 +83,7 @@ interface Version extends VersionParams {
   Id: number;
 }
 
-const Create = async (
+export const Create = async (
   model: Models,
   params:
     | AnsprechpartnerParams
@@ -96,7 +96,7 @@ const Create = async (
   return response;
 };
 
-const Update = async (
+export const Update = async (
   model: Models,
   params:
     | AnsprechpartnerParams
@@ -115,9 +115,11 @@ const Update = async (
   return response;
 };
 
-const Read = async (
+export type MitarbeiterModel = db.MitarbeiterModel;
+
+export const Read = async (
   model: Models,
-  id: string | number
+  id?: string | number
 ): Promise<
   Ansprechparnter[] | Lieferant[] | db.MitarbeiterModel[] | User[] | Version[]
 > => {
@@ -129,7 +131,10 @@ const Read = async (
   return results;
 };
 
-const Delete = async (model: Models, id: string | number): Promise<boolean> => {
+export const Delete = async (
+  model: Models,
+  id: string | number
+): Promise<boolean> => {
   const response = await APIDelete(
     model,
     typeof id == "string" ? id : null,
@@ -138,21 +143,12 @@ const Delete = async (model: Models, id: string | number): Promise<boolean> => {
   return response;
 };
 
-const Einkaufsliste = async (): Promise<Array<db.MitarbeiterModel>> => {
+export const Einkaufsliste = async (): Promise<Array<db.MitarbeiterModel>> => {
   const res = await APIEinkauf();
   return res;
 };
 
-const GeburtstagsListe = async (): Promise<db.GeburtstagsListe> => {
+export const GeburtstagsListe = async (): Promise<db.GeburtstagsListe> => {
   const res = await APIGeburtstag();
   return res;
-};
-
-export default {
-  Create,
-  Update,
-  Read,
-  Delete,
-  Einkaufsliste,
-  GeburtstagsListe,
 };
