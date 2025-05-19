@@ -1,20 +1,20 @@
 [Database]
-URL = ""
+URL = "root:maserpassword@tcp(localhost:3306)/viktor?parseTime=true"
 
 [Folder]
-Upload = ""
-Archive = ""
+Upload = "tmp"
+Archive = "archive"
 
 [Mail]
-From = ""
-Server = ""
+From = "noreply@example.com"
+Server = "smtp.myserver.com"
 Port = 465
-User = ""
-Password = ""
+User = "superadmin"
+Password = "mysecurepassword"
 
 [Sage]
-Server = ""
+Server = "SQL\\SAGE"
 Port = 1433
-User = ""
-Password = ""
-Database = ""
+User = "sa"
+Password = "mysecretpassword123"
+Database = "Mandant1"
