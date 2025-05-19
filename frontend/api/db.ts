@@ -136,11 +136,13 @@ export class Mitarbeiter {
       params.MobilPrivat,
       params.Email,
       params.Azubi,
-      params.Geburtstag?.toLocaleString("de-DE", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-      })
+      params.Geburtstag
+        ? params.Geburtstag.toLocaleString("de-DE", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          })
+        : ""
     );
   }
 
@@ -159,11 +161,13 @@ export class Mitarbeiter {
       params.MobilPrivat,
       params.Email,
       params.Azubi,
-      params.Geburtstag?.toLocaleString("de-DE", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-      })
+      params.Geburtstag
+        ? params.Geburtstag.toLocaleString("de-DE", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          })
+        : ""
     );
   }
   static async UpdateEinkauf(

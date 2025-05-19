@@ -26,7 +26,7 @@ export default function Layout() {
             variant={location.pathname == "/" ? "default" : "link"}
             asChild
           >
-            <NavLink to="/">Einkauf</NavLink>
+            <NavLink to="/">Start</NavLink>
           </Button>
           <Button
             variant={

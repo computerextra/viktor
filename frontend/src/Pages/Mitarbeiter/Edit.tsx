@@ -1,8 +1,9 @@
 import BackButton from "@/components/BackButton";
+import { Button } from "@/components/ui/button";
 import { Mitarbeiter } from "@api/db";
 import type { db } from "@wails/go/models";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import MitarbeiterForm from "./_components/mitarbeiter-form";
 
 export default function MitarbeiterBearbeiten() {
@@ -11,6 +12,7 @@ export default function MitarbeiterBearbeiten() {
     undefined
   );
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function x() {
@@ -25,11 +27,21 @@ export default function MitarbeiterBearbeiten() {
     x();
   }, [id]);
 
+  const handleDelete = async () => {
+    if (id == null) return;
+    const i = parseInt(id);
+    await Mitarbeiter.Delete(i);
+    navigate("/Mitarbeiter");
+  };
+
   return (
     <>
       <BackButton href={"/Mitarbeiter/" + id} />
       <h1 className="text-center">Bearbeiten</h1>
       {!loading && mitarbeiter && <MitarbeiterForm mitarbeiter={mitarbeiter} />}
+      <Button variant={"destructive"} onClick={handleDelete}>
+        Mitarbeiter löschen
+      </Button>
     </>
   );
 }

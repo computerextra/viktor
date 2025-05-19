@@ -68,13 +68,23 @@ export const columns: ColumnDef<db.Mitarbeiter>[] = [
           {x.FestnetzPrivat && x.FestnetzPrivat.length > 0 && (
             <>
               <span>Privat</span>
-              <a href={"tel:" + x.FestnetzPrivat}>{x.FestnetzPrivat}</a>
+              <a
+                className="underline text-primary"
+                href={"tel:" + x.FestnetzPrivat}
+              >
+                {x.FestnetzPrivat}
+              </a>
             </>
           )}
           {x.FestnetzBusiness && x.FestnetzBusiness.length > 0 && (
             <>
               <span>Business</span>
-              <a href={"tel:" + x.FestnetzBusiness}>{x.FestnetzBusiness}</a>
+              <a
+                className="underline text-primary"
+                href={"tel:" + x.FestnetzBusiness}
+              >
+                {x.FestnetzBusiness}
+              </a>
             </>
           )}
         </div>
@@ -91,13 +101,23 @@ export const columns: ColumnDef<db.Mitarbeiter>[] = [
           {x.MobilPrivat && x.MobilPrivat.length > 0 && (
             <>
               <span>Privat</span>
-              <a href={"tel:" + x.MobilPrivat}>{x.MobilPrivat}</a>
+              <a
+                className="underline text-primary"
+                href={"tel:" + x.MobilPrivat}
+              >
+                {x.MobilPrivat}
+              </a>
             </>
           )}
           {x.MobilBusiness && x.MobilBusiness.length > 0 && (
             <>
               <span>Business</span>
-              <a href={"tel:" + x.MobilBusiness}>{x.MobilBusiness}</a>
+              <a
+                className="underline text-primary"
+                href={"tel:" + x.MobilBusiness}
+              >
+                {x.MobilBusiness}
+              </a>
             </>
           )}
         </div>

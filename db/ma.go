@@ -75,63 +75,22 @@ func (d Database) CreateMitarbeiter(
 		)
 		b.Valid = true
 		b.Time = parsedTime
-
-	}
-
-	var LocalShort,
-		LocalGruppenwahl,
-		LocalInternTelefon1,
-		LocalInternTelefon2,
-		LocalFestnetzPrivat,
-		LocalFestnetzBusiness,
-		LocalHomeOffice,
-		LocalMobilBusiness,
-		LocalMobilPrivat,
-		LocalEmail *string
-
-	if len(*Short) > 0 {
-		LocalShort = Short
-	}
-	if len(*Gruppenwahl) > 0 {
-		LocalGruppenwahl = Gruppenwahl
-	}
-	if len(*InternTelefon1) > 0 {
-		LocalInternTelefon1 = InternTelefon1
-	}
-	if len(*InternTelefon2) > 0 {
-		LocalInternTelefon2 = InternTelefon2
-	}
-	if len(*FestnetzPrivat) > 0 {
-		LocalFestnetzPrivat = FestnetzPrivat
-	}
-	if len(*FestnetzBusiness) > 0 {
-		LocalFestnetzBusiness = FestnetzBusiness
-	}
-	if len(*HomeOffice) > 0 {
-		LocalHomeOffice = HomeOffice
-	}
-	if len(*MobilBusiness) > 0 {
-		LocalMobilBusiness = MobilBusiness
-	}
-	if len(*MobilPrivat) > 0 {
-		LocalMobilPrivat = MobilPrivat
-	}
-	if len(*Email) > 0 {
-		LocalEmail = Email
+	} else {
+		b.Valid = false
 	}
 
 	d.db.Create(&Mitarbeiter{
 		Name:             Name,
-		Short:            LocalShort,
-		Gruppenwahl:      LocalGruppenwahl,
-		InternTelefon1:   LocalInternTelefon1,
-		InternTelefon2:   LocalInternTelefon2,
-		FestnetzPrivat:   LocalFestnetzPrivat,
-		FestnetzBusiness: LocalFestnetzBusiness,
-		HomeOffice:       LocalHomeOffice,
-		MobilBusiness:    LocalMobilBusiness,
-		MobilPrivat:      LocalMobilPrivat,
-		Email:            LocalEmail,
+		Short:            Short,
+		Gruppenwahl:      Gruppenwahl,
+		InternTelefon1:   InternTelefon1,
+		InternTelefon2:   InternTelefon2,
+		FestnetzPrivat:   FestnetzPrivat,
+		FestnetzBusiness: FestnetzBusiness,
+		HomeOffice:       HomeOffice,
+		MobilBusiness:    MobilBusiness,
+		MobilPrivat:      MobilPrivat,
+		Email:            Email,
 		Azubi:            Azubi,
 		Geburtstag:       b,
 		Paypal:           false,
