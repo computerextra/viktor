@@ -1,43 +1,111 @@
 import {
-  Create as APICreate,
-  Delete as APIDelete,
-  Einkaufsliste as APIEinkauf,
-  Geburtstagsliste as APIGeburtstag,
-  Read as APIRead,
-  Update as APIUpdate,
+  ChangePassword,
+  CheckUser,
+  CreateAnsprechpartner,
+  CreateLieferant,
+  CreateMitarbeiter,
+  CreateUser,
+  DeleteAnsprechpartner,
+  DeleteLieferant,
+  DeleteMitarbeiter,
+  DeleteUser,
+  GetAllAnsprechpartner,
+  GetAllMitarbeiter,
+  GetAnsprechpartner,
+  GetEinkaufsliste,
+  GetGeburtstagsliste,
+  GetLieferant,
+  GetLieferanten,
+  GetMitarbeiter,
+  GetUser,
+  UpdateAnsprechpartner,
+  UpdateEinkauf,
+  UpdateLieferant,
+  UpdateMitarbeiter,
 } from "@wails/go/main/App";
-import type { db } from "@wails/go/models";
 
-type Models =
-  | "Ansprechpartner"
-  | "Lieferant"
-  | "Mitarbeiter"
-  | "User"
-  | "Version";
+// Ansprechpartner
 
-interface AnsprechpartnerParams {
+type AnsprechpartnerParams = {
   Name: string;
   Telefon?: string;
   Mobil?: string;
   Mail?: string;
-  LieferantenId?: string;
+  LieferantenId: number;
+};
+
+export class Ansprechpartner {
+  static async Create(params: AnsprechpartnerParams) {
+    return await CreateAnsprechpartner(
+      params.Name,
+      params.Telefon,
+      params.Mobil,
+      params.Mail,
+      params.LieferantenId
+    );
+  }
+
+  static async Update(id: number, params: AnsprechpartnerParams) {
+    return await UpdateAnsprechpartner(
+      id,
+      params.Name,
+      params.Telefon,
+      params.Mobil,
+      params.Mail
+    );
+  }
+
+  static async Get(id: number) {
+    return await GetAnsprechpartner(id);
+  }
+
+  static async GetAll() {
+    return await GetAllAnsprechpartner();
+  }
+
+  static async Delete(id: number) {
+    return await DeleteAnsprechpartner(id);
+  }
 }
 
-interface Ansprechparnter extends AnsprechpartnerParams {
-  Id: string;
-}
-
-interface LieferantParams {
+type LiefertantenParams = {
   Firma: string;
   Kundennummer?: string;
   Webseite?: string;
+};
+
+export class Lieferant {
+  static async Create(params: LiefertantenParams) {
+    return await CreateLieferant(
+      params.Firma,
+      params.Kundennummer,
+      params.Webseite
+    );
+  }
+
+  static async Update(id: number, params: LiefertantenParams) {
+    return await UpdateLieferant(
+      id,
+      params.Firma,
+      params.Kundennummer,
+      params.Webseite
+    );
+  }
+
+  static async Get(id: number) {
+    return await GetLieferant(id);
+  }
+
+  static async GetAll() {
+    return await GetLieferanten();
+  }
+
+  static async Delete(id: number) {
+    return await DeleteLieferant(id);
+  }
 }
 
-interface Lieferant extends LieferantParams {
-  Id: string;
-}
-
-export interface MitarbeiterParams {
+type CreateMitarbeiterParams = {
   Name: string;
   Short?: string;
   Gruppenwahl?: string;
@@ -49,106 +117,114 @@ export interface MitarbeiterParams {
   MobilBusiness?: string;
   MobilPrivat?: string;
   Email?: string;
-  Azubi?: boolean;
+  Azubi: boolean;
   Geburtstag?: Date;
-  Paypal?: boolean;
-  Abonniert?: boolean;
-  Geld?: string;
-  Pfand?: string;
-  Dinge?: string;
-  Abgeschickt?: string;
-  Bild1?: string;
-  Bild2?: string;
-  Bild3?: string;
-  Bild1Date?: Date;
-  Bild2Date?: Date;
-  Bild3Date?: Date;
+};
+
+export class Mitarbeiter {
+  static async Create(params: CreateMitarbeiterParams) {
+    return await CreateMitarbeiter(
+      params.Name,
+      params.Short,
+      params.Gruppenwahl,
+      params.InternTelefon1,
+      params.InternTelefon2,
+      params.FestnetzPrivat,
+      params.FestnetzBusiness,
+      params.HomeOffice,
+      params.MobilBusiness,
+      params.MobilPrivat,
+      params.Email,
+      params.Azubi,
+      params.Geburtstag?.toLocaleString("de-DE", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      })
+    );
+  }
+
+  static async Update(id: number, params: CreateMitarbeiterParams) {
+    return await UpdateMitarbeiter(
+      id,
+      params.Name,
+      params.Short,
+      params.Gruppenwahl,
+      params.InternTelefon1,
+      params.InternTelefon2,
+      params.FestnetzPrivat,
+      params.FestnetzBusiness,
+      params.HomeOffice,
+      params.MobilBusiness,
+      params.MobilPrivat,
+      params.Email,
+      params.Azubi,
+      params.Geburtstag?.toLocaleString("de-DE", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      })
+    );
+  }
+  static async UpdateEinkauf(
+    id: number,
+    params: {
+      Paypal: boolean;
+      Abonniert: boolean;
+      Geld?: string;
+      Pfand?: string;
+      Dinge?: string;
+    }
+  ) {
+    return await UpdateEinkauf(
+      id,
+      params.Paypal,
+      params.Abonniert,
+      params.Geld,
+      params.Pfand,
+      params.Dinge
+    );
+  }
+
+  static async Get(id: number) {
+    return await GetMitarbeiter(id);
+  }
+
+  static async GetAll() {
+    return await GetAllMitarbeiter();
+  }
+
+  static async Einkauf() {
+    return await GetEinkaufsliste();
+  }
+
+  static async Geburtstag() {
+    return await GetGeburtstagsliste();
+  }
+
+  static async Delete(id: number) {
+    return await DeleteMitarbeiter(id);
+  }
 }
 
-interface UserParams {
-  Password: string;
-  Mail: string;
-  Active: boolean;
+export class User {
+  static async Create(Mail: string, Password: string) {
+    return await CreateUser(Mail, Password);
+  }
+
+  static async Get(id: number) {
+    return await GetUser(id);
+  }
+
+  static async Check(Mail: string, Password: string) {
+    return await CheckUser(Mail, Password);
+  }
+
+  static async ChangePassword(id: number, New: string, Old: string) {
+    return await ChangePassword(id, New, Old);
+  }
+
+  static async Delete(id: number) {
+    return await DeleteUser(id);
+  }
 }
-interface User extends UserParams {
-  Id: string;
-  MitarbeiterId: string;
-}
-
-interface VersionParams {
-  Current: number;
-}
-
-interface Version extends VersionParams {
-  Id: number;
-}
-
-export const Create = async (
-  model: Models,
-  params:
-    | AnsprechpartnerParams
-    | LieferantParams
-    | MitarbeiterParams
-    | UserParams
-    | VersionParams
-): Promise<boolean> => {
-  const response = await APICreate(model, params);
-  return response;
-};
-
-export const Update = async (
-  model: Models,
-  params:
-    | AnsprechpartnerParams
-    | LieferantParams
-    | MitarbeiterParams
-    | UserParams
-    | VersionParams,
-  id: string | number
-): Promise<boolean> => {
-  const response = await APIUpdate(
-    model,
-    params,
-    typeof id == "string" ? id : null,
-    typeof id == "number" ? id : null
-  );
-  return response;
-};
-
-export type MitarbeiterModel = db.MitarbeiterModel;
-
-export const Read = async (
-  model: Models,
-  id?: string | number
-): Promise<
-  Ansprechparnter[] | Lieferant[] | db.MitarbeiterModel[] | User[] | Version[]
-> => {
-  const results = await APIRead(
-    model,
-    typeof id == "string" ? id : null,
-    typeof id == "number" ? id : null
-  );
-  return results;
-};
-
-export const Delete = async (
-  model: Models,
-  id: string | number
-): Promise<boolean> => {
-  const response = await APIDelete(
-    model,
-    typeof id == "string" ? id : null,
-    typeof id == "number" ? id : null
-  );
-  return response;
-};
-
-export const Einkaufsliste = async (): Promise<Array<db.MitarbeiterModel>> => {
-  const res = await APIEinkauf();
-  return res;
-};
-
-export const GeburtstagsListe = async (): Promise<db.GeburtstagsListe> => {
-  const res = await APIGeburtstag();
-  return res;
-};

@@ -1,4 +1,4 @@
-import { CheckSession } from "@api/userdata";
+import { CheckSession } from "@wails/go/main/App";
 import type { userdata } from "@wails/go/models";
 import { useEffect, useState } from "react";
 

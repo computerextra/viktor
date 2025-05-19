@@ -1,16 +1,17 @@
-import { Read, type MitarbeiterModel } from "@api/db";
+import { Mitarbeiter } from "@api/db";
+import { db } from "@wails/go/models";
 import { useEffect, useState } from "react";
 import { columns } from "./columns";
 import { DataTable } from "./data-table";
 
 export default function MitarbeiterTable() {
-  const [Mitarbeiter, setMitarbeiter] = useState<
-    Array<MitarbeiterModel> | undefined
-  >(undefined);
+  const [Worker, setMitarbeiter] = useState<Array<db.Mitarbeiter> | undefined>(
+    undefined
+  );
 
   useEffect(() => {
     async function x() {
-      const mitarbeiter = (await Read("Mitarbeiter")) as MitarbeiterModel[];
+      const mitarbeiter = await Mitarbeiter.GetAll();
       setMitarbeiter(mitarbeiter);
     }
 
@@ -19,7 +20,7 @@ export default function MitarbeiterTable() {
 
   return (
     <div className="container mx-auto py-10">
-      {Mitarbeiter && <DataTable columns={columns} data={Mitarbeiter} />}
+      {Worker && <DataTable columns={columns} data={Worker} />}
     </div>
   );
 }

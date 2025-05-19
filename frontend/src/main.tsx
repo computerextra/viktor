@@ -11,6 +11,8 @@ import Werkstatt from "@/Pages/Werkstatt/Werkstatt";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { HashRouter, Route, Routes } from "react-router";
+import MitarbeiterDetails from "./Pages/Mitarbeiter/Details";
+import MitarbeiterBearbeiten from "./Pages/Mitarbeiter/Edit";
 import NeuerMitarbeiter from "./Pages/Mitarbeiter/Neu";
 
 createRoot(document.getElementById("root")!).render(
@@ -28,6 +30,8 @@ createRoot(document.getElementById("root")!).render(
           <Route path="Mitarbeiter">
             <Route index element={<Mitarbeiter />} />
             <Route path="Neu" element={<NeuerMitarbeiter />} />
+            <Route path=":id" element={<MitarbeiterDetails />} />
+            <Route path=":id/Bearbeiten" element={<MitarbeiterBearbeiten />} />
           </Route>
           <Route path="Lieferant">
             <Route index element={<Lieferant />} />

@@ -5,25 +5,53 @@ import {db} from '../models';
 import {sagedb} from '../models';
 import {archive} from '../models';
 
+export function ChangePassword(arg1:number,arg2:string,arg3:string):Promise<void>;
+
 export function CheckSession():Promise<userdata.UserData>;
 
-export function Create(arg1:db.Model,arg2:any):Promise<boolean>;
+export function CheckUser(arg1:string,arg2:string):Promise<boolean>;
 
-export function Delete(arg1:db.Model,arg2:any,arg3:any):Promise<boolean>;
+export function CreateAnsprechpartner(arg1:string,arg2:any,arg3:any,arg4:any,arg5:number):Promise<void>;
+
+export function CreateLieferant(arg1:string,arg2:any,arg3:any):Promise<void>;
+
+export function CreateMitarbeiter(arg1:string,arg2:any,arg3:any,arg4:any,arg5:any,arg6:any,arg7:any,arg8:any,arg9:any,arg10:any,arg11:any,arg12:boolean,arg13:any):Promise<void>;
+
+export function CreateUser(arg1:string,arg2:string):Promise<void>;
+
+export function DeleteAnsprechpartner(arg1:number):Promise<void>;
+
+export function DeleteLieferant(arg1:number):Promise<void>;
+
+export function DeleteMitarbeiter(arg1:number):Promise<void>;
+
+export function DeleteUser(arg1:number):Promise<void>;
 
 export function DownloadArchive(arg1:number):Promise<boolean>;
 
-export function Einkaufsliste():Promise<Array<db.MitarbeiterModel>>;
+export function GetAllAnsprechpartner():Promise<Array<db.Ansprechpartner>>;
 
-export function Geburtstagsliste():Promise<db.GeburtstagsListe>;
+export function GetAllMitarbeiter():Promise<Array<db.Mitarbeiter>>;
+
+export function GetAnsprechpartner(arg1:number):Promise<db.Ansprechpartner>;
+
+export function GetEinkaufsliste():Promise<Array<db.Mitarbeiter>>;
+
+export function GetGeburtstagsliste():Promise<db.Geburtstagsliste>;
 
 export function GetKundeWithKundennummer(arg1:string):Promise<sagedb.User>;
+
+export function GetLieferant(arg1:number):Promise<db.Lieferant>;
+
+export function GetLieferanten():Promise<Array<db.Lieferant>>;
+
+export function GetMitarbeiter(arg1:number):Promise<db.Mitarbeiter>;
+
+export function GetUser(arg1:number):Promise<db.User>;
 
 export function Login(arg1:string,arg2:string):Promise<userdata.UserData>;
 
 export function Logout():Promise<boolean>;
-
-export function Read(arg1:db.Model,arg2:any,arg3:any):Promise<any>;
 
 export function Reload():Promise<void>;
 
@@ -31,6 +59,12 @@ export function SearchArchive(arg1:string):Promise<Array<archive.ArchiveResult>>
 
 export function SearchSage(arg1:string):Promise<Array<sagedb.SearchResult>>;
 
-export function Update(arg1:db.Model,arg2:any,arg3:any,arg4:any):Promise<boolean>;
+export function UpdateAnsprechpartner(arg1:number,arg2:string,arg3:any,arg4:any,arg5:any):Promise<void>;
 
-export function UploadImage(arg1:string,arg2:number):Promise<boolean>;
+export function UpdateEinkauf(arg1:number,arg2:boolean,arg3:boolean,arg4:any,arg5:any,arg6:any):Promise<void>;
+
+export function UpdateLieferant(arg1:number,arg2:string,arg3:any,arg4:any):Promise<void>;
+
+export function UpdateMitarbeiter(arg1:number,arg2:string,arg3:any,arg4:any,arg5:any,arg6:any,arg7:any,arg8:any,arg9:any,arg10:any,arg11:any,arg12:any,arg13:boolean,arg14:any):Promise<void>;
+
+export function UploadImage(arg1:number,arg2:number):Promise<boolean>;

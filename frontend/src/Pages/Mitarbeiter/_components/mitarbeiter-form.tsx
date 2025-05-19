@@ -16,7 +16,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { Create, Update } from "@api/db";
+import { Mitarbeiter } from "@api/db";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { db } from "@wails/go/models";
 import { format } from "date-fns";
@@ -45,51 +45,83 @@ const formSchema = z.object({
 export default function MitarbeiterForm({
   mitarbeiter,
 }: {
-  mitarbeiter?: db.MitarbeiterModel;
+  mitarbeiter?: db.Mitarbeiter;
 }) {
   const navigate = useNavigate();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      Short: mitarbeiter?.Short,
-      Name: mitarbeiter?.Name,
-      Email: mitarbeiter?.Email,
-      FestnetzBusiness: mitarbeiter?.Festnetz_busines,
-      FestnetzPrivat: mitarbeiter?.Festnetz_privat,
-      Gruppenwahl: mitarbeiter?.Gruppenwahl,
-      HomeOffice: mitarbeiter?.Home_office,
-      InternTelefon1: mitarbeiter?.Intern_telefon1,
-      InternTelefon2: mitarbeiter?.Intern_telefon2,
-      MobilBusiness: mitarbeiter?.Mobil_buiness,
-      MobilPrivat: mitarbeiter?.Mobil_privat,
+      Short: mitarbeiter?.Short ? mitarbeiter?.Short : "",
+      Name: mitarbeiter?.Name ? mitarbeiter?.Name : "",
+      Email: mitarbeiter?.Email ? mitarbeiter?.Email : "",
+      FestnetzBusiness: mitarbeiter?.FestnetzBusiness
+        ? mitarbeiter?.FestnetzBusiness
+        : "",
+      FestnetzPrivat: mitarbeiter?.FestnetzPrivat
+        ? mitarbeiter?.FestnetzPrivat
+        : "",
+      Gruppenwahl: mitarbeiter?.Gruppenwahl ? mitarbeiter?.Gruppenwahl : "",
+      HomeOffice: mitarbeiter?.HomeOffice ? mitarbeiter?.HomeOffice : "",
+      InternTelefon1: mitarbeiter?.InternTelefon1
+        ? mitarbeiter?.InternTelefon1
+        : "",
+      InternTelefon2: mitarbeiter?.InternTelefon2
+        ? mitarbeiter?.InternTelefon2
+        : "",
+      MobilBusiness: mitarbeiter?.MobilBusiness
+        ? mitarbeiter?.MobilBusiness
+        : "",
+      MobilPrivat: mitarbeiter?.MobilPrivat ? mitarbeiter?.MobilPrivat : "",
 
-      Geburtstag: mitarbeiter?.Geburtstag
-        ? new Date(mitarbeiter.Geburtstag)
+      Geburtstag: mitarbeiter?.Geburtstag.Valid
+        ? new Date(mitarbeiter.Geburtstag.Time)
         : undefined,
       Azubi: mitarbeiter?.Azubi ?? false,
     },
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    console.log(values);
+
     if (mitarbeiter == null) {
-      const res = await Create("Mitarbeiter", values);
-      if (res) {
-        navigate("/Mitarbeiter");
-      } else {
-        alert("Fehler beim Speichern des Mitarbeiters");
-        return;
-      }
+      await Mitarbeiter.Create({
+        Azubi: values.Azubi,
+        Geburtstag: values.Geburtstag,
+        Name: values.Name,
+        Email: values.Email,
+        FestnetzBusiness: values.FestnetzBusiness,
+        FestnetzPrivat: values.FestnetzPrivat,
+        Gruppenwahl: values.Gruppenwahl,
+        HomeOffice: values.HomeOffice,
+        InternTelefon1: values.InternTelefon1,
+        InternTelefon2: values.InternTelefon2,
+        MobilBusiness: values.MobilBusiness,
+        MobilPrivat: values.MobilPrivat,
+        Short: values.Short,
+      });
+
+      navigate("/Mitarbeiter");
     }
 
-    if (mitarbeiter?.id == null) return;
-    const res = await Update("Mitarbeiter", values, mitarbeiter.id);
-    if (res) {
-      navigate("/Mitarbeiter");
-    } else {
-      alert("Fehler beim Speichern des Mitarbeiters");
-      return;
-    }
+    if (mitarbeiter?.ID == null) return;
+    await Mitarbeiter.Update(mitarbeiter.ID, {
+      Azubi: values.Azubi,
+      Geburtstag: values.Geburtstag,
+      Name: values.Name,
+      Email: values.Email,
+      FestnetzBusiness: values.FestnetzBusiness,
+      FestnetzPrivat: values.FestnetzPrivat,
+      Gruppenwahl: values.Gruppenwahl,
+      HomeOffice: values.HomeOffice,
+      InternTelefon1: values.InternTelefon1,
+      InternTelefon2: values.InternTelefon2,
+      MobilBusiness: values.MobilBusiness,
+      MobilPrivat: values.MobilPrivat,
+      Short: values.Short,
+    });
+
+    navigate("/Mitarbeiter");
   };
 
   return (

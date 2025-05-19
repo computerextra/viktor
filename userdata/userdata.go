@@ -9,26 +9,23 @@ import (
 type UserData struct {
 	Name *string
 	Mail *string
-	id   *string
+	id   *uint
 }
 
 func NewUserdata() *UserData {
 	return &UserData{}
 }
 
-func (d UserData) GetId() string {
+func (d UserData) GetId() uint {
 	return *d.id
 }
 
-func (d UserData) Login(name, mail, id string) (*UserData, error) {
+func (d UserData) Login(name, mail string, id uint) (*UserData, error) {
 	if len(name) < 3 {
 		return nil, fmt.Errorf("no name given")
 	}
 	if len(mail) < 3 {
 		return nil, fmt.Errorf("no mail given")
-	}
-	if len(id) < 3 {
-		return nil, fmt.Errorf("no id given")
 	}
 
 	d.id = &id
