@@ -53,7 +53,6 @@ type User struct {
 }
 
 func NewSage(server, db, user, password string, port int) *SageDB {
-
 	return &SageDB{
 		connectionString: fmt.Sprintf("server=%s;database=%s;user id=%s;password=%s;port=%d", server, db, user, password, port),
 	}
@@ -211,5 +210,4 @@ func (s SageDB) Search(searchTerm string) ([]SearchResult, error) {
 		}
 		return results, nil
 	}
-
 }

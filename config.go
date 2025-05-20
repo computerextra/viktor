@@ -43,10 +43,9 @@ type (
 )
 
 func NewConfig() *Config {
-	err := os.WriteFile("test.toml", configFile, 0644)
+	err := os.WriteFile("test.toml", configFile, 0o644)
 	if err != nil {
 		panic(fmt.Errorf("failed to create config: %v", err))
-
 	}
 
 	var conf Config

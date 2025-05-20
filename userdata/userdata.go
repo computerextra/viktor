@@ -45,7 +45,7 @@ func (d UserData) writeData() error {
 	if err != nil {
 		return err
 	}
-	err = os.WriteFile("userdata", jsonData, 0644)
+	err = os.WriteFile("userdata", jsonData, 0o644)
 	if err != nil {
 		return err
 	}

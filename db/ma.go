@@ -186,7 +186,6 @@ func (d Database) GetGeburtstagsliste() Geburtstagsliste {
 			two = v[j].Geburtstag.Time
 		}
 		return one.Before(two)
-
 	})
 	sort.Slice(z, func(i, j int) bool {
 		var one, two time.Time

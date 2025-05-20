@@ -4,6 +4,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
 	"viktor/archive"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
@@ -37,6 +38,6 @@ func (a App) DownloadArchive(id int32) bool {
 	if len(pathName) == 0 {
 		return false
 	}
-	err = os.WriteFile(pathName, file, 0644)
+	err = os.WriteFile(pathName, file, 0o644)
 	return err == nil
 }

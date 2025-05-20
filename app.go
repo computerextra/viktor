@@ -88,7 +88,7 @@ func (a *App) UploadImage(mitarbeiterId uint, imageNr uint) bool {
 
 	m := a.db.GetMitarbeiter(mitarbeiterId)
 
-	var now = time.Now()
+	now := time.Now()
 
 	if imageNr == 1 {
 		m.Bild1 = &base64Encoding
