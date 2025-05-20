@@ -16,7 +16,7 @@ import { Link, useParams } from "react-router";
 export default function MitarbeiterDetails() {
   const { id } = useParams();
   const [mitarbeiter, setMitarbeiter] = useState<db.Mitarbeiter | undefined>(
-    undefined,
+    undefined
   );
 
   useEffect(() => {

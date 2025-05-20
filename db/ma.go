@@ -121,9 +121,8 @@ func (d Database) GetAllMitarbeiter() []Mitarbeiter {
 }
 
 func (d Database) GetEinkaufsliste() []Mitarbeiter {
-	now := time.Now()
 	var m []Mitarbeiter
-	d.db.Where("Abgeschickt=?", now).Or("Abonniert=?", true).Order("Name asc").Find(&m)
+	d.db.Where("DATE(Abgeschickt)=DATE('now')").Or("Abonniert=?", true).Order("Name asc").Find(&m)
 	return m
 }
 

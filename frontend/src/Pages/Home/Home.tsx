@@ -1,8 +1,11 @@
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 import { Mitarbeiter } from "@api/db";
 import type { db } from "@wails/go/models";
 import { AlertCircle } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
+import { NavLink } from "react-router";
+import Einkaufsliste from "../Einkauf/Einkaufsliste";
 import { columns } from "./_components/columns";
 import { DataTable } from "./_components/data-table";
 
@@ -35,8 +38,29 @@ export default function Home() {
   return (
     <>
       <h1 className="text-center">Einkauf</h1>
-      <p>Somthing somehitng bla bla bla</p>
-      <h1 className="text-center">Geburtstagsliste</h1>
+      <div className="container mx-auto grid grid-cols-4 my-5 gap-4">
+        <Button asChild variant={"outline"}>
+          <NavLink to="/Eingabe">Eingabe</NavLink>
+        </Button>
+        <Button variant={"outline"}>Liste Drucken</Button>
+        <Button asChild variant={"outline"}>
+          <a
+            href="https://www.edeka.de/markt-id/10001842/prospekt/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Edeka Blättchen
+          </a>
+        </Button>
+        <Button asChild variant={"outline"}>
+          <NavLink to="/">Paypal Abrechnung</NavLink>
+        </Button>
+      </div>
+      <Suspense>
+        <Einkaufsliste />
+      </Suspense>
+
+      <h1 className="text-center mt-5">Geburtstagsliste</h1>
       <div className="container mx-auto">
         {liste?.Heute && (
           <div className="mt-8 mb-8">
