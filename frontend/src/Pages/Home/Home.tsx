@@ -20,13 +20,25 @@ export default function Home() {
       const res = await Mitarbeiter.Geburtstag();
       const a: db.Mitarbeiter[] = [];
       if (res.Vergangen?.length > 0) {
-        res.Vergangen.forEach((e) => a.push(e));
+        res.Vergangen.forEach((e) => {
+          if (e.Geburtstag.Valid && e.Geburtstag.Time.length > 0) {
+            a.push(e);
+          }
+        });
       }
       if (res.Heute?.length > 0) {
-        res.Heute.forEach((e) => a.push(e));
+        res.Heute.forEach((e) => {
+          if (e.Geburtstag.Valid && e.Geburtstag.Time.length > 0) {
+            a.push(e);
+          }
+        });
       }
       if (res.Zukunft?.length > 0) {
-        res.Zukunft.forEach((e) => a.push(e));
+        res.Zukunft.forEach((e) => {
+          if (e.Geburtstag.Valid && e.Geburtstag.Time.length > 0) {
+            a.push(e);
+          }
+        });
       }
       setListe(res);
       setalles(a);
@@ -37,12 +49,17 @@ export default function Home() {
 
   return (
     <>
-      <h1 className="text-center">Einkauf</h1>
-      <div className="container mx-auto grid grid-cols-4 my-5 gap-4">
+      <h1 className="text-center print:hidden">Einkauf</h1>
+      <h1 className="hidden print:block text-center my-2">
+        An Post / Milch und Kaffee denken!
+      </h1>
+      <div className="container mx-auto grid grid-cols-4 my-5 gap-4 print:hidden">
         <Button asChild variant={"outline"}>
           <NavLink to="/Eingabe">Eingabe</NavLink>
         </Button>
-        <Button variant={"outline"}>Liste Drucken</Button>
+        <Button variant={"outline"} onClick={window.print}>
+          Liste Drucken
+        </Button>
         <Button asChild variant={"outline"}>
           <a
             href="https://www.edeka.de/markt-id/10001842/prospekt/"
@@ -60,8 +77,8 @@ export default function Home() {
         <Einkaufsliste />
       </Suspense>
 
-      <h1 className="text-center mt-5">Geburtstagsliste</h1>
-      <div className="container mx-auto">
+      <h1 className="text-center mt-5 print:hidden">Geburtstagsliste</h1>
+      <div className="container mx-auto print:hidden">
         {liste?.Heute && (
           <div className="mt-8 mb-8">
             {liste.Heute.map((x) => (
@@ -76,10 +93,10 @@ export default function Home() {
           </div>
         )}
         {alles && (
-          <>
+          <div className="print:hidden">
             <h2>Geburtstage</h2>
             <DataTable columns={columns} data={alles} />
-          </>
+          </div>
         )}
       </div>
     </>

@@ -389,6 +389,7 @@ export namespace userdata {
 	export class UserData {
 	    Name?: string;
 	    Mail?: string;
+	    Id?: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new UserData(source);
@@ -398,6 +399,7 @@ export namespace userdata {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.Name = source["Name"];
 	        this.Mail = source["Mail"];
+	        this.Id = source["Id"];
 	    }
 	}
 

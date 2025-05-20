@@ -9,7 +9,7 @@ import (
 type UserData struct {
 	Name *string
 	Mail *string
-	id   *uint
+	Id   *uint
 }
 
 func NewUserdata() *UserData {
@@ -17,7 +17,7 @@ func NewUserdata() *UserData {
 }
 
 func (d UserData) GetId() uint {
-	return *d.id
+	return *d.Id
 }
 
 func (d UserData) Login(name, mail string, id uint) (*UserData, error) {
@@ -28,7 +28,7 @@ func (d UserData) Login(name, mail string, id uint) (*UserData, error) {
 		return nil, fmt.Errorf("no mail given")
 	}
 
-	d.id = &id
+	d.Id = &id
 	d.Mail = &mail
 	d.Name = &name
 	d.writeData()

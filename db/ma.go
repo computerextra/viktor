@@ -110,19 +110,64 @@ func (d Database) CreateMitarbeiter(
 
 func (d Database) GetMitarbeiter(id uint) Mitarbeiter {
 	var m Mitarbeiter
-	d.db.First(&m, id)
+	d.db.Select(
+		"ID",
+		"Name",
+		"Short",
+		"Gruppenwahl",
+		"InternTelefon1",
+		"InternTelefon2",
+		"FestnetzPrivat",
+		"FestnetzBusiness",
+		"HomeOffice",
+		"MobilBusiness",
+		"MobilPrivat",
+		"Email",
+		"Azubi",
+		"Geburtstag",
+	).First(&m, id)
 	return m
 }
 
 func (d Database) GetAllMitarbeiter() []Mitarbeiter {
 	var m []Mitarbeiter
-	d.db.Order("Name asc").Find(&m)
+	d.db.Select(
+		"ID",
+		"Name",
+		"Short",
+		"Gruppenwahl",
+		"InternTelefon1",
+		"InternTelefon2",
+		"FestnetzPrivat",
+		"FestnetzBusiness",
+		"HomeOffice",
+		"MobilBusiness",
+		"MobilPrivat",
+		"Email",
+		"Azubi",
+		"Geburtstag",
+	).Order("Name asc").Find(&m)
 	return m
 }
 
 func (d Database) GetEinkaufsliste() []Mitarbeiter {
 	var m []Mitarbeiter
-	d.db.Where("DATE(Abgeschickt)=DATE('now')").Or("Abonniert=?", true).Order("Name asc").Find(&m)
+	d.db.Select(
+		"ID",
+		"Name",
+		"Paypal",
+		"Abonniert",
+		"Geld",
+		"Pfand",
+		"Dinge",
+		"Abgeschickt",
+		"Bild1",
+		"Bild2",
+		"Bild3",
+		"Bild1Date",
+		"Bild2Date",
+		"Bild3Date",
+	).Where("DATE(Abgeschickt)=DATE('now')").Or("Abonniert=?", true).Order("Name asc").Find(&m)
 	return m
 }
 
@@ -135,7 +180,7 @@ type Geburtstagsliste struct {
 func (d Database) GetGeburtstagsliste() Geburtstagsliste {
 	loc, _ := time.LoadLocation("Europe/Berlin")
 	var ms []Mitarbeiter
-	d.db.Not(&Mitarbeiter{Geburtstag: sql.NullTime{Valid: false}}).Find(&ms)
+	d.db.Select("ID", "Name", "Geburtstag").Not(&Mitarbeiter{Geburtstag: sql.NullTime{Valid: false}}).Find(&ms)
 
 	var z, v, h []Mitarbeiter
 	for _, m := range ms {

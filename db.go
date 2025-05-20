@@ -161,6 +161,8 @@ func (a *App) DeleteMitarbeiter(id uint) {
 
 func (a *App) CreateUser(Mail, Password string) {
 	a.db.CreateUser(Mail, Password)
+	u := a.db.GetUserByMail(Mail)
+	a.userdata.Login(u.Mitarbeiter.Name, u.Mail, u.Mitarbeiter.ID)
 }
 
 func (a *App) GetUser(id uint) db.User {

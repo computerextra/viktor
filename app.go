@@ -3,10 +3,10 @@ package main
 import (
 	"context"
 	"database/sql"
+	"encoding/base64"
 	"fmt"
 	"net/http"
 	"os"
-	"path/filepath"
 	"time"
 
 	"viktor/archive"
@@ -73,45 +73,40 @@ func (a *App) UploadImage(mitarbeiterId uint, imageNr uint) bool {
 		return false
 	}
 
-	var fileextension string
+	var base64Encoding string
 	mimeType := http.DetectContentType(data)
 	switch mimeType {
 	case "image/jpg":
-		fileextension = "jpg"
+		base64Encoding = "data:image/jpg;base64,"
 
 	case "image/jpeg":
-		fileextension = "jpeg"
+		base64Encoding = "data:image/jpeg;base64,"
 
 	case "image/png":
-		fileextension = "png"
+		base64Encoding = "data:image/png;base64,"
 
 	}
+	base64Encoding += base64.StdEncoding.EncodeToString(data)
 
 	m := a.db.GetMitarbeiter(mitarbeiterId)
 
 	now := time.Now()
-	path := filepath.Join(a.config.Folder.Upload, "Upload")
-	fullPath := fmt.Sprintf("%s/Image-%v-%v.%s", path, mitarbeiterId, imageNr, fileextension)
-	err = os.WriteFile(fullPath, data, 0644)
-	if err != nil {
-		return false
-	}
 
 	if imageNr == 1 {
 
-		m.Bild1 = &fullPath
+		m.Bild1 = &base64Encoding
 		m.Bild1Date = sql.NullTime{
 			Valid: true,
 			Time:  now,
 		}
 	} else if imageNr == 2 {
-		m.Bild2 = &fullPath
+		m.Bild2 = &base64Encoding
 		m.Bild2Date = sql.NullTime{
 			Valid: true,
 			Time:  now,
 		}
 	} else if imageNr == 3 {
-		m.Bild3 = &fullPath
+		m.Bild3 = &base64Encoding
 		m.Bild3Date = sql.NullTime{
 			Valid: true,
 			Time:  now,
@@ -134,13 +129,13 @@ func (a *App) Login(mail, password string) *userdata.UserData {
 	}
 	user := a.db.GetUserByMail(mail)
 
-	data, err := a.userdata.Login(user.Mitarbeiter.Name, user.Mail, user.ID)
+	data, err := a.userdata.Login(user.Mitarbeiter.Name, user.Mail, user.Mitarbeiter.ID)
 	if err != nil {
 		return nil
 	}
 	a.userdata = data
 
-	return a.userdata
+	return data
 }
 
 func (a *App) Logout() bool {
