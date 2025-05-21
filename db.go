@@ -1,6 +1,7 @@
 package main
 
 import (
+	"strings"
 	"viktor/db"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
@@ -159,10 +160,28 @@ func (a *App) DeleteMitarbeiter(id uint) {
 
 // User
 
-func (a *App) CreateUser(Mail, Password string) {
-	a.db.CreateUser(Mail, Password)
+func (a *App) CreateUser(Mail, Password string) string {
+	// Check mail
+	splittedMail := strings.Split(Mail, "@")
+	if splittedMail[1] != "computer-extra.de" {
+		return "Keine Firmen E-Mail Adresse angegeben"
+	}
+	if len(splittedMail[0]) < 3 {
+		return "Firmen E-Mail Adresse darf nicht aus einem Alias bestehen"
+	}
+	res := a.db.CreateUser(Mail, Password)
+	if res != "OK" {
+		return res
+	}
 	u := a.db.GetUserByMail(Mail)
-	a.userdata.Login(u.Mitarbeiter.Name, u.Mail, u.Mitarbeiter.ID)
+	if len(u.Mail) < 3 {
+		return "Keinen Mitarbeiter mit dieser E-Mail Adresse gefunden gefunden"
+	}
+	_, err := a.userdata.Login(u.Mitarbeiter.Name, u.Mail, u.Mitarbeiter.ID)
+	if err != nil {
+		return err.Error()
+	}
+	return "OK"
 }
 
 func (a *App) GetUser(id uint) db.User {

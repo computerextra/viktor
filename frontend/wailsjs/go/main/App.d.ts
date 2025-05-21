@@ -17,7 +17,7 @@ export function CreateLieferant(arg1:string,arg2:any,arg3:any):Promise<void>;
 
 export function CreateMitarbeiter(arg1:string,arg2:any,arg3:any,arg4:any,arg5:any,arg6:any,arg7:any,arg8:any,arg9:any,arg10:any,arg11:any,arg12:boolean,arg13:any):Promise<void>;
 
-export function CreateUser(arg1:string,arg2:string):Promise<void>;
+export function CreateUser(arg1:string,arg2:string):Promise<string>;
 
 export function DeleteAnsprechpartner(arg1:number):Promise<void>;
 

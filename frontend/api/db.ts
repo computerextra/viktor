@@ -212,7 +212,7 @@ export class Mitarbeiter {
 }
 
 export class User {
-  static async Create(Mail: string, Password: string) {
+  static async Create(Mail: string, Password: string): Promise<string> {
     return await CreateUser(Mail, Password);
   }
 
@@ -220,7 +220,7 @@ export class User {
     return await GetUser(id);
   }
 
-  static async Check(Mail: string, Password: string) {
+  static async Check(Mail: string, Password: string): Promise<boolean> {
     return await CheckUser(Mail, Password);
   }
 

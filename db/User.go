@@ -10,16 +10,26 @@ type User struct {
 	Mitarbeiter   Mitarbeiter
 }
 
-func (d Database) CreateUser(Mail, Password string) {
+func (d Database) CreateUser(Mail, Password string) string {
 	var m Mitarbeiter
-	d.db.Where(&Mitarbeiter{Email: &Mail}).First(&m)
+	res := d.db.Where(&Mitarbeiter{Email: &Mail}).First(&m)
+	if res.Error != nil {
+		return res.Error.Error()
+	}
+	if len(*m.Email) < 3 {
+		return "Kein Mitarbeiter mit dieser E-Mail Adresse gefunden"
+	}
 
-	d.db.Create(&User{
+	res = d.db.Create(&User{
 		Password:      Password,
 		Mail:          Mail,
 		Mitarbeiter:   m,
 		MitarbeiterId: m.ID,
 	})
+	if res.Error != nil {
+		return res.Error.Error()
+	}
+	return "OK"
 }
 
 func (d Database) GetUser(id uint) User {
@@ -28,10 +38,14 @@ func (d Database) GetUser(id uint) User {
 	return u
 }
 
-func (d Database) GetUserByMail(Mail string) User {
+func (d Database) GetUserByMail(Mail string) *User {
 	var u User
-	d.db.Where(&User{Mail: Mail}).Joins("Mitarbeiter").First(&u)
-	return u
+	res := d.db.Where(&User{Mail: Mail}).Joins("Mitarbeiter").First(&u)
+	if res.Error != nil {
+		return nil
+	}
+
+	return &u
 }
 
 func (d Database) CheckUser(Mail, Password string) bool {
