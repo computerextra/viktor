@@ -14,6 +14,7 @@ import { Mitarbeiter } from "@api/db";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UploadImage } from "@wails/go/main/App";
 import type { db } from "@wails/go/models";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 import { z } from "zod";
@@ -31,6 +32,7 @@ export default function EinkaufForm({
 }: {
   mitarbeiter: db.Mitarbeiter;
 }) {
+  const [loading, setLoading] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -44,6 +46,7 @@ export default function EinkaufForm({
   const navigate = useNavigate();
 
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
+    setLoading(true);
     await Mitarbeiter.UpdateEinkauf(mitarbeiter.ID, {
       Abonniert: values.Abo,
       Paypal: values.Paypal,
@@ -51,6 +54,7 @@ export default function EinkaufForm({
       Geld: values.Geld,
       Pfand: values.Pfand,
     });
+    setLoading(false);
     await navigate("/");
   };
 
@@ -66,7 +70,7 @@ export default function EinkaufForm({
                 <FormItem>
                   <FormLabel>Geld</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input disabled={loading} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -79,7 +83,7 @@ export default function EinkaufForm({
                 <FormItem>
                   <FormLabel>Pfand</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input disabled={loading} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -97,6 +101,7 @@ export default function EinkaufForm({
                   </div>
                   <FormControl>
                     <Switch
+                      disabled={loading}
                       checked={field.value}
                       onCheckedChange={field.onChange}
                     />
@@ -115,6 +120,7 @@ export default function EinkaufForm({
                   </div>
                   <FormControl>
                     <Switch
+                      disabled={loading}
                       checked={field.value}
                       onCheckedChange={field.onChange}
                     />
@@ -131,7 +137,7 @@ export default function EinkaufForm({
               <FormItem>
                 <FormLabel>Dein Einkauf</FormLabel>
                 <FormControl>
-                  <Textarea {...field} />
+                  <Textarea disabled={loading} {...field} />
                 </FormControl>
 
                 <FormMessage />
@@ -141,27 +147,38 @@ export default function EinkaufForm({
           <div className="grid grid-cols-3 gap-4">
             <Input
               type="file"
+              disabled={loading}
               onClick={async (e) => {
                 e.preventDefault();
+                setLoading(true);
                 await UploadImage(mitarbeiter.ID, 1);
+                setLoading(false);
               }}
             />
             <Input
               type="file"
+              disabled={loading}
               onClick={async (e) => {
                 e.preventDefault();
+                setLoading(true);
                 await UploadImage(mitarbeiter.ID, 2);
+                setLoading(false);
               }}
             />
             <Input
               type="file"
+              disabled={loading}
               onClick={async (e) => {
                 e.preventDefault();
+                setLoading(true);
                 await UploadImage(mitarbeiter.ID, 3);
+                setLoading(false);
               }}
             />
           </div>
-          <Button type="submit">Speichern</Button>
+          <Button type="submit" disabled={loading}>
+            {loading ? "Speichert ..." : "Speichern"}
+          </Button>
         </form>
       </Form>
     </div>
