@@ -101,6 +101,7 @@ export default function Anmelden() {
   }
 
   async function onSignupSubmit(values: z.infer<typeof signupSchema>) {
+    // TODO: Fehler besser spezifieren. Auf firmen Adresse prüfen!
     setIsLoading(true);
     await User.Create(values.email.toLowerCase(), values.password);
     const res = await Login(values.email.toLowerCase(), values.password);

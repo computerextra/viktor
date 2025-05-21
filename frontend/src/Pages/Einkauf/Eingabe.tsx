@@ -20,6 +20,7 @@ export default function Eingabe() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    // TODO: scheint nicht korrekt zu laufen
     async function x() {
       setLoading(true);
       const mas: db.Mitarbeiter[] = [];
@@ -29,7 +30,7 @@ export default function Eingabe() {
           mas.push(ma);
         }
         if (session && session.Name) {
-          if (session.Name == ma.Name) {
+          if (session.Mail == ma.Email) {
             mas.push(ma);
             setAus(ma);
           }
