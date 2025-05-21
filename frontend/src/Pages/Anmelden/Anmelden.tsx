@@ -19,8 +19,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { User } from "@api/db";
 import { Login } from "@api/userdata";
 import { zodResolver } from "@hookform/resolvers/zod";
+import useSession from "@hooks/useSession";
+import { Reload } from "@wails/go/main/App";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 import { z } from "zod";
@@ -51,8 +53,23 @@ export default function Anmelden() {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const session = useSession();
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (
+      session &&
+      session.Mail &&
+      session.Name &&
+      session.Id &&
+      session.Mail.length > 0 &&
+      session.Name.length > 0
+    ) {
+      navigate("/");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session]);
 
   const loginForm = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -73,20 +90,27 @@ export default function Anmelden() {
 
   async function onLoginSubmit(values: z.infer<typeof loginSchema>) {
     setIsLoading(true);
-    const res = await Login(values.email, values.password);
+    const res = await Login(values.email.toLowerCase(), values.password);
     if (res == undefined) {
       alert("Falsche Zugangsdaten!");
     } else {
-      navigate("/");
+      await Reload();
+      await navigate("/");
     }
     setIsLoading(false);
   }
 
   async function onSignupSubmit(values: z.infer<typeof signupSchema>) {
     setIsLoading(true);
-    await User.Create(values.email, values.password);
+    await User.Create(values.email.toLowerCase(), values.password);
+    const res = await Login(values.email.toLowerCase(), values.password);
     setIsLoading(false);
-    navigate("/");
+    if (res == undefined) {
+      alert("Server Fehler!");
+    } else {
+      await Reload();
+      navigate("/");
+    }
   }
 
   return (
@@ -128,7 +152,10 @@ export default function Anmelden() {
                         <FormItem>
                           <FormLabel>Email</FormLabel>
                           <FormControl>
-                            <Input placeholder="name@example.com" {...field} />
+                            <Input
+                              placeholder="vorname.nachname@computer-extra.de"
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -209,7 +236,10 @@ export default function Anmelden() {
                         <FormItem>
                           <FormLabel>Email</FormLabel>
                           <FormControl>
-                            <Input placeholder="name@example.com" {...field} />
+                            <Input
+                              placeholder="vorname.nachname@computer-extra.de"
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>

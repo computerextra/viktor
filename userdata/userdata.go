@@ -6,6 +6,8 @@ import (
 	"os"
 )
 
+const userdata = "userdata.tmp"
+
 type UserData struct {
 	Name *string
 	Mail *string
@@ -45,7 +47,7 @@ func (d UserData) writeData() error {
 	if err != nil {
 		return err
 	}
-	err = os.WriteFile("userdata", jsonData, 0o644)
+	err = os.WriteFile(userdata, jsonData, 0o644)
 	if err != nil {
 		return err
 	}
@@ -53,6 +55,19 @@ func (d UserData) writeData() error {
 	return nil
 }
 
+func ReadFile() (*UserData, error) {
+	data, err := os.ReadFile(userdata)
+	if err != nil {
+		return nil, err
+	}
+	var jsonData UserData
+	err = json.Unmarshal(data, &jsonData)
+	if err != nil {
+		return nil, err
+	}
+	return &jsonData, nil
+}
+
 func (d UserData) deleteData() error {
-	return os.Remove("userdata")
+	return os.Remove(userdata)
 }

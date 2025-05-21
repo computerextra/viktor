@@ -117,32 +117,48 @@ func (a *App) UploadImage(mitarbeiterId uint, imageNr uint) bool {
 }
 
 func (a *App) Login(mail, password string) *userdata.UserData {
+	runtime.LogDebug(a.ctx, mail)
+	runtime.LogDebug(a.ctx, password)
 	if len(mail) < 3 {
 		return nil
 	}
+	runtime.LogDebug(a.ctx, "mail ok")
 	if len(password) < 3 {
 		return nil
 	}
+	runtime.LogDebug(a.ctx, "pass ok")
 	res := a.db.CheckUser(mail, password)
+	runtime.LogDebug(a.ctx, "after user check")
 	if !res {
 		return nil
 	}
+	runtime.LogDebug(a.ctx, "user check ok")
 	user := a.db.GetUserByMail(mail)
-
+	runtime.LogDebug(a.ctx, "after user")
 	data, err := a.userdata.Login(user.Mitarbeiter.Name, user.Mail, user.Mitarbeiter.ID)
 	if err != nil {
+		runtime.LogDebug(a.ctx, err.Error())
 		return nil
 	}
+	runtime.LogDebug(a.ctx, "login ok")
 	a.userdata = data
 
 	return data
 }
 
 func (a *App) Logout() bool {
-	a.userdata = nil
+	empty := userdata.UserData{}
+	a.userdata = &empty
+
 	return a.userdata.Logout() == nil
 }
 
 func (a *App) CheckSession() *userdata.UserData {
-	return a.userdata
+	data, err := userdata.ReadFile()
+	if err != nil {
+		return a.userdata
+	} else {
+		a.userdata = data
+		return data
+	}
 }

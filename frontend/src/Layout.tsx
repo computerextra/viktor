@@ -12,11 +12,12 @@ import {
 import { Logout } from "@api/userdata";
 import useSession from "@hooks/useSession";
 import { Reload } from "@wails/go/main/App";
-import { NavLink, Outlet, useLocation } from "react-router";
+import { NavLink, Outlet, useLocation, useNavigate } from "react-router";
 
 export default function Layout() {
   const location = useLocation();
   const session = useSession();
+  const navigate = useNavigate();
 
   return (
     <>
@@ -73,8 +74,10 @@ export default function Layout() {
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
-                  <DropdownMenuItem>
-                    <NavLink to={"/Mitarbeiter/" + session.Id}>Profil</NavLink>
+                  <DropdownMenuItem
+                    onClick={() => navigate("/Mitarbeiter/" + session.Id)}
+                  >
+                    Profil
                     <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
                   </DropdownMenuItem>
                 </DropdownMenuGroup>

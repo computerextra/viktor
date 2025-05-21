@@ -30,7 +30,7 @@ func (d Database) GetUser(id uint) User {
 
 func (d Database) GetUserByMail(Mail string) User {
 	var u User
-	d.db.Where(&User{Mail: Mail}).First(&u)
+	d.db.Where(&User{Mail: Mail}).Joins("Mitarbeiter").First(&u)
 	return u
 }
 
