@@ -33,6 +33,8 @@ export function GetAllAnsprechpartner():Promise<Array<db.Ansprechpartner>>;
 
 export function GetAllMitarbeiter():Promise<Array<db.Mitarbeiter>>;
 
+export function GetAllMitarbeiterEinkauf():Promise<Array<db.Mitarbeiter>>;
+
 export function GetAnsprechpartner(arg1:number):Promise<db.Ansprechpartner>;
 
 export function GetEinkaufsliste():Promise<Array<db.Mitarbeiter>>;
@@ -61,7 +63,7 @@ export function SearchSage(arg1:string):Promise<Array<sagedb.SearchResult>>;
 
 export function UpdateAnsprechpartner(arg1:number,arg2:string,arg3:any,arg4:any,arg5:any):Promise<void>;
 
-export function UpdateEinkauf(arg1:number,arg2:boolean,arg3:boolean,arg4:any,arg5:any,arg6:any):Promise<void>;
+export function UpdateEinkauf(arg1:number,arg2:boolean,arg3:boolean,arg4:any,arg5:any,arg6:any,arg7:boolean,arg8:boolean,arg9:boolean):Promise<void>;
 
 export function UpdateLieferant(arg1:number,arg2:string,arg3:any,arg4:any):Promise<void>;
 

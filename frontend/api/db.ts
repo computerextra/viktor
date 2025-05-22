@@ -11,6 +11,7 @@ import {
   DeleteUser,
   GetAllAnsprechpartner,
   GetAllMitarbeiter,
+  GetAllMitarbeiterEinkauf,
   GetAnsprechpartner,
   GetEinkaufsliste,
   GetGeburtstagsliste,
@@ -178,6 +179,9 @@ export class Mitarbeiter {
       Geld?: string;
       Pfand?: string;
       Dinge?: string;
+      Bild1: boolean;
+      Bild2: boolean;
+      Bild3: boolean;
     }
   ) {
     return await UpdateEinkauf(
@@ -186,7 +190,10 @@ export class Mitarbeiter {
       params.Abonniert,
       params.Geld,
       params.Pfand,
-      params.Dinge
+      params.Dinge,
+      params.Bild1,
+      params.Bild2,
+      params.Bild3
     );
   }
 
@@ -196,6 +203,10 @@ export class Mitarbeiter {
 
   static async GetAll() {
     return await GetAllMitarbeiter();
+  }
+
+  static async GetAllEinkauf() {
+    return await GetAllMitarbeiterEinkauf();
   }
 
   static async Einkauf() {

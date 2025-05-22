@@ -20,15 +20,16 @@ export default function Eingabe() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // TODO: scheint nicht korrekt zu laufen
     async function x() {
+      if (session == null) return;
       setLoading(true);
       const mas: db.Mitarbeiter[] = [];
-      const res = await Mitarbeiter.GetAll();
+      const res = await Mitarbeiter.GetAllEinkauf();
       res.forEach((ma) => {
         if (ma.Name == "Kaffeekasse") {
           mas.push(ma);
         }
+
         if (session && session.Name) {
           if (session.Mail == ma.Email) {
             mas.push(ma);
@@ -37,12 +38,14 @@ export default function Eingabe() {
         }
       });
       setMitarbeiter(mas);
+      console.log("res", res);
+      console.log("mas", mas);
+      console.log("session", session);
       setLoading(false);
     }
 
     x();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [session]);
 
   return (
     <>
@@ -56,6 +59,7 @@ export default function Eingabe() {
               const z = mitarbeiter?.find((y) => y.Name === e);
               setAus(z);
             }}
+            defaultValue={Aus?.Name}
           >
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Auswahl..." />
@@ -68,6 +72,7 @@ export default function Eingabe() {
               ))}
             </SelectContent>
           </Select>
+
           {Aus && <EinkaufForm mitarbeiter={Aus} />}
         </div>
       )}

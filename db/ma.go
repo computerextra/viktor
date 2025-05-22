@@ -150,6 +150,21 @@ func (d Database) GetAllMitarbeiter() []Mitarbeiter {
 	return m
 }
 
+func (d Database) GetAllMitarbeiterEinkauf() []Mitarbeiter {
+	var m []Mitarbeiter
+	d.db.Select(
+		"ID",
+		"Name",
+		"Email",
+		"Paypal",
+		"Abonniert",
+		"Geld",
+		"Pfand",
+		"Dinge",
+	).Order("Name asc").Find(&m)
+	return m
+}
+
 func (d Database) GetEinkaufsliste() []Mitarbeiter {
 	var m []Mitarbeiter
 	d.db.Select(
@@ -367,6 +382,7 @@ func (d Database) UpdateEinkauf(
 	Geld,
 	Pfand,
 	Dinge *string,
+	bild1, bild2, bild3 bool,
 ) {
 	var m Mitarbeiter
 	d.db.First(&m, id)
@@ -378,6 +394,18 @@ func (d Database) UpdateEinkauf(
 	m.Abgeschickt = sql.NullTime{
 		Time:  time.Now(),
 		Valid: true,
+	}
+	if !bild1 {
+		m.Bild1 = nil
+		m.Bild1Date.Valid = false
+	}
+	if !bild2 {
+		m.Bild2 = nil
+		m.Bild2Date.Valid = false
+	}
+	if !bild3 {
+		m.Bild3 = nil
+		m.Bild3Date.Valid = false
 	}
 	d.db.Save(&m)
 }

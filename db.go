@@ -85,6 +85,10 @@ func (a *App) CreateMitarbeiter(
 	)
 }
 
+func (a *App) GetAllMitarbeiterEinkauf() []db.Mitarbeiter {
+	return a.db.GetAllMitarbeiterEinkauf()
+}
+
 func (a *App) GetMitarbeiter(id uint) db.Mitarbeiter {
 	return a.db.GetMitarbeiter(id)
 }
@@ -143,6 +147,7 @@ func (a *App) UpdateEinkauf(
 	Geld,
 	Pfand,
 	Dinge *string,
+	bild1, bild2, bild3 bool,
 ) {
 	a.db.UpdateEinkauf(
 		id,
@@ -150,7 +155,7 @@ func (a *App) UpdateEinkauf(
 		Abonniert,
 		Geld,
 		Pfand,
-		Dinge,
+		Dinge, bild1, bild2, bild3,
 	)
 }
 

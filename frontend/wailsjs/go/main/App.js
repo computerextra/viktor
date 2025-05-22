@@ -58,6 +58,10 @@ export function GetAllMitarbeiter() {
   return window['go']['main']['App']['GetAllMitarbeiter']();
 }
 
+export function GetAllMitarbeiterEinkauf() {
+  return window['go']['main']['App']['GetAllMitarbeiterEinkauf']();
+}
+
 export function GetAnsprechpartner(arg1) {
   return window['go']['main']['App']['GetAnsprechpartner'](arg1);
 }
@@ -114,8 +118,8 @@ export function UpdateAnsprechpartner(arg1, arg2, arg3, arg4, arg5) {
   return window['go']['main']['App']['UpdateAnsprechpartner'](arg1, arg2, arg3, arg4, arg5);
 }
 
-export function UpdateEinkauf(arg1, arg2, arg3, arg4, arg5, arg6) {
-  return window['go']['main']['App']['UpdateEinkauf'](arg1, arg2, arg3, arg4, arg5, arg6);
+export function UpdateEinkauf(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9) {
+  return window['go']['main']['App']['UpdateEinkauf'](arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);
 }
 
 export function UpdateLieferant(arg1, arg2, arg3, arg4) {

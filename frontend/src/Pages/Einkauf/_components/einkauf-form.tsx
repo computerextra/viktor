@@ -14,7 +14,7 @@ import { Mitarbeiter } from "@api/db";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UploadImage } from "@wails/go/main/App";
 import type { db } from "@wails/go/models";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 import { z } from "zod";
@@ -33,6 +33,11 @@ export default function EinkaufForm({
   mitarbeiter: db.Mitarbeiter;
 }) {
   const [loading, setLoading] = useState(false);
+
+  const [uploaded1, setUploaded1] = useState(false);
+  const [uploaded2, setUploaded2] = useState(false);
+  const [uploaded3, setUploaded3] = useState(false);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -45,6 +50,17 @@ export default function EinkaufForm({
   });
   const navigate = useNavigate();
 
+  useEffect(() => {
+    form.reset({
+      Dinge: mitarbeiter.Dinge ?? "",
+      Geld: mitarbeiter.Geld ?? "",
+      Pfand: mitarbeiter.Pfand ?? "",
+      Abo: mitarbeiter.Abonniert ?? false,
+      Paypal: mitarbeiter.Paypal ?? false,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mitarbeiter]);
+
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
     setLoading(true);
     await Mitarbeiter.UpdateEinkauf(mitarbeiter.ID, {
@@ -53,6 +69,9 @@ export default function EinkaufForm({
       Dinge: values.Dinge,
       Geld: values.Geld,
       Pfand: values.Pfand,
+      Bild1: uploaded1,
+      Bild2: uploaded2,
+      Bild3: uploaded3,
     });
     setLoading(false);
     await navigate("/");
@@ -145,36 +164,51 @@ export default function EinkaufForm({
             )}
           />
           <div className="grid grid-cols-3 gap-4">
-            <Input
-              type="file"
-              disabled={loading}
-              onClick={async (e) => {
-                e.preventDefault();
-                setLoading(true);
-                await UploadImage(mitarbeiter.ID, 1);
-                setLoading(false);
-              }}
-            />
-            <Input
-              type="file"
-              disabled={loading}
-              onClick={async (e) => {
-                e.preventDefault();
-                setLoading(true);
-                await UploadImage(mitarbeiter.ID, 2);
-                setLoading(false);
-              }}
-            />
-            <Input
-              type="file"
-              disabled={loading}
-              onClick={async (e) => {
-                e.preventDefault();
-                setLoading(true);
-                await UploadImage(mitarbeiter.ID, 3);
-                setLoading(false);
-              }}
-            />
+            {!uploaded1 ? (
+              <Input
+                type="file"
+                disabled={loading || uploaded1}
+                onClick={async (e) => {
+                  e.preventDefault();
+                  setLoading(true);
+                  await UploadImage(mitarbeiter.ID, 1);
+                  setUploaded1(true);
+                  setLoading(false);
+                }}
+              />
+            ) : (
+              "Bild bereits gespeichert"
+            )}
+            {!uploaded2 ? (
+              <Input
+                type="file"
+                disabled={loading || uploaded2}
+                onClick={async (e) => {
+                  e.preventDefault();
+                  setLoading(true);
+                  await UploadImage(mitarbeiter.ID, 2);
+                  setUploaded2(true);
+                  setLoading(false);
+                }}
+              />
+            ) : (
+              "Bild bereits gespeichert"
+            )}
+            {!uploaded3 ? (
+              <Input
+                type="file"
+                disabled={loading || uploaded3}
+                onClick={async (e) => {
+                  e.preventDefault();
+                  setLoading(true);
+                  setUploaded3(true);
+                  await UploadImage(mitarbeiter.ID, 3);
+                  setLoading(false);
+                }}
+              />
+            ) : (
+              "Bild bereits gespeichert"
+            )}
           </div>
           <Button type="submit" disabled={loading}>
             {loading ? "Speichert ..." : "Speichern"}
