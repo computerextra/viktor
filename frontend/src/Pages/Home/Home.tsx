@@ -70,7 +70,7 @@ export default function Home() {
           </a>
         </Button>
         <Button asChild variant={"outline"}>
-          <NavLink to="/">Paypal Abrechnung</NavLink>
+          <NavLink to="/Abrechnung">Paypal Abrechnung</NavLink>
         </Button>
       </div>
       <Suspense>

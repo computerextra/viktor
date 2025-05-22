@@ -11,6 +11,7 @@ import (
 
 	"viktor/archive"
 	"viktor/db"
+	appMail "viktor/mail"
 	"viktor/sagedb"
 	"viktor/userdata"
 
@@ -50,6 +51,16 @@ func (a *App) startup(ctx context.Context) {
 
 func (a *App) Reload() {
 	runtime.WindowReload(a.ctx)
+}
+
+func (a *App) Paypal(Benutzername, Betrag string, id uint) bool {
+	ma := a.db.GetMitarbeiter(id)
+	var props appMail.PaypalMail
+	props.Benutzername = Benutzername
+	props.Betrag = Betrag
+	props.Mitarbeiter = ma
+	conf := a.config.Mail
+	return appMail.SendPaypalMail(props, conf.Server, conf.Port, conf.User, conf.Password, conf.From) == nil
 }
 
 func (a *App) UploadImage(mitarbeiterId uint, imageNr uint) bool {

@@ -55,6 +55,8 @@ export function Login(arg1:string,arg2:string):Promise<userdata.UserData>;
 
 export function Logout():Promise<boolean>;
 
+export function Paypal(arg1:string,arg2:string,arg3:number):Promise<boolean>;
+
 export function Reload():Promise<void>;
 
 export function SearchArchive(arg1:string):Promise<Array<archive.ArchiveResult>>;

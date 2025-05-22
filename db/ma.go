@@ -170,6 +170,7 @@ func (d Database) GetEinkaufsliste() []Mitarbeiter {
 	d.db.Select(
 		"ID",
 		"Name",
+		"Email",
 		"Paypal",
 		"Abonniert",
 		"Geld",

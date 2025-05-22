@@ -11,6 +11,7 @@ import Werkstatt from "@/Pages/Werkstatt/Werkstatt";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { HashRouter, Route, Routes } from "react-router";
+import Abrechnung from "./Pages/Einkauf/Abrechnung";
 import Eingabe from "./Pages/Einkauf/Eingabe";
 import MitarbeiterDetails from "./Pages/Mitarbeiter/Details";
 import MitarbeiterBearbeiten from "./Pages/Mitarbeiter/Edit";
@@ -23,6 +24,7 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
           <Route path="Eingabe" element={<Eingabe />} />
+          <Route path="Abrechnung" element={<Abrechnung />} />
           <Route path="Anmelden">
             <Route index element={<Anmelden />} />
           </Route>

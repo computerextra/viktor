@@ -102,6 +102,10 @@ export function Logout() {
   return window['go']['main']['App']['Logout']();
 }
 
+export function Paypal(arg1, arg2, arg3) {
+  return window['go']['main']['App']['Paypal'](arg1, arg2, arg3);
+}
+
 export function Reload() {
   return window['go']['main']['App']['Reload']();
 }
