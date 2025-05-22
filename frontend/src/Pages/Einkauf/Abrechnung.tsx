@@ -45,11 +45,17 @@ export default function Abrechnung() {
     if (loading) return;
     if (selected == null) return;
 
-    // TODO: Resettet nicht das Formular... Mach ma neu!
     setLoading(true);
     const res = await Paypal(username, Betrag, selected.ID);
     if (res) {
-      setBetrag(undefined);
+      setMitarbeiter((prev) => {
+        const n: db.Mitarbeiter[] = [];
+        prev?.forEach((x) => {
+          if (selected.Email != x.Email) n.push(x);
+        });
+        return n;
+      });
+      setBetrag("");
       setSelected(undefined);
     } else {
       alert("Fehler beim Senden der E-Mail");
@@ -66,6 +72,7 @@ export default function Abrechnung() {
             const m = mitarbeiter?.find((x) => x.Email == e);
             setSelected(m);
           }}
+          value={selected?.Email ? selected.Email : undefined}
           disabled={loading}
         >
           <SelectTrigger className="w-[180px]">
