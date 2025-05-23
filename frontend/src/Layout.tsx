@@ -104,7 +104,7 @@ export default function Layout() {
           )}
         </div>
       </header>
-      <div className="pt-2">
+      <div className="pt-2 container mx-auto">
         <Outlet />
       </div>
     </>
