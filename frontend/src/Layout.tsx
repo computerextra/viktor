@@ -24,7 +24,13 @@ export default function Layout() {
       <header className="sticky top-0 flex h-16 shrink-0 items-center gap-2 border-b bg-background px-4 print:hidden">
         <div className="w-full grid grid-cols-7 gap-0.5 items-center">
           <Button
-            variant={location.pathname == "/" ? "default" : "link"}
+            variant={
+              location.pathname == "/" ||
+              location.pathname.includes("Eingabe") ||
+              location.pathname.includes("Abrechnung")
+                ? "default"
+                : "link"
+            }
             asChild
           >
             <NavLink to="/">Start</NavLink>
