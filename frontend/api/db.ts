@@ -26,16 +26,17 @@ import {
   UpdateLieferant,
   UpdateMitarbeiter,
 } from "@wails/go/main/App";
+import { z } from "zod";
 
 // Ansprechpartner
-
-type AnsprechpartnerParams = {
-  Name: string;
-  Telefon?: string;
-  Mobil?: string;
-  Mail?: string;
-  LieferantenId: number;
-};
+export const AnsprechpartnerParams = z.object({
+  Name: z.string(),
+  Telefon: z.string().optional(),
+  Mobil: z.string().optional(),
+  Mail: z.string().optional(),
+  LieferantenId: z.number().int(),
+});
+export type AnsprechpartnerParams = z.infer<typeof AnsprechpartnerParams>;
 
 export class Ansprechpartner {
   static async Create(params: AnsprechpartnerParams) {
@@ -71,11 +72,12 @@ export class Ansprechpartner {
   }
 }
 
-type LiefertantenParams = {
-  Firma: string;
-  Kundennummer?: string;
-  Webseite?: string;
-};
+export const LiefertantenParams = z.object({
+  Firma: z.string(),
+  Kundennummer: z.string().optional(),
+  Webseite: z.string().optional(),
+});
+export type LiefertantenParams = z.infer<typeof LiefertantenParams>;
 
 export class Lieferant {
   static async Create(params: LiefertantenParams) {

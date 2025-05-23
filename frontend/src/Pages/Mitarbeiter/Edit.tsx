@@ -37,7 +37,7 @@ export default function MitarbeiterBearbeiten() {
   return (
     <>
       <BackButton href={"/Mitarbeiter/" + id} />
-      <h1 className="text-center">Bearbeiten</h1>
+      <h1 className="text-center">{mitarbeiter?.Name} Bearbeiten</h1>
       {!loading && mitarbeiter && <MitarbeiterForm mitarbeiter={mitarbeiter} />}
       <Button variant={"destructive"} onClick={handleDelete}>
         Mitarbeiter löschen

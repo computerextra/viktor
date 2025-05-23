@@ -1,17 +1,19 @@
 package db
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+)
 
 type Lieferant struct {
 	gorm.Model
 	Firma           string
 	Kundennummer    *string
 	Webseite        *string
-	Ansprechpartner []Ansprechpartner
+	Ansprechpartner []Ansprechpartner `gorm:"foreignKey:LieferantenId;constraint:OnDelete:CASCADE"`
 }
 
 func (d Database) CreateLieferant(Firma string, Kundennummer, Webseite *string) {
-	d.db.Create(&Lieferant{
+	d.db.Omit("Ansprechpartner.*").Create(&Lieferant{
 		Firma:        Firma,
 		Kundennummer: Kundennummer,
 		Webseite:     Webseite,
@@ -26,7 +28,7 @@ func (d Database) GetLieferant(id uint) Lieferant {
 
 func (d Database) GetLieferanten() []Lieferant {
 	var l []Lieferant
-	d.db.Model(&Lieferant{}).Preload("Ansprechpartner").Order("Firma asc").Find(&l)
+	d.db.Preload("Ansprechpartner").Find(&l).Order("Firma asc")
 	return l
 }
 

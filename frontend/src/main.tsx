@@ -3,16 +3,22 @@ import Layout from "@/Layout.tsx";
 import Anmelden from "@/Pages/Anmelden/Anmelden";
 import Archiv from "@/Pages/Archiv/Archiv";
 import Home from "@/Pages/Home/Home";
-import Lieferant from "@/Pages/Lieferant/Lieferant";
 import Mitarbeiter from "@/Pages/Mitarbeiter/Mitarbeiter";
 import Suche from "@/Pages/Suche/Suche";
 import Werkstatt from "@/Pages/Werkstatt/Werkstatt";
 
+import LieferantOverview from "@/Pages/Lieferant/Lieferant";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { HashRouter, Route, Routes } from "react-router";
 import Abrechnung from "./Pages/Einkauf/Abrechnung";
 import Eingabe from "./Pages/Einkauf/Eingabe";
+import {
+  AnsprechpartnerDetails,
+  LieferantenDetails,
+} from "./Pages/Lieferant/Details";
+import { EditAnsprechpartner, EditLieferant } from "./Pages/Lieferant/Edit";
+import { NeuerAnsprechpartner, NeuerLieferant } from "./Pages/Lieferant/Neu";
 import MitarbeiterDetails from "./Pages/Mitarbeiter/Details";
 import MitarbeiterBearbeiten from "./Pages/Mitarbeiter/Edit";
 import NeuerMitarbeiter from "./Pages/Mitarbeiter/Neu";
@@ -38,7 +44,17 @@ createRoot(document.getElementById("root")!).render(
             <Route path=":id/Bearbeiten" element={<MitarbeiterBearbeiten />} />
           </Route>
           <Route path="Lieferant">
-            <Route index element={<Lieferant />} />
+            <Route index element={<LieferantOverview />} />
+            <Route path="Neu" element={<NeuerLieferant />} />
+            <Route path=":id">
+              <Route index element={<LieferantenDetails />} />
+              <Route path="Bearbeiten" element={<EditLieferant />} />
+              <Route path="Neu" element={<NeuerAnsprechpartner />} />
+              <Route path=":ap">
+                <Route index element={<AnsprechpartnerDetails />} />
+                <Route path="Bearbeiten" element={<EditAnsprechpartner />} />
+              </Route>
+            </Route>
           </Route>
           <Route path="Suche">
             <Route index element={<Suche />} />
