@@ -1,6 +1,10 @@
 package main
 
-import "viktor/sagedb"
+import (
+	"viktor/sagedb"
+
+	"github.com/wailsapp/wails/v2/pkg/runtime"
+)
 
 func (a *App) SearchSage(searchTerm string) (results []sagedb.SearchResult) {
 	if len(searchTerm) == 0 {
@@ -8,6 +12,7 @@ func (a *App) SearchSage(searchTerm string) (results []sagedb.SearchResult) {
 	}
 	results, err := a.sage.Search(searchTerm)
 	if err != nil {
+		runtime.LogDebug(a.ctx, err.Error())
 		return nil
 	}
 	return results

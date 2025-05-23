@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	"fmt"
 	"regexp"
+
+	_ "github.com/denisenkom/go-mssqldb"
 )
 
 type SageDB struct {
@@ -105,26 +107,23 @@ func (s SageDB) Search(searchTerm string) ([]SearchResult, error) {
 	defer conn.Close()
 
 	if reverse {
-		query := fmt.Sprintf("'%%%s%%'", searchTerm)
-		reversed, err := conn.Prepare(`
+		query := fmt.Sprintf(`
 			SELECT SG_Adressen_PK, Suchbegriff,  KundNr, LiefNr, Homepage, Telefon1, Telefon2, Mobiltelefon1, Mobiltelefon2, EMail1, EMail2, KundUmsatz, LiefUmsatz 
 			FROM sg_adressen WHERE 
 			REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(Telefon1, ' ',''),'/',''),'-',''),'+49','0'),'(',''),')',''),',','')
-			LIKE ? 
+			LIKE '%%%s%%' 
 			OR 
 			REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(Telefon2, ' ',''),'/',''),'-',''),'+49','0'),'(',''),')',''),',','')
-			LIKE ?
+			LIKE '%%%s%%' 
 			OR 
 			REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(Mobiltelefon1, ' ',''),'/',''),'-',''),'+49','0'),'(',''),')',''),',','')
-			LIKE ?
+			LIKE '%%%s%%' 
 			OR 
 			REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(Mobiltelefon2, ' ',''),'/',''),'-',''),'+49','0'),'(',''),')',''),',','')
-			LIKE ?;`)
-		if err != nil {
-			return nil, err
-		}
-		defer reversed.Close()
-		rows, err := reversed.Query(query, query, query, query)
+			LIKE '%%%s%%'`, searchTerm, searchTerm, searchTerm, searchTerm,
+		)
+
+		rows, err := conn.Query(query, query, query, query)
 		if err != nil {
 			return nil, err
 		}
@@ -133,7 +132,21 @@ func (s SageDB) Search(searchTerm string) ([]SearchResult, error) {
 		var results []SearchResult
 		for rows.Next() {
 			var x Sg_Adressen
-			if err := rows.Scan(&x); err != nil {
+			if err := rows.Scan(
+				&x.SG_Adressen_PK,
+				&x.Suchbegriff,
+				&x.KundNr,
+				&x.LiefNr,
+				&x.Homepage,
+				&x.Telefon1,
+				&x.Telefon2,
+				&x.Mobiltelefon1,
+				&x.Mobiltelefon2,
+				&x.EMail1,
+				&x.EMail2,
+				&x.KundUmsatz,
+				&x.LiefUmsatz,
+			); err != nil {
 				return nil, err
 			}
 			results = append(results, SearchResult{
@@ -154,10 +167,9 @@ func (s SageDB) Search(searchTerm string) ([]SearchResult, error) {
 		}
 		return results, nil
 	} else {
-		query := fmt.Sprintf("'%%%s%%'", searchTerm)
-		normal, err := conn.Prepare(`
+		rows, err := conn.Query(fmt.Sprintf(`
 		DECLARE @SearchWord NVARCHAR(30) 
-		SET @SearchWord = N? 
+		SET @SearchWord = N'%%%s%%' 
 		SELECT 
 		SG_Adressen_PK, 
 		Suchbegriff,  
@@ -175,12 +187,7 @@ func (s SageDB) Search(searchTerm string) ([]SearchResult, error) {
 		FROM sg_adressen 
 		WHERE Suchbegriff LIKE @SearchWord 
 		OR KundNr LIKE @SearchWord 
-		OR LiefNr LIKE @SearchWord;`)
-		if err != nil {
-			return nil, err
-		}
-		defer normal.Close()
-		rows, err := normal.Query(query)
+		OR LiefNr LIKE @SearchWord;`, searchTerm))
 		if err != nil {
 			return nil, err
 		}
@@ -189,7 +196,21 @@ func (s SageDB) Search(searchTerm string) ([]SearchResult, error) {
 		var results []SearchResult
 		for rows.Next() {
 			var x Sg_Adressen
-			if err := rows.Scan(&x); err != nil {
+			if err := rows.Scan(
+				&x.SG_Adressen_PK,
+				&x.Suchbegriff,
+				&x.KundNr,
+				&x.LiefNr,
+				&x.Homepage,
+				&x.Telefon1,
+				&x.Telefon2,
+				&x.Mobiltelefon1,
+				&x.Mobiltelefon2,
+				&x.EMail1,
+				&x.EMail2,
+				&x.KundUmsatz,
+				&x.LiefUmsatz,
+			); err != nil {
 				return nil, err
 			}
 			results = append(results, SearchResult{
