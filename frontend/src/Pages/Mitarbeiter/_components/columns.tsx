@@ -1,8 +1,18 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import type { db } from "@wails/go/models";
+import { Check, Cross } from "lucide-react";
 import { Link } from "react-router";
 
 export const columns: ColumnDef<db.Mitarbeiter>[] = [
+  {
+    accessorKey: "Azubi",
+    header: "Azubi",
+    cell: ({ row }) => {
+      const x = row.original;
+      if (x.Azubi) return <Check className="text-green-500 h-4 w-4" />;
+      if (!x.Azubi) return <Cross className="text-red-500 h-4 w-4 rotate-45" />;
+    },
+  },
   {
     accessorKey: "Name",
     header: "Name",
@@ -24,39 +34,8 @@ export const columns: ColumnDef<db.Mitarbeiter>[] = [
     },
   },
   {
-    accessorKey: "InternTelefon1",
+    accessorKey: "Gruppenwahl",
     header: "Interne Durchwahl",
-    cell: ({ row }) => {
-      const x = row.original;
-      return (
-        <div className="grid grid-cols-2">
-          {x.Gruppenwahl && x.Gruppenwahl.length > 0 && (
-            <>
-              <span>Gruppe</span>
-              <span>{x.Gruppenwahl}</span>
-            </>
-          )}
-          {x.InternTelefon1 && x.InternTelefon1.length > 0 && (
-            <>
-              <span>DW 1</span>
-              <span>{x.InternTelefon1}</span>
-            </>
-          )}
-          {x.InternTelefon2 && x.InternTelefon2.length > 0 && (
-            <>
-              <span>DW 2</span>
-              <span>{x.InternTelefon2}</span>
-            </>
-          )}
-          {x.HomeOffice && x.HomeOffice.length > 0 && (
-            <>
-              <span>Homeoffice</span>
-              <span>{x.HomeOffice}</span>
-            </>
-          )}
-        </div>
-      );
-    },
   },
   {
     accessorKey: "FestnetzBusiness",
