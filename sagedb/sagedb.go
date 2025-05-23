@@ -67,16 +67,27 @@ func (s SageDB) Get(id string) (*User, error) {
 	}
 	defer conn.Close()
 
-	stmt, err := conn.Prepare("SELECT Name, Vorname FROM sg_adressen WHERE KundNr LIKE ?;")
+	rows, err := conn.Query(fmt.Sprintf("SELECT Name, Vorname FROM sg_adressen WHERE KundNr LIKE '%s';", id))
 	if err != nil {
 		return nil, err
 	}
-	defer stmt.Close()
-
+	defer rows.Close()
 	var res UserSearch
-	err = stmt.QueryRow(fmt.Sprintf("'%s'", id)).Scan(&res)
-	if err != nil {
-		return nil, err
+	for rows.Next() {
+		var name sql.NullString
+		var vorname sql.NullString
+		if err := rows.Scan(&name, &vorname); err != nil {
+			return nil, err
+		}
+		if name.Valid {
+			res.Name = name
+		}
+		if vorname.Valid {
+			res.Vorname = vorname
+		}
+		if err := rows.Err(); err != nil {
+			return nil, err
+		}
 	}
 
 	var ret User
