@@ -38,9 +38,6 @@ export default function Eingabe() {
         }
       });
       setMitarbeiter(mas);
-      console.log("res", res);
-      console.log("mas", mas);
-      console.log("session", session);
       setLoading(false);
     }
 
