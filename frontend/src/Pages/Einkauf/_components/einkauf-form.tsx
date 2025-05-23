@@ -215,6 +215,34 @@ export default function EinkaufForm({
           </Button>
         </form>
       </Form>
+      <div className="grid grid-cols-2 gap-4 mt-5">
+        <Button
+          disabled={loading}
+          variant={"secondary"}
+          onClick={async (e) => {
+            e.preventDefault();
+            setLoading(true);
+            await Mitarbeiter.EinkaufSkip(mitarbeiter.ID);
+            await navigate("/");
+            setLoading(false);
+          }}
+        >
+          Einkauf Überspringen
+        </Button>
+        <Button
+          disabled={loading}
+          variant={"destructive"}
+          onClick={async (e) => {
+            e.preventDefault();
+            setLoading(true);
+            await Mitarbeiter.EinkaufDelete(mitarbeiter.ID);
+            await navigate("/");
+            setLoading(false);
+          }}
+        >
+          Einkauf Löschen
+        </Button>
+      </div>
     </div>
   );
 }

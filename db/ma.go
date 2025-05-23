@@ -183,8 +183,29 @@ func (d Database) GetEinkaufsliste() []Mitarbeiter {
 		"Bild1Date",
 		"Bild2Date",
 		"Bild3Date",
-	).Where("DATE(Abgeschickt)=DATE('now')").Or("Abonniert=?", true).Order("Name asc").Find(&m)
+	).Where("DATE(Abgeschickt)=DATE('now')").Or("DATE(Abgeschickt)<=DATE('now') AND Abonniert=?", true).Order("Name asc").Find(&m)
 	return m
+}
+
+func (d Database) SkipEinkauf(id uint) {
+	var ma Mitarbeiter
+	d.db.First(&ma, id)
+	tomorrow := time.Now().AddDate(0, 0, 1)
+	ma.Abgeschickt = sql.NullTime{
+		Valid: true,
+		Time:  tomorrow,
+	}
+	d.db.Save(&ma)
+}
+
+func (d Database) DeleteEinkauf(id uint) {
+	var ma Mitarbeiter
+	d.db.First(&ma, id)
+	ma.Abgeschickt = sql.NullTime{
+		Valid: false,
+	}
+	ma.Abonniert = false
+	d.db.Save(&ma)
 }
 
 type Geburtstagsliste struct {

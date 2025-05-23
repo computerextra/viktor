@@ -3,8 +3,6 @@ package main
 import (
 	"strings"
 	"viktor/db"
-
-	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 // Ansprechpartner
@@ -121,7 +119,6 @@ func (a *App) UpdateMitarbeiter(
 	Azubi bool,
 	Geburtstag *string,
 ) {
-	runtime.LogDebug(a.ctx, *Geburtstag)
 	a.db.UpdateMitarbeiter(
 		id,
 		Name,
@@ -138,6 +135,14 @@ func (a *App) UpdateMitarbeiter(
 		Azubi,
 		Geburtstag,
 	)
+}
+
+func (a *App) SkipEinkauf(id uint) {
+	a.db.SkipEinkauf(id)
+}
+
+func (a *App) DeleteEinkauf(id uint) {
+	a.db.DeleteEinkauf(id)
 }
 
 func (a *App) UpdateEinkauf(

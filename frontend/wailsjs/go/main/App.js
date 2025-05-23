@@ -34,6 +34,10 @@ export function DeleteAnsprechpartner(arg1) {
   return window['go']['main']['App']['DeleteAnsprechpartner'](arg1);
 }
 
+export function DeleteEinkauf(arg1) {
+  return window['go']['main']['App']['DeleteEinkauf'](arg1);
+}
+
 export function DeleteLieferant(arg1) {
   return window['go']['main']['App']['DeleteLieferant'](arg1);
 }
@@ -116,6 +120,10 @@ export function SearchArchive(arg1) {
 
 export function SearchSage(arg1) {
   return window['go']['main']['App']['SearchSage'](arg1);
+}
+
+export function SkipEinkauf(arg1) {
+  return window['go']['main']['App']['SkipEinkauf'](arg1);
 }
 
 export function UpdateAnsprechpartner(arg1, arg2, arg3, arg4, arg5) {

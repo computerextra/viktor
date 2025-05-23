@@ -6,6 +6,7 @@ import {
   CreateMitarbeiter,
   CreateUser,
   DeleteAnsprechpartner,
+  DeleteEinkauf,
   DeleteLieferant,
   DeleteMitarbeiter,
   DeleteUser,
@@ -19,6 +20,7 @@ import {
   GetLieferanten,
   GetMitarbeiter,
   GetUser,
+  SkipEinkauf,
   UpdateAnsprechpartner,
   UpdateEinkauf,
   UpdateLieferant,
@@ -195,6 +197,14 @@ export class Mitarbeiter {
       params.Bild2,
       params.Bild3
     );
+  }
+
+  static async EinkaufSkip(id: number) {
+    return await SkipEinkauf(id);
+  }
+
+  static async EinkaufDelete(id: number) {
+    return await DeleteEinkauf(id);
   }
 
   static async Get(id: number) {

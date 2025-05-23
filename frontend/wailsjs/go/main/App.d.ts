@@ -21,6 +21,8 @@ export function CreateUser(arg1:string,arg2:string):Promise<string>;
 
 export function DeleteAnsprechpartner(arg1:number):Promise<void>;
 
+export function DeleteEinkauf(arg1:number):Promise<void>;
+
 export function DeleteLieferant(arg1:number):Promise<void>;
 
 export function DeleteMitarbeiter(arg1:number):Promise<void>;
@@ -62,6 +64,8 @@ export function Reload():Promise<void>;
 export function SearchArchive(arg1:string):Promise<Array<archive.ArchiveResult>>;
 
 export function SearchSage(arg1:string):Promise<Array<sagedb.SearchResult>>;
+
+export function SkipEinkauf(arg1:number):Promise<void>;
 
 export function UpdateAnsprechpartner(arg1:number,arg2:string,arg3:any,arg4:any,arg5:any):Promise<void>;
 
