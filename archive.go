@@ -13,6 +13,7 @@ import (
 func (a App) SearchArchive(searchTerm string) (results []archive.ArchiveResult) {
 	results, err := a.archive.Search(searchTerm)
 	if err != nil {
+		runtime.LogDebug(a.ctx, err.Error())
 		return nil
 	}
 	return results

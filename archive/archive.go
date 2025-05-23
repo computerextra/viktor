@@ -30,7 +30,7 @@ func (a Archive) Search(searchTerm string) ([]ArchiveResult, error) {
 	}
 	defer conn.Close()
 
-	stmt, err := conn.Prepare("SELECT * FROM pdfs WHERE body LIKE ? OR title LIKE ?;")
+	stmt, err := conn.Prepare("SELECT id, title, body FROM pdfs WHERE body LIKE ? OR title LIKE ?;")
 	if err != nil {
 		return nil, err
 	}
@@ -47,7 +47,7 @@ func (a Archive) Search(searchTerm string) ([]ArchiveResult, error) {
 
 	for rows.Next() {
 		var x ArchiveResult
-		if err := rows.Scan(&x); err != nil {
+		if err := rows.Scan(&x.Id, &x.Title, &x.Body); err != nil {
 			return nil, err
 		}
 		results = append(results, x)
@@ -62,14 +62,14 @@ func (a Archive) Get(id int32) (*ArchiveResult, error) {
 	}
 	defer conn.Close()
 
-	stmt, err := conn.Prepare("SELECT * FROM pdfs WHERE id=?;")
+	stmt, err := conn.Prepare("SELECT id, title FROM pdfs WHERE id=?;")
 	if err != nil {
 		return nil, err
 	}
 	defer stmt.Close()
 
 	var result ArchiveResult
-	err = stmt.QueryRow(id).Scan(&result)
+	err = stmt.QueryRow(id).Scan(&result.Id, &result.Title)
 	if err != nil {
 		return nil, err
 	}
