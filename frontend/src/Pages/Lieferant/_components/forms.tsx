@@ -104,7 +104,6 @@ export const AnsprechpartnerForm = ({
   ansprechpartner?: db.Ansprechpartner;
   LieferantenId: number;
 }) => {
-  console.log(ansprechpartner);
   const navigate = useNavigate();
 
   const form = useForm<z.infer<typeof AnsprechpartnerFornSchema>>({

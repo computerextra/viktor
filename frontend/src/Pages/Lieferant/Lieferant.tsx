@@ -6,7 +6,6 @@ import LieferantenTable from "./_components/lieferanten-table";
 export default function LieferantOverview() {
   return (
     <>
-      {/* TODO: BTN nur anzeigen, wenn Admin */}
       <Button asChild className="ms-2 mb-2" variant={"outline"}>
         <Link to="/Lieferant/Neu">Neuen Lieferanten anlegen</Link>
       </Button>
