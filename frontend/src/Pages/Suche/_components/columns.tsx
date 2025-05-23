@@ -3,7 +3,7 @@ import type { sagedb } from "@wails/go/models";
 
 export const columns: ColumnDef<sagedb.SearchResult>[] = [
   {
-    accessorKey: "KundNr",
+    accessorKey: "LiefNr",
     header: "Kunden/Lieferant",
     cell: ({ row }) => {
       const x = row.original;
