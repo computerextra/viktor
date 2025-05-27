@@ -1,6 +1,10 @@
 package db
 
-import "gorm.io/gorm"
+import (
+	"fmt"
+
+	"gorm.io/gorm"
+)
 
 type User struct {
 	gorm.Model
@@ -10,14 +14,14 @@ type User struct {
 	Mitarbeiter   Mitarbeiter
 }
 
-func (d Database) CreateUser(Mail, Password string) string {
+func (d Database) CreateUser(Mail, Password string) error {
 	var m Mitarbeiter
 	res := d.db.Where(&Mitarbeiter{Email: &Mail}).First(&m)
 	if res.Error != nil {
-		return res.Error.Error()
+		return res.Error
 	}
 	if len(*m.Email) < 3 {
-		return "Kein Mitarbeiter mit dieser E-Mail Adresse gefunden"
+		return fmt.Errorf("kein Mitarbeiter mit dieser E-Mail Adresse gefunden")
 	}
 
 	res = d.db.Create(&User{
@@ -27,40 +31,49 @@ func (d Database) CreateUser(Mail, Password string) string {
 		MitarbeiterId: m.ID,
 	})
 	if res.Error != nil {
-		return res.Error.Error()
+		return res.Error
 	}
-	return "OK"
+	return nil
 }
 
-func (d Database) GetUser(id uint) User {
+func (d Database) GetUser(id uint) (*User, error) {
 	var u User
-	d.db.First(&u, id)
-	return u
+	err := d.db.First(&u, id).Error
+	if err != nil {
+		return nil, err
+	}
+	return &u, nil
 }
 
-func (d Database) GetUserByMail(Mail string) *User {
+func (d Database) GetUserByMail(Mail string) (*User, error) {
 	var u User
 	res := d.db.Where(&User{Mail: Mail}).Joins("Mitarbeiter").First(&u)
 	if res.Error != nil {
-		return nil
+		return nil, res.Error
 	}
 
-	return &u
+	return &u, nil
 }
 
-func (d Database) CheckUser(Mail, Password string) bool {
-	u := d.GetUserByMail(Mail)
-	return u.Password == Password
+func (d Database) CheckUser(Mail, Password string) (bool, error) {
+	u, err := d.GetUserByMail(Mail)
+	if err != nil {
+		return false, err
+	}
+	return u.Password == Password, nil
 }
 
-func (d Database) ChangePassword(id uint, old, new string) {
-	u := d.GetUser(id)
+func (d Database) ChangePassword(id uint, old, new string) error {
+	u, err := d.GetUser(id)
+	if err != nil {
+		return err
+	}
 	if u.Password == old {
 		u.Password = new
 	}
-	d.db.Save(&u)
+	return d.db.Save(&u).Error
 }
 
-func (d Database) DeleteUser(id uint) {
-	d.db.Delete(&User{}, id)
+func (d Database) DeleteUser(id uint) error {
+	return d.db.Delete(&User{}, id).Error
 }

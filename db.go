@@ -11,42 +11,58 @@ func (a *App) CreateAnsprechpartner(Name string, Telefon, Mobil, Mail *string, L
 	a.db.CreateAnsprechpartner(Name, Telefon, Mobil, Mail, LieferantenId)
 }
 
-func (a *App) GetAnsprechpartner(id uint) db.Ansprechpartner {
-	return a.db.GetAnsprechpartner(id)
+func (a *App) GetAnsprechpartner(id uint) *db.Ansprechpartner {
+	ap, e := a.db.GetAnsprechpartner(id)
+	if e != nil {
+		return nil
+	}
+	return ap
 }
 
 func (a *App) GetAllAnsprechpartner() []db.Ansprechpartner {
-	return a.db.GetAllAnsprechpartner()
+	ap, err := a.db.GetAllAnsprechpartner()
+	if err != nil {
+		return nil
+	}
+	return ap
 }
 
-func (a *App) UpdateAnsprechpartner(id uint, Name string, Telefon, Mobil, Mail *string) {
-	a.db.UpdateAnsprechpartner(id, Name, Telefon, Mobil, Mail)
+func (a *App) UpdateAnsprechpartner(id uint, Name string, Telefon, Mobil, Mail *string) bool {
+	return a.db.UpdateAnsprechpartner(id, Name, Telefon, Mobil, Mail) != nil
 }
 
-func (a *App) DeleteAnsprechpartner(id uint) {
-	a.db.DeleteAnsprechpartner(id)
+func (a *App) DeleteAnsprechpartner(id uint) bool {
+	return a.db.DeleteAnsprechpartner(id) != nil
 }
 
 // Lieferant
 
-func (a *App) CreateLieferant(Firma string, Kundennummer, Webseite *string) {
-	a.db.CreateLieferant(Firma, Kundennummer, Webseite)
+func (a *App) CreateLieferant(Firma string, Kundennummer, Webseite *string) bool {
+	return a.db.CreateLieferant(Firma, Kundennummer, Webseite) != nil
 }
 
-func (a *App) GetLieferant(id uint) db.Lieferant {
-	return a.db.GetLieferant(id)
+func (a *App) GetLieferant(id uint) *db.Lieferant {
+	l, e := a.db.GetLieferant(id)
+	if e != nil {
+		return nil
+	}
+	return l
 }
 
 func (a *App) GetLieferanten() []db.Lieferant {
-	return a.db.GetLieferanten()
+	l, e := a.db.GetLieferanten()
+	if e != nil {
+		return nil
+	}
+	return l
 }
 
-func (a *App) UpdateLieferant(id uint, Firma string, Kundennummer, Webseite *string) {
-	a.db.UpdateLieferant(id, Firma, Kundennummer, Webseite)
+func (a *App) UpdateLieferant(id uint, Firma string, Kundennummer, Webseite *string) bool {
+	return a.db.UpdateLieferant(id, Firma, Kundennummer, Webseite) != nil
 }
 
-func (a *App) DeleteLieferant(id uint) {
-	a.db.DeleteLieferant(id)
+func (a *App) DeleteLieferant(id uint) bool {
+	return a.db.DeleteLieferant(id) != nil
 }
 
 // Mitarbeiter
@@ -84,23 +100,43 @@ func (a *App) CreateMitarbeiter(
 }
 
 func (a *App) GetAllMitarbeiterEinkauf() []db.Mitarbeiter {
-	return a.db.GetAllMitarbeiterEinkauf()
+	m, e := a.db.GetAllMitarbeiterEinkauf()
+	if e != nil {
+		return nil
+	}
+	return m
 }
 
-func (a *App) GetMitarbeiter(id uint) db.Mitarbeiter {
-	return a.db.GetMitarbeiter(id)
+func (a *App) GetMitarbeiter(id uint) *db.Mitarbeiter {
+	m, e := a.db.GetMitarbeiter(id)
+	if e != nil {
+		return nil
+	}
+	return m
 }
 
 func (a *App) GetAllMitarbeiter() []db.Mitarbeiter {
-	return a.db.GetAllMitarbeiter()
+	m, e := a.db.GetAllMitarbeiter()
+	if e != nil {
+		return nil
+	}
+	return m
 }
 
 func (a *App) GetEinkaufsliste() []db.Mitarbeiter {
-	return a.db.GetEinkaufsliste()
+	m, e := a.db.GetEinkaufsliste()
+	if e != nil {
+		return nil
+	}
+	return m
 }
 
-func (a *App) GetGeburtstagsliste() db.Geburtstagsliste {
-	return a.db.GetGeburtstagsliste()
+func (a *App) GetGeburtstagsliste() *db.Geburtstagsliste {
+	g, e := a.db.GetGeburtstagsliste()
+	if e != nil {
+		return nil
+	}
+	return g
 }
 
 func (a *App) UpdateMitarbeiter(
@@ -118,8 +154,8 @@ func (a *App) UpdateMitarbeiter(
 	Email *string,
 	Azubi bool,
 	Geburtstag *string,
-) {
-	a.db.UpdateMitarbeiter(
+) bool {
+	return a.db.UpdateMitarbeiter(
 		id,
 		Name,
 		Short,
@@ -134,15 +170,15 @@ func (a *App) UpdateMitarbeiter(
 		Email,
 		Azubi,
 		Geburtstag,
-	)
+	) != nil
 }
 
-func (a *App) SkipEinkauf(id uint) {
-	a.db.SkipEinkauf(id)
+func (a *App) SkipEinkauf(id uint) bool {
+	return a.db.SkipEinkauf(id) != nil
 }
 
-func (a *App) DeleteEinkauf(id uint) {
-	a.db.DeleteEinkauf(id)
+func (a *App) DeleteEinkauf(id uint) bool {
+	return a.db.DeleteEinkauf(id) != nil
 }
 
 func (a *App) UpdateEinkauf(
@@ -153,19 +189,19 @@ func (a *App) UpdateEinkauf(
 	Pfand,
 	Dinge *string,
 	bild1, bild2, bild3 bool,
-) {
-	a.db.UpdateEinkauf(
+) bool {
+	return a.db.UpdateEinkauf(
 		id,
 		Paypal,
 		Abonniert,
 		Geld,
 		Pfand,
 		Dinge, bild1, bild2, bild3,
-	)
+	) != nil
 }
 
-func (a *App) DeleteMitarbeiter(id uint) {
-	a.db.DeleteMitarbeiter(id)
+func (a *App) DeleteMitarbeiter(id uint) bool {
+	return a.db.DeleteMitarbeiter(id) != nil
 }
 
 // User
@@ -180,32 +216,43 @@ func (a *App) CreateUser(Mail, Password string) string {
 		return "Firmen E-Mail Adresse darf nicht aus einem Alias bestehen"
 	}
 	res := a.db.CreateUser(Mail, Password)
-	if res != "OK" {
-		return res
+	if res != nil {
+		return res.Error()
 	}
-	u := a.db.GetUserByMail(Mail)
+	u, err := a.db.GetUserByMail(Mail)
+	if err != nil {
+		return err.Error()
+	}
 	if len(u.Mail) < 3 {
 		return "Keinen Mitarbeiter mit dieser E-Mail Adresse gefunden gefunden"
 	}
-	_, err := a.userdata.Login(u.Mitarbeiter.Name, u.Mail, u.Mitarbeiter.ID)
+	_, err = a.userdata.Login(u.Mitarbeiter.Name, u.Mail, u.Mitarbeiter.ID)
 	if err != nil {
 		return err.Error()
 	}
 	return "OK"
 }
 
-func (a *App) GetUser(id uint) db.User {
-	return a.db.GetUser(id)
+func (a *App) GetUser(id uint) *db.User {
+	u, err := a.db.GetUser(id)
+	if err != nil {
+		return nil
+	}
+	return u
 }
 
 func (a *App) CheckUser(Mail, Password string) bool {
-	return a.db.CheckUser(Mail, Password)
+	b, e := a.db.CheckUser(Mail, Password)
+	if e != nil {
+		return false
+	}
+	return b
 }
 
-func (a *App) ChangePassword(id uint, OldPassword, NewPassword string) {
-	a.db.ChangePassword(id, OldPassword, NewPassword)
+func (a *App) ChangePassword(id uint, OldPassword, NewPassword string) bool {
+	return a.db.ChangePassword(id, OldPassword, NewPassword) != nil
 }
 
-func (a *App) DeleteUser(id uint) {
-	a.db.DeleteUser(id)
+func (a *App) DeleteUser(id uint) bool {
+	return a.db.DeleteUser(id) != nil
 }

@@ -53,10 +53,13 @@ func (d Database) CreateMitarbeiter(
 	Email *string,
 	Azubi bool,
 	Geburtstag *string,
-) {
+) error {
 	var b sql.NullTime
 	var day, month, year int
-	loc, _ := time.LoadLocation("Europe/Berlin")
+	loc, err := time.LoadLocation("Europe/Berlin")
+	if err != nil {
+		return err
+	}
 
 	if len(*Geburtstag) > 0 {
 		spliites := strings.Split(*Geburtstag, ".")
@@ -79,7 +82,7 @@ func (d Database) CreateMitarbeiter(
 		b.Valid = false
 	}
 
-	d.db.Create(&Mitarbeiter{
+	return d.db.Create(&Mitarbeiter{
 		Name:             Name,
 		Short:            Short,
 		Gruppenwahl:      Gruppenwahl,
@@ -105,12 +108,12 @@ func (d Database) CreateMitarbeiter(
 		Bild1Date:        sql.NullTime{Valid: false},
 		Bild2Date:        sql.NullTime{Valid: false},
 		Bild3Date:        sql.NullTime{Valid: false},
-	})
+	}).Error
 }
 
-func (d Database) GetMitarbeiter(id uint) Mitarbeiter {
+func (d Database) GetMitarbeiter(id uint) (*Mitarbeiter, error) {
 	var m Mitarbeiter
-	d.db.Select(
+	err := d.db.Select(
 		"ID",
 		"Name",
 		"Short",
@@ -125,13 +128,16 @@ func (d Database) GetMitarbeiter(id uint) Mitarbeiter {
 		"Email",
 		"Azubi",
 		"Geburtstag",
-	).First(&m, id)
-	return m
+	).First(&m, id).Error
+	if err != nil {
+		return nil, err
+	}
+	return &m, nil
 }
 
-func (d Database) GetAllMitarbeiter() []Mitarbeiter {
+func (d Database) GetAllMitarbeiter() ([]Mitarbeiter, error) {
 	var m []Mitarbeiter
-	d.db.Select(
+	err := d.db.Select(
 		"ID",
 		"Name",
 		"Short",
@@ -146,13 +152,16 @@ func (d Database) GetAllMitarbeiter() []Mitarbeiter {
 		"Email",
 		"Azubi",
 		"Geburtstag",
-	).Order("Name asc").Find(&m)
-	return m
+	).Order("Name asc").Find(&m).Error
+	if err != nil {
+		return nil, err
+	}
+	return m, nil
 }
 
-func (d Database) GetAllMitarbeiterEinkauf() []Mitarbeiter {
+func (d Database) GetAllMitarbeiterEinkauf() ([]Mitarbeiter, error) {
 	var m []Mitarbeiter
-	d.db.Select(
+	err := d.db.Select(
 		"ID",
 		"Name",
 		"Email",
@@ -161,13 +170,16 @@ func (d Database) GetAllMitarbeiterEinkauf() []Mitarbeiter {
 		"Geld",
 		"Pfand",
 		"Dinge",
-	).Order("Name asc").Find(&m)
-	return m
+	).Order("Name asc").Find(&m).Error
+	if err != nil {
+		return nil, err
+	}
+	return m, nil
 }
 
-func (d Database) GetEinkaufsliste() []Mitarbeiter {
+func (d Database) GetEinkaufsliste() ([]Mitarbeiter, error) {
 	var m []Mitarbeiter
-	d.db.Select(
+	err := d.db.Select(
 		"ID",
 		"Name",
 		"Email",
@@ -183,29 +195,40 @@ func (d Database) GetEinkaufsliste() []Mitarbeiter {
 		"Bild1Date",
 		"Bild2Date",
 		"Bild3Date",
-	).Where("DATE(Abgeschickt)=DATE('now')").Or("DATE(Abgeschickt)<=DATE('now') AND Abonniert=?", true).Order("Name asc").Find(&m)
-	return m
+	).Where("DATE(Abgeschickt)=DATE('now')").
+		Or("DATE(Abgeschickt)<=DATE('now') AND Abonniert=?", true).
+		Order("Name asc").Find(&m).Error
+	if err != nil {
+		return nil, err
+	}
+	return m, nil
 }
 
-func (d Database) SkipEinkauf(id uint) {
+func (d Database) SkipEinkauf(id uint) error {
 	var ma Mitarbeiter
-	d.db.First(&ma, id)
+	err := d.db.First(&ma, id).Error
+	if err != nil {
+		return err
+	}
 	tomorrow := time.Now().AddDate(0, 0, 1)
 	ma.Abgeschickt = sql.NullTime{
 		Valid: true,
 		Time:  tomorrow,
 	}
-	d.db.Save(&ma)
+	return d.db.Save(&ma).Error
 }
 
-func (d Database) DeleteEinkauf(id uint) {
+func (d Database) DeleteEinkauf(id uint) error {
 	var ma Mitarbeiter
-	d.db.First(&ma, id)
+	err := d.db.First(&ma, id).Error
+	if err != nil {
+		return err
+	}
 	ma.Abgeschickt = sql.NullTime{
 		Valid: false,
 	}
 	ma.Abonniert = false
-	d.db.Save(&ma)
+	return d.db.Save(&ma).Error
 }
 
 type Geburtstagsliste struct {
@@ -214,10 +237,21 @@ type Geburtstagsliste struct {
 	Zukunft   []Mitarbeiter
 }
 
-func (d Database) GetGeburtstagsliste() Geburtstagsliste {
-	loc, _ := time.LoadLocation("Europe/Berlin")
+func (d Database) GetGeburtstagsliste() (*Geburtstagsliste, error) {
+	loc, err := time.LoadLocation("Europe/Berlin")
+	if err != nil {
+		return nil, err
+	}
+
 	var ms []Mitarbeiter
-	d.db.Select("ID", "Name", "Geburtstag").Not(&Mitarbeiter{Geburtstag: sql.NullTime{Valid: false}}).Find(&ms)
+	err = d.db.
+		Select("ID", "Name", "Geburtstag").
+		Not(&Mitarbeiter{Geburtstag: sql.NullTime{Valid: false}}).
+		Find(&ms).
+		Error
+	if err != nil {
+		return nil, err
+	}
 
 	var z, v, h []Mitarbeiter
 	for _, m := range ms {
@@ -279,15 +313,15 @@ func (d Database) GetGeburtstagsliste() Geburtstagsliste {
 		return one.Before(two)
 	})
 
-	return Geburtstagsliste{
+	return &Geburtstagsliste{
 		Vergangen: v,
 		Heute:     h,
 		Zukunft:   z,
-	}
+	}, nil
 }
 
-func (d Database) UpdateMitarbeiterImages(m Mitarbeiter) {
-	d.db.Save(&m)
+func (d Database) UpdateMitarbeiterImages(m Mitarbeiter) error {
+	return d.db.Save(&m).Error
 }
 
 func (d Database) UpdateMitarbeiter(
@@ -305,16 +339,28 @@ func (d Database) UpdateMitarbeiter(
 	Email *string,
 	Azubi bool,
 	Geburtstag *string,
-) {
+) error {
 	var b sql.NullTime
 	var day, month, year int
-	loc, _ := time.LoadLocation("Europe/Berlin")
+	loc, err := time.LoadLocation("Europe/Berlin")
+	if err != nil {
+		return err
+	}
 
 	if len(*Geburtstag) > 0 {
 		spliites := strings.Split(*Geburtstag, ".")
-		day, _ = strconv.Atoi(spliites[0])
-		month, _ = strconv.Atoi(spliites[1])
-		year, _ = strconv.Atoi(spliites[2])
+		day, err = strconv.Atoi(spliites[0])
+		if err != nil {
+			return err
+		}
+		month, err = strconv.Atoi(spliites[1])
+		if err != nil {
+			return err
+		}
+		year, err = strconv.Atoi(spliites[2])
+		if err != nil {
+			return err
+		}
 		parsedTime := time.Date(
 			year,
 			time.Month(month),
@@ -327,11 +373,13 @@ func (d Database) UpdateMitarbeiter(
 		)
 		b.Valid = true
 		b.Time = parsedTime
-
 	}
 
 	var m Mitarbeiter
-	d.db.First(&m, id)
+	err = d.db.First(&m, id).Error
+	if err != nil {
+		return err
+	}
 	m.Name = Name
 	if len(*Short) > 0 {
 		m.Short = Short
@@ -394,7 +442,7 @@ func (d Database) UpdateMitarbeiter(
 
 	m.Azubi = Azubi
 	m.Geburtstag = b
-	d.db.Save(&m)
+	return d.db.Save(&m).Error
 }
 
 func (d Database) UpdateEinkauf(
@@ -405,9 +453,12 @@ func (d Database) UpdateEinkauf(
 	Pfand,
 	Dinge *string,
 	bild1, bild2, bild3 bool,
-) {
+) error {
 	var m Mitarbeiter
-	d.db.First(&m, id)
+	err := d.db.First(&m, id).Error
+	if err != nil {
+		return err
+	}
 	m.Paypal = Paypal
 	m.Abonniert = Abonniert
 	m.Geld = Geld
@@ -429,9 +480,9 @@ func (d Database) UpdateEinkauf(
 		m.Bild3 = nil
 		m.Bild3Date.Valid = false
 	}
-	d.db.Save(&m)
+	return d.db.Save(&m).Error
 }
 
-func (d Database) DeleteMitarbeiter(id uint) {
-	d.db.Delete(&Mitarbeiter{}, id)
+func (d Database) DeleteMitarbeiter(id uint) error {
+	return d.db.Delete(&Mitarbeiter{}, id).Error
 }

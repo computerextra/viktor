@@ -21,28 +21,37 @@ func (d Database) CreateAnsprechpartner(Name string, Telefon, Mobil, Mail *strin
 	})
 }
 
-func (d Database) GetAnsprechpartner(id uint) Ansprechpartner {
+func (d Database) GetAnsprechpartner(id uint) (*Ansprechpartner, error) {
 	var ap Ansprechpartner
-	d.db.First(&ap, id)
-	return ap
+	err := d.db.First(&ap, id).Error
+	if err != nil {
+		return nil, err
+	}
+	return &ap, nil
 }
 
-func (d Database) GetAllAnsprechpartner() []Ansprechpartner {
+func (d Database) GetAllAnsprechpartner() ([]Ansprechpartner, error) {
 	var aps []Ansprechpartner
-	d.db.Order("Name asc").Find(&aps)
-	return aps
+	err := d.db.Order("Name asc").Find(&aps).Error
+	if err != nil {
+		return nil, err
+	}
+	return aps, nil
 }
 
-func (d Database) UpdateAnsprechpartner(id uint, Name string, Telefon, Mobil, Mail *string) {
+func (d Database) UpdateAnsprechpartner(id uint, Name string, Telefon, Mobil, Mail *string) error {
 	var ap Ansprechpartner
-	d.db.First(&ap, id)
+	err := d.db.First(&ap, id).Error
+	if err != nil {
+		return err
+	}
 	ap.Name = Name
 	ap.Telefon = Telefon
 	ap.Mobil = Mobil
 	ap.Mail = Mail
-	d.db.Save(&ap)
+	return d.db.Save(&ap).Error
 }
 
-func (d Database) DeleteAnsprechpartner(id uint) {
-	d.db.Delete(&Ansprechpartner{}, id)
+func (d Database) DeleteAnsprechpartner(id uint) error {
+	return d.db.Delete(&Ansprechpartner{}, id).Error
 }

@@ -1,6 +1,8 @@
 package db
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+)
 
 // TODO: https://marmelab.com/blog/2023/07/28/create-a-kanban-board-in-react-admin.html
 
@@ -27,59 +29,74 @@ type Status struct {
 
 // CREATE
 
-func (d Database) CreateKanban(id uint, name string) {
-	user := d.GetUser(id)
-	d.db.Omit("Post.*").Create(&Kanban{
+func (d Database) CreateKanban(id uint, name string) error {
+	user, err := d.GetUser(id)
+	if err != nil {
+		return err
+	}
+	return d.db.Omit("Post.*").Create(&Kanban{
 		Name: name,
-		User: user,
-	})
+		User: *user,
+	}).Error
 }
 
-func (d Database) CreatePost(kanbanId uint, name string, desc *string, importance int, statusId uint) {
+func (d Database) CreatePost(kanbanId uint, name string, desc *string, importance int, statusId uint) error {
 	var s Status
 	d.db.First(&s, statusId)
-	d.db.Create(&Post{
+	return d.db.Create(&Post{
 		KanbanId:    kanbanId,
 		Name:        name,
 		Description: desc,
 		Importance:  importance,
 		Status:      s,
-	})
+	}).Error
 }
 
-func (d Database) CreateStatus(name string) {
-	d.db.Create(&Status{
+func (d Database) CreateStatus(name string) error {
+	return d.db.Create(&Status{
 		Name: name,
-	})
+	}).Error
 }
 
 // READ
-func (d Database) GetKanbanBoardsFromUser(id uint) []Kanban {
-	user := d.GetUser(id)
+func (d Database) GetKanbanBoardsFromUser(id uint) ([]Kanban, error) {
+	user, err := d.GetUser(id)
+	if err != nil {
+		return nil, err
+	}
 	var k []Kanban
-	d.db.Model(&Kanban{}).Preload("Post").Preload("Status").Where(
+	err = d.db.Model(&Kanban{}).Preload("Post").Preload("Status").Where(
 		Kanban{
-			User: user,
+			User: *user,
 		},
-	).Find(&k).Order("Name asc")
-	return k
+	).Find(&k).Order("Name asc").Error
+	if err != nil {
+		return nil, err
+	}
+	return k, nil
 }
 
-func (d Database) GetKanbanBord(id uint) *Kanban {
+func (d Database) GetKanbanBord(id uint) (*Kanban, error) {
 	var k Kanban
-	d.db.Model(&Kanban{}).Preload("Post").Preload("Status").First(&k, id)
-	return &k
+	err := d.db.Model(&Kanban{}).Preload("Post").Preload("Status").First(&k, id).Error
+	if err != nil {
+		return nil, err
+	}
+	return &k, err
 }
 
 // UPDATE
 
-func (d Database) UpdateKanban(id uint, newName string) {
-	kanban := d.GetKanbanBord(id)
+func (d Database) UpdateKanban(id uint, newName string) error {
+	kanban, err := d.GetKanbanBord(id)
+	if err != nil {
+		return err
+	}
 	kanban.Name = newName
-	d.db.Save(&kanban)
+	return d.db.Save(&kanban).Error
 }
 
-func (d Database) UpdatePost(id uint, name string, desc *string, statusID uint, Importance int) {
+func (d Database) UpdatePost(id uint, name string, desc *string, statusID uint, Importance int) error {
 	var post Post
 	d.db.First(&post, id)
 	var s Status
@@ -88,16 +105,26 @@ func (d Database) UpdatePost(id uint, name string, desc *string, statusID uint, 
 	post.Description = desc
 	post.Status = s
 	post.Importance = Importance
-	d.db.Save(&post)
+	return d.db.Save(&post).Error
 }
 
-func (d Database) UpdateStatus(id uint, name string) {
+func (d Database) UpdateStatus(id uint, name string) error {
 	var s Status
 	d.db.First(&s, id)
 	s.Name = name
-	d.db.Save(&s)
+	return d.db.Save(&s).Error
 }
 
 // DELETE
 
-// TODO: NYI
+func (d Database) DeletePost(id uint) error {
+	return d.db.Delete(Post{}, id).Error
+}
+
+func (d Database) DeleteBoard(id uint) error {
+	return d.db.Delete(Kanban{}, id).Error
+}
+
+func (d Database) DeleteStatus(id uint) error {
+	return d.db.Delete(Post{}, id).Error
+}

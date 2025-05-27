@@ -54,11 +54,14 @@ func (a *App) Reload() {
 }
 
 func (a *App) Paypal(Benutzername, Betrag string, id uint) bool {
-	ma := a.db.GetMitarbeiter(id)
+	ma, err := a.db.GetMitarbeiter(id)
+	if err != nil {
+		return false
+	}
 	var props appMail.PaypalMail
 	props.Benutzername = Benutzername
 	props.Betrag = Betrag
-	props.Mitarbeiter = ma
+	props.Mitarbeiter = *ma
 	conf := a.config.Mail
 	return appMail.SendPaypalMail(props, conf.Server, conf.Port, conf.User, conf.Password, conf.From) == nil
 }
@@ -99,7 +102,10 @@ func (a *App) UploadImage(mitarbeiterId uint, imageNr uint) bool {
 	}
 	base64Encoding += base64.StdEncoding.EncodeToString(data)
 
-	m := a.db.GetMitarbeiter(mitarbeiterId)
+	m, err := a.db.GetMitarbeiter(mitarbeiterId)
+	if err != nil {
+		return false
+	}
 
 	now := time.Now()
 
@@ -123,8 +129,7 @@ func (a *App) UploadImage(mitarbeiterId uint, imageNr uint) bool {
 			Time:  now,
 		}
 	}
-	a.db.UpdateMitarbeiterImages(m)
-	return true
+	return a.db.UpdateMitarbeiterImages(*m) != nil
 }
 
 func (a *App) Login(mail, password string) *userdata.UserData {
@@ -138,13 +143,19 @@ func (a *App) Login(mail, password string) *userdata.UserData {
 		return nil
 	}
 	runtime.LogDebug(a.ctx, "pass ok")
-	res := a.db.CheckUser(mail, password)
+	res, err := a.db.CheckUser(mail, password)
+	if err != nil {
+		return nil
+	}
 	runtime.LogDebug(a.ctx, "after user check")
 	if !res {
 		return nil
 	}
 	runtime.LogDebug(a.ctx, "user check ok")
-	user := a.db.GetUserByMail(mail)
+	user, err := a.db.GetUserByMail(mail)
+	if err != nil {
+		return nil
+	}
 	runtime.LogDebug(a.ctx, "after user")
 	data, err := a.userdata.Login(user.Mitarbeiter.Name, user.Mail, user.Mitarbeiter.ID)
 	if err != nil {
