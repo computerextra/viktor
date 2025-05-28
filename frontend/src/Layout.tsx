@@ -22,7 +22,7 @@ export default function Layout() {
   return (
     <>
       <header className="sticky top-0 flex h-16 shrink-0 items-center gap-2 border-b bg-background px-4 print:hidden">
-        <div className="w-full grid grid-cols-7 gap-0.5 items-center">
+        <div className="w-full grid grid-cols-8 gap-0.5 items-center">
           <Button
             variant={
               location.pathname == "/" ||
@@ -62,6 +62,12 @@ export default function Layout() {
             asChild
           >
             <NavLink to="/Suche">Suche</NavLink>
+          </Button>
+          <Button
+            variant={location.pathname.includes("/Kanban") ? "default" : "link"}
+            asChild
+          >
+            <NavLink to="/Kanban">Kanban</NavLink>
           </Button>
           <Button
             variant={

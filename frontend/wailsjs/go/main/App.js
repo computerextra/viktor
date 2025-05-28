@@ -18,6 +18,10 @@ export function CreateAnsprechpartner(arg1, arg2, arg3, arg4, arg5) {
   return window['go']['main']['App']['CreateAnsprechpartner'](arg1, arg2, arg3, arg4, arg5);
 }
 
+export function CreateBoard(arg1, arg2) {
+  return window['go']['main']['App']['CreateBoard'](arg1, arg2);
+}
+
 export function CreateLieferant(arg1, arg2, arg3) {
   return window['go']['main']['App']['CreateLieferant'](arg1, arg2, arg3);
 }
@@ -26,12 +30,20 @@ export function CreateMitarbeiter(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8
   return window['go']['main']['App']['CreateMitarbeiter'](arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13);
 }
 
+export function CreatePost(arg1, arg2, arg3, arg4, arg5) {
+  return window['go']['main']['App']['CreatePost'](arg1, arg2, arg3, arg4, arg5);
+}
+
 export function CreateUser(arg1, arg2) {
   return window['go']['main']['App']['CreateUser'](arg1, arg2);
 }
 
 export function DeleteAnsprechpartner(arg1) {
   return window['go']['main']['App']['DeleteAnsprechpartner'](arg1);
+}
+
+export function DeleteBoard(arg1) {
+  return window['go']['main']['App']['DeleteBoard'](arg1);
 }
 
 export function DeleteEinkauf(arg1) {
@@ -44,6 +56,10 @@ export function DeleteLieferant(arg1) {
 
 export function DeleteMitarbeiter(arg1) {
   return window['go']['main']['App']['DeleteMitarbeiter'](arg1);
+}
+
+export function DeletePost(arg1) {
+  return window['go']['main']['App']['DeletePost'](arg1);
 }
 
 export function DeleteUser(arg1) {
@@ -68,6 +84,14 @@ export function GetAllMitarbeiterEinkauf() {
 
 export function GetAnsprechpartner(arg1) {
   return window['go']['main']['App']['GetAnsprechpartner'](arg1);
+}
+
+export function GetBoard(arg1) {
+  return window['go']['main']['App']['GetBoard'](arg1);
+}
+
+export function GetBoardFromUser(arg1) {
+  return window['go']['main']['App']['GetBoardFromUser'](arg1);
 }
 
 export function GetEinkaufsliste() {
@@ -130,6 +154,10 @@ export function UpdateAnsprechpartner(arg1, arg2, arg3, arg4, arg5) {
   return window['go']['main']['App']['UpdateAnsprechpartner'](arg1, arg2, arg3, arg4, arg5);
 }
 
+export function UpdateBoard(arg1, arg2) {
+  return window['go']['main']['App']['UpdateBoard'](arg1, arg2);
+}
+
 export function UpdateEinkauf(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9) {
   return window['go']['main']['App']['UpdateEinkauf'](arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);
 }
@@ -140,6 +168,10 @@ export function UpdateLieferant(arg1, arg2, arg3, arg4) {
 
 export function UpdateMitarbeiter(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14) {
   return window['go']['main']['App']['UpdateMitarbeiter'](arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+}
+
+export function UpdatePost(arg1, arg2, arg3, arg4, arg5) {
+  return window['go']['main']['App']['UpdatePost'](arg1, arg2, arg3, arg4, arg5);
 }
 
 export function UploadImage(arg1, arg2) {

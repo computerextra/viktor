@@ -5,29 +5,37 @@ import {db} from '../models';
 import {sagedb} from '../models';
 import {archive} from '../models';
 
-export function ChangePassword(arg1:number,arg2:string,arg3:string):Promise<void>;
+export function ChangePassword(arg1:number,arg2:string,arg3:string):Promise<boolean>;
 
 export function CheckSession():Promise<userdata.UserData>;
 
 export function CheckUser(arg1:string,arg2:string):Promise<boolean>;
 
-export function CreateAnsprechpartner(arg1:string,arg2:any,arg3:any,arg4:any,arg5:number):Promise<void>;
+export function CreateAnsprechpartner(arg1:string,arg2:any,arg3:any,arg4:any,arg5:number):Promise<boolean>;
 
-export function CreateLieferant(arg1:string,arg2:any,arg3:any):Promise<void>;
+export function CreateBoard(arg1:number,arg2:string):Promise<boolean>;
 
-export function CreateMitarbeiter(arg1:string,arg2:any,arg3:any,arg4:any,arg5:any,arg6:any,arg7:any,arg8:any,arg9:any,arg10:any,arg11:any,arg12:boolean,arg13:any):Promise<void>;
+export function CreateLieferant(arg1:string,arg2:any,arg3:any):Promise<boolean>;
+
+export function CreateMitarbeiter(arg1:string,arg2:any,arg3:any,arg4:any,arg5:any,arg6:any,arg7:any,arg8:any,arg9:any,arg10:any,arg11:any,arg12:boolean,arg13:any):Promise<boolean>;
+
+export function CreatePost(arg1:number,arg2:string,arg3:any,arg4:string,arg5:string):Promise<boolean>;
 
 export function CreateUser(arg1:string,arg2:string):Promise<string>;
 
-export function DeleteAnsprechpartner(arg1:number):Promise<void>;
+export function DeleteAnsprechpartner(arg1:number):Promise<boolean>;
 
-export function DeleteEinkauf(arg1:number):Promise<void>;
+export function DeleteBoard(arg1:number):Promise<boolean>;
 
-export function DeleteLieferant(arg1:number):Promise<void>;
+export function DeleteEinkauf(arg1:number):Promise<boolean>;
 
-export function DeleteMitarbeiter(arg1:number):Promise<void>;
+export function DeleteLieferant(arg1:number):Promise<boolean>;
 
-export function DeleteUser(arg1:number):Promise<void>;
+export function DeleteMitarbeiter(arg1:number):Promise<boolean>;
+
+export function DeletePost(arg1:number):Promise<boolean>;
+
+export function DeleteUser(arg1:number):Promise<boolean>;
 
 export function DownloadArchive(arg1:number):Promise<boolean>;
 
@@ -38,6 +46,10 @@ export function GetAllMitarbeiter():Promise<Array<db.Mitarbeiter>>;
 export function GetAllMitarbeiterEinkauf():Promise<Array<db.Mitarbeiter>>;
 
 export function GetAnsprechpartner(arg1:number):Promise<db.Ansprechpartner>;
+
+export function GetBoard(arg1:number):Promise<db.Kanban>;
+
+export function GetBoardFromUser(arg1:number):Promise<Array<db.Kanban>>;
 
 export function GetEinkaufsliste():Promise<Array<db.Mitarbeiter>>;
 
@@ -65,14 +77,18 @@ export function SearchArchive(arg1:string):Promise<Array<archive.ArchiveResult>>
 
 export function SearchSage(arg1:string):Promise<Array<sagedb.SearchResult>>;
 
-export function SkipEinkauf(arg1:number):Promise<void>;
+export function SkipEinkauf(arg1:number):Promise<boolean>;
 
-export function UpdateAnsprechpartner(arg1:number,arg2:string,arg3:any,arg4:any,arg5:any):Promise<void>;
+export function UpdateAnsprechpartner(arg1:number,arg2:string,arg3:any,arg4:any,arg5:any):Promise<boolean>;
 
-export function UpdateEinkauf(arg1:number,arg2:boolean,arg3:boolean,arg4:any,arg5:any,arg6:any,arg7:boolean,arg8:boolean,arg9:boolean):Promise<void>;
+export function UpdateBoard(arg1:number,arg2:string):Promise<boolean>;
 
-export function UpdateLieferant(arg1:number,arg2:string,arg3:any,arg4:any):Promise<void>;
+export function UpdateEinkauf(arg1:number,arg2:boolean,arg3:boolean,arg4:any,arg5:any,arg6:any,arg7:boolean,arg8:boolean,arg9:boolean):Promise<boolean>;
 
-export function UpdateMitarbeiter(arg1:number,arg2:string,arg3:any,arg4:any,arg5:any,arg6:any,arg7:any,arg8:any,arg9:any,arg10:any,arg11:any,arg12:any,arg13:boolean,arg14:any):Promise<void>;
+export function UpdateLieferant(arg1:number,arg2:string,arg3:any,arg4:any):Promise<boolean>;
+
+export function UpdateMitarbeiter(arg1:number,arg2:string,arg3:any,arg4:any,arg5:any,arg6:any,arg7:any,arg8:any,arg9:any,arg10:any,arg11:any,arg12:any,arg13:boolean,arg14:any):Promise<boolean>;
+
+export function UpdatePost(arg1:number,arg2:string,arg3:any,arg4:string,arg5:string):Promise<boolean>;
 
 export function UploadImage(arg1:number,arg2:number):Promise<boolean>;

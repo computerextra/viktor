@@ -138,31 +138,28 @@ func (a *App) Login(mail, password string) *userdata.UserData {
 	if len(mail) < 3 {
 		return nil
 	}
-	runtime.LogDebug(a.ctx, "mail ok")
 	if len(password) < 3 {
 		return nil
 	}
-	runtime.LogDebug(a.ctx, "pass ok")
+
 	res, err := a.db.CheckUser(mail, password)
 	if err != nil {
+		runtime.LogError(a.ctx, err.Error())
 		return nil
 	}
-	runtime.LogDebug(a.ctx, "after user check")
 	if !res {
 		return nil
 	}
-	runtime.LogDebug(a.ctx, "user check ok")
 	user, err := a.db.GetUserByMail(mail)
 	if err != nil {
+		runtime.LogError(a.ctx, err.Error())
 		return nil
 	}
-	runtime.LogDebug(a.ctx, "after user")
-	data, err := a.userdata.Login(user.Mitarbeiter.Name, user.Mail, user.Mitarbeiter.ID)
+	data, err := a.userdata.Login(user.Mitarbeiter.Name, user.Mail, user.Mitarbeiter.ID, user.ID)
 	if err != nil {
-		runtime.LogDebug(a.ctx, err.Error())
+		runtime.LogError(a.ctx, err.Error())
 		return nil
 	}
-	runtime.LogDebug(a.ctx, "login ok")
 	a.userdata = data
 
 	return data

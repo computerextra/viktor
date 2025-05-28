@@ -193,6 +193,100 @@ export namespace db {
 		    return a;
 		}
 	}
+	export class Post {
+	    ID: number;
+	    // Go type: time
+	    CreatedAt: any;
+	    // Go type: time
+	    UpdatedAt: any;
+	    // Go type: gorm
+	    DeletedAt: any;
+	    KanbanId: number;
+	    Name: string;
+	    Description?: string;
+	    Status: string;
+	    Importance: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new Post(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.ID = source["ID"];
+	        this.CreatedAt = this.convertValues(source["CreatedAt"], null);
+	        this.UpdatedAt = this.convertValues(source["UpdatedAt"], null);
+	        this.DeletedAt = this.convertValues(source["DeletedAt"], null);
+	        this.KanbanId = source["KanbanId"];
+	        this.Name = source["Name"];
+	        this.Description = source["Description"];
+	        this.Status = source["Status"];
+	        this.Importance = source["Importance"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	export class Kanban {
+	    ID: number;
+	    // Go type: time
+	    CreatedAt: any;
+	    // Go type: time
+	    UpdatedAt: any;
+	    // Go type: gorm
+	    DeletedAt: any;
+	    Name: string;
+	    UserId: number;
+	    Posts: Post[];
+	
+	    static createFrom(source: any = {}) {
+	        return new Kanban(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.ID = source["ID"];
+	        this.CreatedAt = this.convertValues(source["CreatedAt"], null);
+	        this.UpdatedAt = this.convertValues(source["UpdatedAt"], null);
+	        this.DeletedAt = this.convertValues(source["DeletedAt"], null);
+	        this.Name = source["Name"];
+	        this.UserId = source["UserId"];
+	        this.Posts = this.convertValues(source["Posts"], Post);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
 	export class Lieferant {
 	    ID: number;
 	    // Go type: time
@@ -241,6 +335,7 @@ export namespace db {
 		}
 	}
 	
+	
 	export class User {
 	    ID: number;
 	    // Go type: time
@@ -253,6 +348,7 @@ export namespace db {
 	    Mail: string;
 	    MitarbeiterId: number;
 	    Mitarbeiter: Mitarbeiter;
+	    Boards: Kanban[];
 	
 	    static createFrom(source: any = {}) {
 	        return new User(source);
@@ -268,6 +364,7 @@ export namespace db {
 	        this.Mail = source["Mail"];
 	        this.MitarbeiterId = source["MitarbeiterId"];
 	        this.Mitarbeiter = this.convertValues(source["Mitarbeiter"], Mitarbeiter);
+	        this.Boards = this.convertValues(source["Boards"], Kanban);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -390,6 +487,7 @@ export namespace userdata {
 	    Name?: string;
 	    Mail?: string;
 	    Id?: number;
+	    UserId?: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new UserData(source);
@@ -400,6 +498,7 @@ export namespace userdata {
 	        this.Name = source["Name"];
 	        this.Mail = source["Mail"];
 	        this.Id = source["Id"];
+	        this.UserId = source["UserId"];
 	    }
 	}
 

@@ -28,7 +28,6 @@ func initDatabase(connString string) *gorm.DB {
 	db.AutoMigrate(&Lieferant{})
 	db.AutoMigrate(&Kanban{})
 	db.AutoMigrate(&Post{})
-	db.AutoMigrate(&Status{})
 	db.AutoMigrate(&Mitarbeiter{})
 	db.AutoMigrate(&User{})
 

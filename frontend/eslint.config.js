@@ -37,7 +37,7 @@ export default tseslint.config(
           map: [
             ["@/", "./src/"],
             ["@wails/", "./wailsjs/"],
-            ["@api/", "./api/"],
+            ["@api/", "./src/api/"],
           ],
         },
       },

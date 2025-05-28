@@ -9,9 +9,10 @@ import (
 const userdata = "userdata.tmp"
 
 type UserData struct {
-	Name *string
-	Mail *string
-	Id   *uint
+	Name   *string
+	Mail   *string
+	Id     *uint
+	UserId *uint
 }
 
 func NewUserdata() *UserData {
@@ -22,7 +23,7 @@ func (d UserData) GetId() uint {
 	return *d.Id
 }
 
-func (d UserData) Login(name, mail string, id uint) (*UserData, error) {
+func (d UserData) Login(name, mail string, id, userId uint) (*UserData, error) {
 	if len(name) < 3 {
 		return nil, fmt.Errorf("no name given")
 	}
@@ -33,6 +34,7 @@ func (d UserData) Login(name, mail string, id uint) (*UserData, error) {
 	d.Id = &id
 	d.Mail = &mail
 	d.Name = &name
+	d.UserId = &userId
 	d.writeData()
 
 	return &d, nil

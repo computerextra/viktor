@@ -12,6 +12,7 @@ type User struct {
 	Mail          string
 	MitarbeiterId uint
 	Mitarbeiter   Mitarbeiter
+	Boards        []Kanban `gorm:"foreignKey:UserId;constraint:OnDelete:CASCADE"`
 }
 
 func (d Database) CreateUser(Mail, Password string) error {
@@ -24,7 +25,7 @@ func (d Database) CreateUser(Mail, Password string) error {
 		return fmt.Errorf("kein Mitarbeiter mit dieser E-Mail Adresse gefunden")
 	}
 
-	res = d.db.Create(&User{
+	res = d.db.Omit("Boards.*").Create(&User{
 		Password:      Password,
 		Mail:          Mail,
 		Mitarbeiter:   m,

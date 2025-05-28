@@ -11,14 +11,14 @@ type Ansprechpartner struct {
 	LieferantenId uint
 }
 
-func (d Database) CreateAnsprechpartner(Name string, Telefon, Mobil, Mail *string, LieferantenId uint) {
-	d.db.Create(&Ansprechpartner{
+func (d Database) CreateAnsprechpartner(Name string, Telefon, Mobil, Mail *string, LieferantenId uint) error {
+	return d.db.Create(&Ansprechpartner{
 		Name:          Name,
 		Telefon:       Telefon,
 		Mobil:         Mobil,
 		Mail:          Mail,
 		LieferantenId: LieferantenId,
-	})
+	}).Error
 }
 
 func (d Database) GetAnsprechpartner(id uint) (*Ansprechpartner, error) {

@@ -13,6 +13,8 @@ import { createRoot } from "react-dom/client";
 import { HashRouter, Route, Routes } from "react-router";
 import Abrechnung from "./Pages/Einkauf/Abrechnung";
 import Eingabe from "./Pages/Einkauf/Eingabe";
+import KanbanBoard from "./Pages/Kanban/Board";
+import KanbanBoards from "./Pages/Kanban/Overview";
 import {
   AnsprechpartnerDetails,
   LieferantenDetails,
@@ -61,6 +63,10 @@ createRoot(document.getElementById("root")!).render(
           </Route>
           <Route path="Werkstatt">
             <Route index element={<Werkstatt />} />
+          </Route>
+          <Route path="/Kanban">
+            <Route index element={<KanbanBoards />} />
+            <Route path=":id" element={<KanbanBoard />} />
           </Route>
         </Route>
       </Routes>
