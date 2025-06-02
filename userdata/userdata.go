@@ -35,8 +35,10 @@ func (d UserData) Login(name, mail string, id, userId uint) (*UserData, error) {
 	d.Mail = &mail
 	d.Name = &name
 	d.UserId = &userId
-	d.writeData()
-
+	err := d.writeData()
+	if err != nil {
+		return nil, err
+	}
 	return &d, nil
 }
 

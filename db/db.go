@@ -24,12 +24,30 @@ func initDatabase(connString string) *gorm.DB {
 		panic(fmt.Errorf("failed to connect database: %v", err))
 	}
 
-	db.AutoMigrate(&Ansprechpartner{})
-	db.AutoMigrate(&Lieferant{})
-	db.AutoMigrate(&Kanban{})
-	db.AutoMigrate(&Post{})
-	db.AutoMigrate(&Mitarbeiter{})
-	db.AutoMigrate(&User{})
+	err = db.AutoMigrate(&Ansprechpartner{})
+	if err != nil {
+		panic(err)
+	}
+	err = db.AutoMigrate(&Lieferant{})
+	if err != nil {
+		panic(err)
+	}
+	err = db.AutoMigrate(&Kanban{})
+	if err != nil {
+		panic(err)
+	}
+	err = db.AutoMigrate(&Post{})
+	if err != nil {
+		panic(err)
+	}
+	err = db.AutoMigrate(&Mitarbeiter{})
+	if err != nil {
+		panic(err)
+	}
+	err = db.AutoMigrate(&User{})
+	if err != nil {
+		panic(err)
+	}
 
 	return db
 }

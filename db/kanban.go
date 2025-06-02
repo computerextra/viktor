@@ -36,7 +36,6 @@ func (d Database) CreateKanban(id uint, name string) error {
 }
 
 func (d Database) CreatePost(kanbanId uint, name string, desc *string, status string, importance string) error {
-
 	return d.db.Create(&Post{
 		KanbanId:    kanbanId,
 		Name:        name,

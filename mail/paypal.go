@@ -3,6 +3,7 @@ package mail
 import (
 	"crypto/tls"
 	"fmt"
+
 	"viktor/db"
 
 	"gopkg.in/gomail.v2"

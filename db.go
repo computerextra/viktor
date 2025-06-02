@@ -2,6 +2,7 @@ package main
 
 import (
 	"strings"
+
 	"viktor/db"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
@@ -240,7 +241,6 @@ func (a *App) DeleteEinkauf(id uint) bool {
 		return false
 	}
 	return true
-
 }
 
 func (a *App) UpdateEinkauf(

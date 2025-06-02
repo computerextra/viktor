@@ -11,9 +11,10 @@ import (
 
 	"viktor/archive"
 	"viktor/db"
-	appMail "viktor/mail"
 	"viktor/sagedb"
 	"viktor/userdata"
+
+	appMail "viktor/mail"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
