@@ -3,8 +3,11 @@ package main
 import (
 	"embed"
 	_ "embed"
+	"fmt"
 	"log"
 	"time"
+	"viktor/backend"
+	"viktor/config"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
 )
@@ -17,20 +20,24 @@ import (
 //go:embed all:frontend/dist
 var assets embed.FS
 
+//go:embed config/config.toml
+var configFile []byte
+
 // main function serves as the application's entry point. It initializes the application, creates a window,
 // and starts a goroutine that emits a time-based event every second. It subsequently runs the application and
 // logs any error that might occur.
 func main() {
-
+	backendApp := backend.NewApp(config.NewConfig(configFile))
 	// Create a new Wails application by providing the necessary options.
 	// Variables 'Name' and 'Description' are for application metadata.
 	// 'Assets' configures the asset server with the 'FS' variable pointing to the frontend files.
 	// 'Bind' is a list of Go struct instances. The frontend has access to the methods of these instances.
 	// 'Mac' options tailor the application when running an macOS.
 	app := application.New(application.Options{
-		Name:        "viktor",
-		Description: "A demo of using raw HTML & CSS",
+		Name:        "Viktor",
+		Description: "Just Viktor",
 		Services: []application.Service{
+			application.NewService(backendApp, application.ServiceOptions{}),
 			application.NewService(&GreetService{}),
 		},
 		Assets: application.AssetOptions{
@@ -38,6 +45,12 @@ func main() {
 		},
 		Mac: application.MacOptions{
 			ApplicationShouldTerminateAfterLastWindowClosed: true,
+		},
+		OnShutdown: func() {
+			backendApp.DB.Close()
+		},
+		ShouldQuit: func() bool {
+			return true
 		},
 	})
 
@@ -47,7 +60,7 @@ func main() {
 	// 'BackgroundColour' is the background colour of the window.
 	// 'URL' is the URL that will be loaded into the webview.
 	app.NewWebviewWindowWithOptions(application.WebviewWindowOptions{
-		Title: "Window 1",
+		Title: "Viktor",
 		Mac: application.MacWindow{
 			InvisibleTitleBarHeight: 50,
 			Backdrop:                application.MacBackdropTranslucent,
@@ -74,4 +87,11 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func ShowError(Title, Message string, err error) {
+	dialog := application.ErrorDialog()
+	dialog.SetTitle(Title)
+	dialog.SetMessage(fmt.Sprintf("%s: %s", Message, err))
+	dialog.Show()
 }
