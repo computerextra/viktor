@@ -1,7 +1,7 @@
 import BackButton from "@/components/BackButton";
 import { Button } from "@/components/ui/button";
 import { Mitarbeiter as MitarbeiterAPI } from "@api/db";
-import type { Mitarbeiter } from "bindings/viktor/db/models";
+import type { Mitarbeiter } from "@bindings/viktor/db/models";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import MitarbeiterForm from "./_components/mitarbeiter-form";

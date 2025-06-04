@@ -1,5 +1,5 @@
 import { Lieferant as LieferantAPI } from "@api/db";
-import type { Lieferant } from "bindings/viktor/db/models";
+import type { Lieferant } from "@bindings/viktor/db/models";
 import { useEffect, useState } from "react";
 import { columns } from "./columns";
 import { DataTable } from "./data-table";

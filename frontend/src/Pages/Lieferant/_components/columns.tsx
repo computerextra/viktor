@@ -6,8 +6,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import type { Ansprechpartner, Lieferant } from "@bindings/viktor/db/models";
 import type { ColumnDef } from "@tanstack/react-table";
-import type { Ansprechpartner, Lieferant } from "bindings/viktor/db/models";
 import { MoreHorizontal } from "lucide-react";
 import { NavLink } from "react-router";
 import { DataTable } from "./data-table";

@@ -2,8 +2,8 @@ import {
   CheckSession as APICheckSession,
   Login as APILogin,
   Logout as APILogout,
-} from "bindings/viktor/backend/app";
-import type { UserData } from "bindings/viktor/userdata/models";
+} from "@bindings/viktor/backend/app";
+import type { UserData } from "@bindings/viktor/userdata/models";
 
 export const Login = async (
   mail: string,

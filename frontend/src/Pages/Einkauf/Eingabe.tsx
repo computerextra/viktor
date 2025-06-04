@@ -6,8 +6,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Mitarbeiter as MitarbeiterAPI } from "@api/db";
+import type { Mitarbeiter } from "@bindings/viktor/db/models";
 import useSession from "@hooks/useSession";
-import type { Mitarbeiter } from "bindings/viktor/db/models";
 import { useEffect, useState } from "react";
 import EinkaufForm from "./_components/einkauf-form";
 
@@ -24,7 +24,8 @@ export default function Eingabe() {
       if (session == null) return;
       setLoading(true);
       const mas: Mitarbeiter[] = [];
-      const res = await MitarbeiterAPI.GetAllEinkauf();
+      const res = await MitarbeiterAPI.GetAllWithEinkauf();
+      console.log(res);
       res.forEach((ma) => {
         if (ma.Name == "Kaffeekasse") {
           mas.push(ma);

@@ -1,5 +1,5 @@
+import type { SearchResult } from "@bindings/viktor/sagedb/models";
 import type { ColumnDef } from "@tanstack/react-table";
-import type { SearchResult } from "bindings/viktor/sagedb/models";
 
 export const columns: ColumnDef<SearchResult>[] = [
   {

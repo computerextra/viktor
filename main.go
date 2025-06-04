@@ -47,7 +47,7 @@ func main() {
 			ApplicationShouldTerminateAfterLastWindowClosed: true,
 		},
 		OnShutdown: func() {
-			backendApp.DB.Close()
+			backendApp.DB.DB.Close()
 		},
 		ShouldQuit: func() bool {
 			return true
@@ -68,6 +68,8 @@ func main() {
 		},
 		BackgroundColour: application.NewRGB(27, 38, 54),
 		URL:              "/",
+		Width:            1500,
+		Height:           800,
 	})
 
 	// Create a goroutine that emits an event containing the current time every second.

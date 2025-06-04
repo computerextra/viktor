@@ -19,7 +19,7 @@ type App struct {
 
 func NewApp(config *config.Config) *App {
 	return &App{
-		DB:       db.NewDatabase(fmt.Sprintf("%s/viktor_badger", config.Folder.Upload)),
+		DB:       db.NewDatabase(fmt.Sprintf("%s/viktor_test.db", config.Folder.Upload)),
 		archive:  archive.NewArchive(config.Database.Url),
 		sage:     sagedb.NewSage(config.Sage.Server, config.Sage.Database, config.Sage.User, config.Sage.Password, config.Sage.Port),
 		config:   config,

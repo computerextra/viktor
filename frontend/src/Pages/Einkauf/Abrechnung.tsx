@@ -9,8 +9,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Mitarbeiter as MitarbeiterApi } from "@api/db";
-import { SendPaypalMail } from "bindings/viktor/backend/app";
-import type { Mitarbeiter } from "bindings/viktor/db/models";
+import { SendPaypalMail } from "@bindings/viktor/backend/app";
+import type { Mitarbeiter } from "@bindings/viktor/db/models";
 import { useEffect, useState } from "react";
 
 export default function Abrechnung() {

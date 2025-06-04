@@ -4,7 +4,7 @@ import {
   Ansprechpartner as AnsprechpartnerAPI,
   Lieferant as LieferantAPI,
 } from "@api/db";
-import type { Ansprechpartner, Lieferant } from "bindings/viktor/db/models";
+import type { Ansprechpartner, Lieferant } from "@bindings/viktor/db/models";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { AnsprechpartnerForm, LieferantenForm } from "./_components/forms";

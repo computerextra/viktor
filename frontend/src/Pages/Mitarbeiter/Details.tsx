@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { Mitarbeiter as MitarbeiterAPI } from "@api/db";
-import type { Mitarbeiter } from "bindings/viktor/db/models";
+import type { Mitarbeiter } from "@bindings/viktor/db/models";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router";
 

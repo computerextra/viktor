@@ -8,8 +8,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Search } from "@api/sage";
+import type { SearchResult } from "@bindings/viktor/sagedb/models";
 import { zodResolver } from "@hookform/resolvers/zod";
-import type { SearchResult } from "bindings/viktor/sagedb/models";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";

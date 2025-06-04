@@ -1,6 +1,5 @@
 import {
   ChangePassword,
-  CheckUser,
   CreateAnsprechpartner,
   CreateLieferant,
   CreateMitarbeiter,
@@ -10,22 +9,23 @@ import {
   DeleteLieferant,
   DeleteMitarbeiter,
   DeleteUser,
-  GetAllAnsprechpartner,
   GetAllMitarbeiter,
-  GetAllMitarbeiterEinkauf,
+  GetAllMitarbeiterMitEinkauf,
   GetAnsprechpartner,
+  GetAnsprechpartnerFromLieferant,
   GetEinkaufsliste,
   GetGeburtstagsliste,
   GetLieferant,
   GetLieferanten,
   GetMitarbeiter,
+  GetMitarbeiterMitEinkauf,
   GetUser,
   SkipEinkauf,
   UpdateAnsprechpartner,
   UpdateEinkauf,
   UpdateLieferant,
   UpdateMitarbeiter,
-} from "bindings/viktor/backend/app";
+} from "@bindings/viktor/backend/app";
 import { z } from "zod";
 
 // Ansprechpartner
@@ -63,8 +63,8 @@ export class Ansprechpartner {
     return await GetAnsprechpartner(id);
   }
 
-  static async GetAll() {
-    return await GetAllAnsprechpartner();
+  static async GetAll(lieferantenId: string) {
+    return await GetAnsprechpartnerFromLieferant(lieferantenId);
   }
 
   static async Delete(id: string) {
@@ -217,8 +217,12 @@ export class Mitarbeiter {
     return await GetAllMitarbeiter();
   }
 
-  static async GetAllEinkauf() {
-    return await GetAllMitarbeiterEinkauf();
+  static async GetAllWithEinkauf() {
+    return await GetAllMitarbeiterMitEinkauf();
+  }
+
+  static async GetWithEinkauf(id: string) {
+    return await GetMitarbeiterMitEinkauf(id);
   }
 
   static async Einkauf() {
@@ -241,10 +245,6 @@ export class User {
 
   static async Get(id: string) {
     return await GetUser(id);
-  }
-
-  static async Check(Mail: string, Password: string): Promise<boolean> {
-    return await CheckUser(Mail, Password);
   }
 
   static async ChangePassword(id: string, New: string, Old: string) {

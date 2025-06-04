@@ -1,5 +1,5 @@
+import type { Mitarbeiter } from "@bindings/viktor/db/models";
 import type { ColumnDef } from "@tanstack/react-table";
-import type { Mitarbeiter } from "bindings/viktor/db/models";
 
 export const columns: ColumnDef<Mitarbeiter>[] = [
   {
@@ -12,8 +12,8 @@ export const columns: ColumnDef<Mitarbeiter>[] = [
     cell: ({ row }) => {
       const x = row.original;
 
-      if (x.Geburtstag.Valid && x.Geburtstag.Time.length > 0) {
-        const tmp = new Date(x.Geburtstag.Time);
+      if (x.Geburtstag && x.Geburtstag.length > 0) {
+        const tmp = new Date(x.Geburtstag);
         const d = new Date(
           new Date().getFullYear(),
           tmp.getMonth(),
@@ -36,8 +36,8 @@ export const columns: ColumnDef<Mitarbeiter>[] = [
     header: "",
     cell: ({ row }) => {
       const x = row.original;
-      if (x.Geburtstag.Valid && x.Geburtstag.Time.length > 0) {
-        const tmp = new Date(x.Geburtstag.Time);
+      if (x.Geburtstag && x.Geburtstag.length > 0) {
+        const tmp = new Date(x.Geburtstag);
         const d = new Date(
           new Date().getFullYear(),
           tmp.getMonth(),

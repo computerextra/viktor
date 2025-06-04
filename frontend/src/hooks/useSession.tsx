@@ -1,5 +1,5 @@
 import { CheckSession } from "@/api/userdata";
-import type { UserData } from "bindings/viktor/userdata/models";
+import type { UserData } from "@bindings/viktor/userdata/models";
 import { useEffect, useState } from "react";
 
 export default function useSession() {

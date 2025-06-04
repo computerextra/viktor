@@ -1,8 +1,8 @@
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Mitarbeiter as MitarbeiterAPI } from "@api/db";
-import type { Geburtstagsliste } from "bindings/viktor/backend/models";
-import type { Mitarbeiter } from "bindings/viktor/db/models";
+import type { Geburtstagsliste } from "@bindings/viktor/backend/models";
+import type { Mitarbeiter } from "@bindings/viktor/db/models";
 import { AlertCircle } from "lucide-react";
 import { Suspense, useEffect, useState } from "react";
 import { NavLink } from "react-router";
@@ -21,21 +21,21 @@ export default function Home() {
       const a: Mitarbeiter[] = [];
       if (res.Vergangen?.length > 0) {
         res.Vergangen.forEach((e) => {
-          if (e.Geburtstag.Valid && e.Geburtstag.Time.length > 0) {
+          if (e.Geburtstag && e.Geburtstag.length > 0) {
             a.push(e);
           }
         });
       }
       if (res.Heute?.length > 0) {
         res.Heute.forEach((e) => {
-          if (e.Geburtstag.Valid && e.Geburtstag.Time.length > 0) {
+          if (e.Geburtstag && e.Geburtstag.length > 0) {
             a.push(e);
           }
         });
       }
       if (res.Zukunft?.length > 0) {
         res.Zukunft.forEach((e) => {
-          if (e.Geburtstag.Valid && e.Geburtstag.Time.length > 0) {
+          if (e.Geburtstag && e.Geburtstag.length > 0) {
             a.push(e);
           }
         });

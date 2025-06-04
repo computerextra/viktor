@@ -1,5 +1,3 @@
-import * as React from "react";
-
 import { DatePicker } from "@/components/date-picker";
 import {
   Sidebar,
@@ -8,6 +6,7 @@ import {
   SidebarRail,
   SidebarSeparator,
 } from "@/components/ui/sidebar";
+import * as React from "react";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (

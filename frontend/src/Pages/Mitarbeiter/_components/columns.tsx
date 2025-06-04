@@ -1,5 +1,5 @@
+import type { Mitarbeiter } from "@bindings/viktor/db/models";
 import type { ColumnDef } from "@tanstack/react-table";
-import type { Mitarbeiter } from "bindings/viktor/db/models";
 import { Check, Cross } from "lucide-react";
 import { Link } from "react-router";
 

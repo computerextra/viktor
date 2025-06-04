@@ -7,8 +7,8 @@ import {
   GetKanbanBoardsFromUser,
   GetKanbanBord,
   UpdateKanban,
-} from "bindings/viktor/backend/app";
-import type { Kanban } from "bindings/viktor/db/models";
+} from "@bindings/viktor/backend/app";
+import type { Kanban } from "@bindings/viktor/db/models";
 import { z } from "zod";
 import { CheckSession } from "./userdata";
 

@@ -35,7 +35,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import useSession from "@/hooks/useSession";
-import type { Kanban } from "bindings/viktor/db/models";
+import type { Kanban } from "@bindings/viktor/db/models";
 import { AlertCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router";

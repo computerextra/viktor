@@ -1,5 +1,5 @@
 import { Mitarbeiter as MitarbeiterAPI } from "@api/db";
-import type { Mitarbeiter } from "bindings/viktor/db/models";
+import type { Mitarbeiter } from "@bindings/viktor/db/models";
 import { useEffect, useState } from "react";
 import { columns } from "./columns";
 import { DataTable } from "./data-table";

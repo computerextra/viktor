@@ -14,8 +14,8 @@ import {
   Lieferant as LieferantAPI,
   LiefertantenParams,
 } from "@api/db";
+import type { Ansprechpartner, Lieferant } from "@bindings/viktor/db/models";
 import { zodResolver } from "@hookform/resolvers/zod";
-import type { Ansprechpartner, Lieferant } from "bindings/viktor/db/models";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 import { z } from "zod";

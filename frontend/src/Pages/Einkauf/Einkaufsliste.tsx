@@ -1,5 +1,5 @@
 import { Mitarbeiter as MitarbeiterAPI } from "@api/db";
-import type { Mitarbeiter } from "bindings/viktor/db/models";
+import type { Mitarbeiter } from "@bindings/viktor/db/models";
 import { useEffect, useState } from "react";
 import { columns } from "./_components/columns";
 import { DataTable } from "./_components/data-table";
@@ -14,6 +14,7 @@ export default function Einkaufsliste() {
     async function x() {
       setLoadin(true);
       const res = await MitarbeiterAPI.Einkauf();
+      console.log(res);
       setMitarbeiter(res);
       setLoadin(false);
     }

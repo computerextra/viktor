@@ -1,295 +1,68 @@
 package db
 
 import (
-	"encoding/json"
-	"errors"
-	"fmt"
-	"log"
-	"reflect"
-	"sync"
-	"time"
+	"database/sql"
 
-	"slices"
-
-	"github.com/dgraph-io/badger/v4"
-	"github.com/dgraph-io/badger/v4/options"
-)
-
-var (
-	ErrNotFound = errors.New("storage: key not found")
-	ErrBadValue = errors.New("storage: bad value")
-
-	storageSync sync.Once
-	instance    *Database
+	_ "github.com/mattn/go-sqlite3"
 )
 
 type Database struct {
-	DB *badger.DB
-}
-
-type Ansprechpartner struct {
-	Id            string
-	Name          string
-	Telefon       *string
-	Mobil         *string
-	Mail          *string
-	LieferantenId string
-}
-
-type Kanban struct {
-	Id        string
-	Name      string
-	UserId    string
-	Posts     []Post
-	CreatedAt time.Time
-	UpdatedAt time.Time
-}
-
-type Post struct {
-	Id          string
-	KanbanId    string
-	Name        string
-	Description *string
-	Status      string
-	Importance  string
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
-}
-
-type Lieferant struct {
-	Id              string
-	Firma           string
-	Kundennummer    *string
-	Webseite        *string
-	Ansprechpartner []Ansprechpartner
-}
-
-type Mitarbeiter struct {
-	Id               string
-	Name             string
-	Short            *string
-	Gruppenwahl      *string
-	InternTelefon1   *string
-	InternTelefon2   *string
-	FestnetzPrivat   *string
-	FestnetzBusiness *string
-	HomeOffice       *string
-	MobilBusiness    *string
-	MobilPrivat      *string
-	Email            *string
-	Azubi            bool
-	Geburtstag       *time.Time
-	Paypal           bool
-	Abonniert        bool
-	Geld             *string
-	Pfand            *string
-	Dinge            *string
-	Abgeschickt      *time.Time
-	Bild1            *string
-	Bild2            *string
-	Bild3            *string
-	Bild1Date        *time.Time
-	Bild2Date        *time.Time
-	Bild3Date        *time.Time
-}
-
-type User struct {
-	Id            string
-	Password      string
-	Mail          string
-	MitarbeiterId string
-	Mitarbeiter   Mitarbeiter
-	Boards        []Kanban
+	DB *sql.DB
 }
 
 func NewDatabase(connString string) *Database {
-	return initDatabase(connString)
-}
-
-func initDatabase(connString string) *Database {
-	storageSync.Do(func() {
-		opts := badger.DefaultOptions(connString).WithLogger(nil).WithCompression(options.ZSTD).WithIndexCacheSize(100 << 20)
-		db, err := badger.Open(opts)
-		if err != nil {
-			panic(fmt.Errorf("failed to connect database: %v", err))
-		}
-		instance = &Database{DB: db}
-		go instance.runGC()
-	})
-
-	if instance == nil {
-		panic("Failed to initialize storage")
-	}
-
-	return instance
-}
-
-func (d *Database) Set(key string, data any) error {
-	if data == nil {
-		return ErrBadValue
-	}
-
-	var buf []byte
-	buf, err := json.Marshal(data)
+	conn, err := initDatabase(connString)
 	if err != nil {
-		return err
+		panic(err)
 	}
-
-	return d.DB.Update(func(txn *badger.Txn) error {
-		e := badger.NewEntry([]byte(key), buf)
-		err := txn.SetEntry(e)
-		return err
-	})
+	return &Database{
+		DB: conn,
+	}
 }
 
-func (d *Database) Get(key string) (any, error) {
-	var data any
-	err := d.DB.View(func(txn *badger.Txn) error {
-		item, err := txn.Get([]byte(key))
-		if err == badger.ErrKeyNotFound {
-			return ErrNotFound
-		}
-		if err != nil {
-			return err
-		}
-		var valCopy []byte
-		err = item.Value(func(val []byte) error {
-			// Copying or parsing val is valid.
-			valCopy = slices.Clone(val)
-
-			return nil
-		})
-		if err != nil {
-			return err
-		}
-
-		err = json.Unmarshal(valCopy, &data)
-		if err != nil {
-			return err
-		}
-		return nil
-	})
+func initDatabase(connString string) (*sql.DB, error) {
+	conn, err := sql.Open("sqlite3", connString)
 	if err != nil {
 		return nil, err
 	}
-	return data, nil
-}
 
-func (d *Database) Update(key string, data any) error {
-	if data == nil {
-		return ErrBadValue
-	}
-	values, err := d.Get(key)
+	// Create Tables
+	Ansprechpartner := `CREATE TABLE IF NOT EXISTS Ansprechpartner (Id TEXT not null primary key, Name TEXT not null, Telefon TEXT, Mobil TEXT,  Mail TEXT, LieferantenId TEXT not null);`
+
+	Kanban := `CREATE TABLE IF NOT EXISTS Kanban (Id TEXT not null primary key, Name TEXT not null, UserId TEXT not null, CreatedAt DATETIME not null default (DATETIME('now')), UpdatedAt DATETIME not null default (DATETIME('now')));`
+
+	Post := `CREATE TABLE IF NOT EXISTS Post (Id TEXT not null primary key, KanbanId TEXT not null, Name TEXT not null, Description TEXT,  Status TEXT not null, Importance TEXT not null, CreatedAt DATETIME not null default (DATETIME('now')), UpdatedAt DATETIME not null default (DATETIME('now')));`
+
+	Lieferant := `CREATE TABLE IF NOT EXISTS Lieferant ( Id text not null primary key, Firma text not null unique, Kundennummer text, Webseite text);`
+
+	Mitarbeiter := `CREATE TABLE IF NOT EXISTS Mitarbeiter (Id text not null primary key, Name text not null unique, Short text default null, Gruppenwahl text default null, InternTelefon1 text default null, InternTelefon2 text default null, FestnetzPrivat text default null, FestnetzBusiness text default null, HomeOffice text default null, MobilBusiness text default null, MobilPrivat text default null, Email text default null, Azubi BOOLEAN default false, Geburtstag DATETIME default null, Paypal BOOLEAN default false, Abonniert BOOLEAN default false, Geld text default null, Pfand text default null, Dinge text default null, Abgeschickt DATETIME default null, Bild1 BLOB default null, Bild2 BLOB default null, Bild3 BLOB default null, Bild1Date DATETIME default null, Bild2Date DATETIME default null, Bild3Date DATETIME default null);`
+
+	User := `CREATE TABLE IF NOT EXISTS User (Id string not null primary key, Passwort string not null, Mail string not null unique, MitarbeiterId string not null unique);`
+
+	_, err = conn.Exec(Ansprechpartner)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	if reflect.TypeOf(values).Kind() != reflect.Slice {
-		return errors.New("malformed data")
-	}
-
-	tmp := values.([]any)
-	values = append(tmp, data)
-
-	return d.Set(key, values)
-}
-
-func (d *Database) Delete(key string, id string) error {
-	values, err := d.Get(key)
+	_, err = conn.Exec(Kanban)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	if reflect.TypeOf(values).Kind() != reflect.Slice {
-		return errors.New("malformed data")
+	_, err = conn.Exec(Post)
+	if err != nil {
+		return nil, err
 	}
-	var newData []any
-	switch key {
-	case "Ansprechpartner":
-		for _, x := range values.([]Ansprechpartner) {
-			if x.Id != id {
-				newData = append(newData, x)
-			}
-		}
-	case "User":
-		for _, x := range values.([]User) {
-			if x.Id != id {
-				newData = append(newData, x)
-			}
-		}
-	case "Kanban":
-		for _, x := range values.([]Kanban) {
-			if x.Id != id {
-				newData = append(newData, x)
-			}
-		}
-	case "Post":
-		for _, x := range values.([]Post) {
-			if x.Id != id {
-				newData = append(newData, x)
-			}
-		}
-	case "Mitarbeiter":
-		for _, x := range values.([]Mitarbeiter) {
-			if x.Id != id {
-				newData = append(newData, x)
-			}
-		}
-	case "Lieferant":
-		for _, x := range values.([]Lieferant) {
-			if x.Id != id {
-				newData = append(newData, x)
-			}
-		}
+	_, err = conn.Exec(Lieferant)
+	if err != nil {
+		return nil, err
+	}
+	_, err = conn.Exec(Mitarbeiter)
+	if err != nil {
+		return nil, err
+	}
+	_, err = conn.Exec(User)
+	if err != nil {
+		return nil, err
 	}
 
-	return d.Update("ap", newData)
-}
-
-func (d *Database) Close() error {
-	if d.DB != nil {
-		return d.DB.Close()
-	}
-	return nil
-}
-
-func (d *Database) IsHealthy() bool {
-	if d.DB == nil {
-		return false
-	}
-
-	err := d.DB.View(func(txn *badger.Txn) error {
-		_, err := txn.Get([]byte("health_check"))
-		if err == badger.ErrKeyNotFound {
-			return nil
-		}
-		return err
-	})
-	return err == nil
-}
-
-func (d *Database) runGC() {
-	ticker := time.NewTicker(10 * time.Minute)
-	defer ticker.Stop()
-
-	for range ticker.C {
-		func() {
-			defer func() {
-				if r := recover(); r != nil {
-					log.Printf("[Storage] GC panic recovered: %v", r)
-				}
-			}()
-
-			err := d.DB.RunValueLogGC(0.5)
-			if err != nil && err != badger.ErrNoRewrite {
-				log.Printf("[Storage] GC error: %v", err)
-			}
-		}()
-	}
-}
-
-func (d *Database) HasKey(key string) bool {
-	err := d.DB.View(func(txn *badger.Txn) error {
-		_, err := txn.Get([]byte(key))
-		return err
-	})
-	return err == nil
+	return conn, err
 }

@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Get } from "@api/sage";
-import type { User } from "bindings/viktor/sagedb/models";
+import type { User } from "@bindings/viktor/sagedb/models";
 import { useEffect, useState } from "react";
 
 export default function MicrosoftForm() {

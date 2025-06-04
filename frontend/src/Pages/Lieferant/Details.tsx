@@ -12,7 +12,7 @@ import {
   Ansprechpartner as AnsprechpartnerAPI,
   Lieferant as LieferantAPI,
 } from "@api/db";
-import type { Ansprechpartner, Lieferant } from "bindings/viktor/db/models";
+import type { Ansprechpartner, Lieferant } from "@bindings/viktor/db/models";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router";
 import { ApColumns } from "./_components/columns";

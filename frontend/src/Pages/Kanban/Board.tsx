@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import type { Kanban, Post } from "bindings/viktor/db/models";
+import type { Kanban, Post } from "@bindings/viktor/db/models";
 import { GripVertical, Plus, X } from "lucide-react";
 import type React from "react";
 import { useEffect, useState } from "react";
@@ -34,6 +34,8 @@ interface Column {
   title: string;
   posts: Post[];
 }
+
+// TODO: Verschieben geht nicht!
 
 export default function KanbanBoard() {
   const { id } = useParams();
@@ -105,20 +107,23 @@ export default function KanbanBoard() {
   ) => {
     setDraggedTask(task);
     setDraggedFrom(columnId);
+    console.log("Drag Start");
     e.dataTransfer.effectAllowed = "move";
   };
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
+    console.log("Drag Over");
     e.dataTransfer.dropEffect = "move";
   };
 
   const handleDrop = async (e: React.DragEvent, targetColumnId: string) => {
     e.preventDefault();
-
+    console.log("Drag Drop");
     if (!draggedTask || !draggedFrom) return;
-
+    console.log("Weiter gehts");
     if (draggedFrom === targetColumnId) {
+      console.log("Los gelassen, komisch");
       setDraggedTask(null);
       setDraggedFrom(null);
       return;

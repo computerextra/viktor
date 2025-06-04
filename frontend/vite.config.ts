@@ -11,6 +11,7 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
       "@api": path.resolve(__dirname, "./src/api"),
       "@hooks": path.resolve(__dirname, "./src/hooks"),
+      "@bindings": path.resolve(__dirname, "./bindings"),
     },
   },
 });

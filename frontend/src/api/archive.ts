@@ -1,5 +1,5 @@
-import type { ArchiveResult } from "./../../bindings/viktor/archive";
-import { Get, SearchArchive } from "./../../bindings/viktor/backend/app";
+import type { ArchiveResult } from "@bindings/viktor/archive";
+import { Get, SearchArchive } from "@bindings/viktor/backend/app";
 
 export const Search = async (
   searchTerm: string

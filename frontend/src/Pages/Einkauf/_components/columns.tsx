@@ -1,5 +1,5 @@
+import type { Mitarbeiter } from "@bindings/viktor/db/models";
 import type { ColumnDef } from "@tanstack/react-table";
-import type { Mitarbeiter } from "bindings/viktor/db/models";
 import { Check, Cross } from "lucide-react";
 
 export const columns: ColumnDef<Mitarbeiter>[] = [
@@ -62,9 +62,9 @@ export const columns: ColumnDef<Mitarbeiter>[] = [
       let b2_ok = false;
       let b3_ok = false;
 
-      if (x.Bild1Date.Valid) {
+      if (x.Bild1Date) {
         const diff = Math.ceil(
-          (new Date().getTime() - new Date(x.Bild1Date.Time).getTime()) /
+          (new Date().getTime() - new Date(x.Bild1Date).getTime()) /
             (1000 * 60 * 60 * 24)
         );
 
@@ -73,9 +73,9 @@ export const columns: ColumnDef<Mitarbeiter>[] = [
         }
       }
 
-      if (x.Bild2Date.Valid) {
+      if (x.Bild2Date) {
         const diff = Math.ceil(
-          (new Date().getTime() - new Date(x.Bild2Date.Time).getTime()) /
+          (new Date().getTime() - new Date(x.Bild2Date).getTime()) /
             (1000 * 60 * 60 * 24)
         );
         if (diff == 1) {
@@ -83,9 +83,9 @@ export const columns: ColumnDef<Mitarbeiter>[] = [
         }
       }
 
-      if (x.Bild3Date.Valid) {
+      if (x.Bild3Date) {
         const diff = Math.ceil(
-          (new Date().getTime() - new Date(x.Bild3Date.Time).getTime()) /
+          (new Date().getTime() - new Date(x.Bild3Date).getTime()) /
             (1000 * 60 * 60 * 24)
         );
         if (diff == 1) {

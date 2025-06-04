@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Download } from "@api/archive";
+import type { ArchiveResult } from "@bindings/viktor/archive";
 import type { ColumnDef } from "@tanstack/react-table";
-import type { ArchiveResult } from "bindings/viktor/archive";
 
 export const columns: ColumnDef<ArchiveResult>[] = [
   {

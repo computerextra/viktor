@@ -17,8 +17,8 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { Mitarbeiter as MitarbeiterAPI } from "@api/db";
+import type { Mitarbeiter } from "@bindings/viktor/db/models";
 import { zodResolver } from "@hookform/resolvers/zod";
-import type { Mitarbeiter } from "bindings/viktor/db/models";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
 import { CalendarIcon } from "lucide-react";
@@ -74,8 +74,8 @@ export default function MitarbeiterForm({
         : "",
       MobilPrivat: mitarbeiter?.MobilPrivat ? mitarbeiter?.MobilPrivat : "",
 
-      Geburtstag: mitarbeiter?.Geburtstag.Valid
-        ? new Date(mitarbeiter.Geburtstag.Time)
+      Geburtstag: mitarbeiter?.Geburtstag
+        ? new Date(mitarbeiter.Geburtstag)
         : undefined,
       Azubi: mitarbeiter?.Azubi ?? false,
     },

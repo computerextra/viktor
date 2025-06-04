@@ -22,7 +22,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import useSession from "@hooks/useSession";
 import { Window } from "@wailsio/runtime";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
-
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";

@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Get } from "@api/sage";
-import type { User } from "bindings/viktor/sagedb/models";
+import type { User } from "@bindings/viktor/sagedb/models";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 
