@@ -11,6 +11,8 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/computerextra/viktor/db"
+
 	"github.com/computerextra/viktor/internal/middleware"
 )
 
@@ -18,15 +20,20 @@ type App struct {
 	config   Config
 	frontend fs.FS
 	logger   *slog.Logger
+	db       *db.PrismaClient
 }
 
 func New(logger *slog.Logger, config Config, frontend fs.FS) (*App, error) {
-	// TODO: Datenbank
+	client := db.NewClient()
+	if err := client.Prisma.Connect(); err != nil {
+		return nil, fmt.Errorf("failed to connect to database: %w", err)
+	}
 
 	return &App{
 		config:   config,
 		logger:   logger,
 		frontend: frontend,
+		db:       client,
 	}, nil
 }
 
@@ -70,6 +77,9 @@ func (a *App) Start(ctx context.Context) error {
 	defer cancel()
 
 	srv.Shutdown(sCtx)
+	if err := a.db.Disconnect(); err != nil {
+		panic(err)
+	}
 
 	return nil
 }

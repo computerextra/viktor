@@ -24,7 +24,7 @@ func (a *App) loadRoutes() (http.Handler, error) {
 }
 
 func (a *App) loadPages(router *http.ServeMux) {
-	h := handler.New(a.logger)
+	h := handler.New(a.logger, a.db)
 
 	router.HandleFunc("GET /api/something", h.GetSomething)
 	router.HandleFunc("POST /api/health", func(w http.ResponseWriter, r *http.Request) {

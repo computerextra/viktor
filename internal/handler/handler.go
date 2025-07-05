@@ -4,19 +4,22 @@ import (
 	"encoding/json"
 	"log/slog"
 	"net/http"
+
+	"github.com/computerextra/viktor/db"
 )
 
 type Handler struct {
 	logger *slog.Logger
-	// TODO: DB
+	db     *db.PrismaClient
 }
 
 func New(
 	logger *slog.Logger,
-	// TODO: Database
+	db *db.PrismaClient,
 ) *Handler {
 	return &Handler{
 		logger: logger,
+		db:     db,
 	}
 }
 
@@ -26,7 +29,7 @@ func (h *Handler) GetSomething(w http.ResponseWriter, r *http.Request) {
 	// Limit the size of the request Body
 	// r.Body = http.MaxBytesReader(w, r.Body, maxBodySize)
 
-	// ctx := r.Context()
+	ctx := r.Context()
 	// shortID := r.PathValue("id")
 
 	// id, err := shortid.GetLongID(shortID)
@@ -46,9 +49,14 @@ func (h *Handler) GetSomething(w http.ResponseWriter, r *http.Request) {
 	//	return
 	// }
 
-	data, err := json.Marshal("Sonething")
+	res, err := h.db.Mitarbeiter.FindMany().Exec(ctx)
 	if err != nil {
-		h.logger.Error("failed to marshal result: ", slog.Any("error", err))
+		h.logger.Error("failed to query database", slog.Any("error", err))
+	}
+
+	data, err := json.MarshalIndent(res, "", "  ")
+	if err != nil {
+		h.logger.Error("failed to marshal result", slog.Any("error", err))
 		w.WriteHeader(http.StatusInternalServerError)
 	}
 	w.Header().Set("Content-Type", "application/json")
