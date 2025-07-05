@@ -1,0 +1,35 @@
+//go:generate bun run --cwd=frontend build
+package main
+
+import (
+	"context"
+	"embed"
+	"log/slog"
+	"os"
+	"os/signal"
+
+	"github.com/computerextra/viktor/internal/app"
+	"github.com/joho/godotenv"
+)
+
+//go:embed frontend/dist
+var Frontend embed.FS
+
+func main() {
+	godotenv.Load()
+
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+
+	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
+	defer cancel()
+
+	app, err := app.New(logger, app.Config{}, Frontend)
+
+	if err != nil {
+		logger.Error("failed to create app", slog.Any("error", err))
+	}
+
+	if err := app.Start(ctx); err != nil {
+		logger.Error("failed to start app", slog.Any("error", err))
+	}
+}
