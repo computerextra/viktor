@@ -12,8 +12,9 @@ import (
 	"time"
 
 	"github.com/computerextra/viktor/db"
-
 	"github.com/computerextra/viktor/internal/middleware"
+	"github.com/computerextra/viktor/internal/util/flash"
+	"github.com/rs/cors"
 )
 
 type App struct {
@@ -45,12 +46,17 @@ func (a *App) Start(ctx context.Context) error {
 
 	middlewares := middleware.Chain(
 		middleware.Logging(a.logger),
+		flash.Middleware,
 	)
+
+	c := cors.New(cors.Options{
+		AllowedOrigins: []string{"*"},
+	})
 
 	port := getPort(3000)
 	srv := &http.Server{
 		Addr:           fmt.Sprintf(":%d", port),
-		Handler:        middlewares(router),
+		Handler:        c.Handler(middlewares(router)),
 		MaxHeaderBytes: 1 << 20, // Max Header size (e.g. 1MB)
 	}
 

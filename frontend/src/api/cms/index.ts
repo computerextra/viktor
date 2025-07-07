@@ -16,4 +16,4 @@ const GetCmsCounter = async (): Promise<GetCmsCounterResponse | null> => {
   return response.data ?? null;
 };
 
-export { GetCmsCounter };
+export { GetCmsCounter, type GetCmsCounterResponse };
