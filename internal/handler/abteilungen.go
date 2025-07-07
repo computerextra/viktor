@@ -42,7 +42,7 @@ func (h *Handler) GetAbteilung(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) CreateAbteilung(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-
+	r.ParseForm()
 	name := r.FormValue("name")
 	if name == "" {
 		flash.SetFlashMessage(w, "error", "content cannot be empty")
@@ -61,7 +61,7 @@ func (h *Handler) CreateAbteilung(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) UpdateAbteilung(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-
+	r.ParseForm()
 	id := r.PathValue("id")
 	name := r.FormValue("name")
 

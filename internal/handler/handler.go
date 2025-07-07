@@ -6,6 +6,8 @@ import (
 	"net/http"
 
 	"github.com/computerextra/viktor/db"
+
+	"github.com/gorilla/schema"
 )
 
 type Handler struct {
@@ -22,6 +24,8 @@ func New(
 		db:     db,
 	}
 }
+
+var decoder = schema.NewDecoder()
 
 const maxBodySize = 1 << 20 // 1 MB
 

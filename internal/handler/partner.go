@@ -1,22 +1,23 @@
 package handler
 
 import (
+	"log/slog"
 	"net/http"
 
 	"github.com/computerextra/viktor/db"
 	"github.com/computerextra/viktor/internal/util/flash"
 )
 
-func (h *Handler) GetJobs(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) GetPartners(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	res, err := h.db.Jobs.FindMany().OrderBy(db.Jobs.Name.Order(db.SortOrderAsc)).Exec(ctx)
+	res, err := h.db.Partner.FindMany().OrderBy(db.Partner.Name.Order(db.SortOrderAsc)).Exec(ctx)
 	if err != nil {
 		sendQueryError(w, h.logger, err)
 	}
 	sendJsonData(marshalData(res, w, h.logger), w)
 }
 
-func (h *Handler) GetJob(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) GetPartner(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	id := r.PathValue("id")
 	if id == "" {
@@ -24,46 +25,34 @@ func (h *Handler) GetJob(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNoContent)
 		return
 	}
-	res, err := h.db.Jobs.FindUnique(db.Jobs.ID.Equals(id)).Exec(ctx)
+	res, err := h.db.Partner.FindUnique(db.Partner.ID.Equals(id)).Exec(ctx)
 	if err != nil {
 		sendQueryError(w, h.logger, err)
 	}
 	sendJsonData(marshalData(res, w, h.logger), w)
 }
 
-func (h *Handler) CreateJob(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-	r.ParseForm()
-	Name := r.FormValue("name")
-	if Name == "" {
-		flash.SetFlashMessage(w, "error", "content cannot be empty")
-		w.WriteHeader(http.StatusNoContent)
-		return
-	}
-	res, err := h.db.Jobs.CreateOne(db.Jobs.Name.Set(Name)).Exec(ctx)
-	if err != nil {
-		sendQueryError(w, h.logger, err)
-	}
-	sendJsonData(marshalData(res, w, h.logger), w)
+type PartnerProps struct {
+	Name  string `schema:"name,required"`
+	Image string `schema:"image,required"`
+	Link  string `schema:"link,required"`
 }
 
-func (h *Handler) UpdateJob(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) CreatePartner(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	r.ParseForm()
-	id := r.PathValue("id")
-	if id == "" {
+	var partner PartnerProps
+	err := decoder.Decode(&partner, r.PostForm)
+	if err != nil {
 		flash.SetFlashMessage(w, "error", "content cannot be empty")
+		h.logger.Error("failed to parse formdata", slog.Any("error", err))
 		w.WriteHeader(http.StatusNoContent)
 		return
 	}
-	Name := r.FormValue("name")
-	if Name == "" {
-		flash.SetFlashMessage(w, "error", "content cannot be empty")
-		w.WriteHeader(http.StatusNoContent)
-		return
-	}
-	res, err := h.db.Jobs.FindUnique(db.Jobs.ID.Equals(id)).Update(
-		db.Jobs.Name.Set(Name),
+	res, err := h.db.Partner.CreateOne(
+		db.Partner.Name.Set(partner.Name),
+		db.Partner.Link.Set(partner.Link),
+		db.Partner.Image.Set(partner.Image),
 	).Exec(ctx)
 	if err != nil {
 		sendQueryError(w, h.logger, err)
@@ -71,7 +60,36 @@ func (h *Handler) UpdateJob(w http.ResponseWriter, r *http.Request) {
 	sendJsonData(marshalData(res, w, h.logger), w)
 }
 
-func (h *Handler) DeleteJob(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) UpdatePartner(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	r.ParseForm()
+	id := r.PathValue("id")
+	if id == "" {
+		flash.SetFlashMessage(w, "error", "content cannot be empty")
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
+	r.ParseForm()
+	var partner PartnerProps
+	err := decoder.Decode(&partner, r.PostForm)
+	if err != nil {
+		flash.SetFlashMessage(w, "error", "content cannot be empty")
+		h.logger.Error("failed to parse formdata", slog.Any("error", err))
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
+	res, err := h.db.Partner.FindUnique(db.Partner.ID.Equals(id)).Update(
+		db.Partner.Name.Set(partner.Name),
+		db.Partner.Link.Set(partner.Link),
+		db.Partner.Image.Set(partner.Image),
+	).Exec(ctx)
+	if err != nil {
+		sendQueryError(w, h.logger, err)
+	}
+	sendJsonData(marshalData(res, w, h.logger), w)
+}
+
+func (h *Handler) DeletePartner(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	id := r.PathValue("id")
 	if id == "" {
@@ -79,7 +97,7 @@ func (h *Handler) DeleteJob(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNoContent)
 		return
 	}
-	res, err := h.db.Jobs.FindUnique(db.Jobs.ID.Equals(id)).Delete().Exec(ctx)
+	res, err := h.db.Partner.FindUnique(db.Partner.ID.Equals(id)).Delete().Exec(ctx)
 	if err != nil {
 		sendQueryError(w, h.logger, err)
 	}

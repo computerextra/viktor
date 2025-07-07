@@ -13,7 +13,7 @@ import (
 
 func (h *Handler) SearchArchive(w http.ResponseWriter, r *http.Request) {
 	r.Body = http.MaxBytesReader(w, r.Body, maxBodySize)
-
+	r.ParseForm()
 	search := r.FormValue("search")
 	if search == "" {
 		flash.SetFlashMessage(w, "error", "content cannot be empty")

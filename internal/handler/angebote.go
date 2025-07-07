@@ -37,7 +37,7 @@ func (h *Handler) GetAngebot(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) CreateAngebot(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-
+	r.ParseForm()
 	Title := r.FormValue("title")
 	SubTitle := r.FormValue("subtitle")
 	Image := r.FormValue("image")
@@ -114,6 +114,7 @@ func (h *Handler) ToggleAngebot(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) UpdateAngebot(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
+	r.ParseForm()
 	id := r.PathValue("id")
 	Title := r.FormValue("title")
 	SubTitle := r.FormValue("subtitle")

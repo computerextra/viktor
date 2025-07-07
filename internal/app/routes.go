@@ -54,8 +54,19 @@ func (a *App) loadPages(router *http.ServeMux) {
 	router.HandleFunc("DELETE /api/Job/{id}", h.DeleteJob)
 
 	// Mitarbeiter
+	router.HandleFunc("GET /api/Mitarbeiter", h.GetMitarbeiters)
+	router.HandleFunc("GET /api/Mitarbeiter/Abteilung", h.GetMitarbeitersWithAbteilung)
+	router.HandleFunc("POST /api/Mitarbeiter", h.CreateMitarbeiter)
+	router.HandleFunc("GET /api/Mitarbeiter/{id}", h.GetMitarbeiter)
+	router.HandleFunc("POST /api/Mitarbeiter/{id}", h.UpdateMitarbeiter)
+	router.HandleFunc("DELETE /api/Mitarbeiter/{id}", h.DeleteMitarbeiter)
 
 	// Partner
+	router.HandleFunc("GET /api/Partner", h.GetPartners)
+	router.HandleFunc("POST /api/Partner", h.CreatePartner)
+	router.HandleFunc("GET /api/Partner/{id}", h.GetPartner)
+	router.HandleFunc("POST /api/Partner/{id}", h.UpdatePartner)
+	router.HandleFunc("DELETE /api/Partner/{id}", h.DeletePartner)
 
 	// CMS ROUTES END
 
