@@ -1,3 +1,4 @@
+//go:generate bun install --cwd=frontend
 //go:generate bun run --cwd=frontend build
 //go:generate go run github.com/steebchen/prisma-client-go generate
 package main

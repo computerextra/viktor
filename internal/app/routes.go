@@ -26,7 +26,20 @@ func (a *App) loadRoutes() (http.Handler, error) {
 func (a *App) loadPages(router *http.ServeMux) {
 	h := handler.New(a.logger, a.db)
 
-	router.HandleFunc("GET /api/something", h.GetSomething)
+	// Abteilungen
+	router.HandleFunc("GET /api/Abteilung", h.GetAbteilungen)
+	router.HandleFunc("POST /api/Abteilung", h.CreateAbteilung)
+	router.HandleFunc("GET /api/Abteilung/{id}", h.GetAbteilung)
+	router.HandleFunc("POST /api/Abteilung/{id}", h.UpdateAbteilung)
+	router.HandleFunc("DELETE /api/Abteilung/{id}", h.DeleteAbteilung)
+
+	// Archive
+	router.HandleFunc("GET /api/Archiv/{id}", h.GetArchive)
+	router.HandleFunc("POST /api/Archiv", h.SearchArchive)
+
+	// CMS
+	router.HandleFunc("GET /api/cms", h.GetCmsCounts)
+
 	router.HandleFunc("POST /api/health", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	})
