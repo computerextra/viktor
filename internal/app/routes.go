@@ -85,6 +85,8 @@ func (a *App) loadPages(router *http.ServeMux) {
 	router.HandleFunc("POST /api/Einkauf/{id}", h.UpdateEinkauf)
 
 	// Warenlieferung
+	router.HandleFunc("POST /api/Warenlieferung/Generate", h.GenerateWarenlieferung)
+	router.HandleFunc("POST /api/Warenlieferung/Send", h.SendWarenlieferung)
 
 	router.HandleFunc("POST /api/health", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)

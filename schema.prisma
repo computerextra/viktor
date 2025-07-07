@@ -116,8 +116,8 @@ model Warenlieferung {
   Name          String
   angelegt      DateTime  @default(now())
   geliefert     DateTime?
-  AlterPreis    Decimal?
-  NeuerPreis    Decimal?
+  AlterPreis    Float?    @db.Float
+  NeuerPreis    Float?    @db.Float
   Preis         DateTime?
   Artikelnummer String
   id            Int       @id
