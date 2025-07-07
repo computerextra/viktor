@@ -6,7 +6,7 @@ const GetAbteilungeRes = z.object({
   name: z.string(),
 });
 
-type GetAbteilungeRes = z.infer<typeof GetAbteilungeRes>;
+export type GetAbteilungeRes = z.infer<typeof GetAbteilungeRes>;
 
 const GetAbteilungen = async () => {
   const res = await client.get<GetAbteilungeRes[]>("/Abteilung", config);
