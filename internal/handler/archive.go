@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
@@ -30,16 +29,11 @@ func (h *Handler) SearchArchive(w http.ResponseWriter, r *http.Request) {
 	),
 	).Select(db.Pdfs.Title.Field(), db.Pdfs.ID.Field()).Exec(ctx)
 	if err != nil {
-		sendError(w, h.logger, "failed to query database", err)
+		sendQueryError(w, h.logger, err)
 	}
 
-	data, err := json.MarshalIndent(searchResults, "", " ")
-	if err != nil {
-		sendError(w, h.logger, "failed to marshal data", err)
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(data)
+	data := marshalData(searchResults, w, h.logger)
+	sendJsonData(data, w)
 }
 
 func (h *Handler) GetArchive(w http.ResponseWriter, r *http.Request) {
@@ -53,7 +47,7 @@ func (h *Handler) GetArchive(w http.ResponseWriter, r *http.Request) {
 	// Find File
 	res, err := h.db.Pdfs.FindUnique(db.Pdfs.ID.Equals(id)).Exec(ctx)
 	if err != nil {
-		sendError(w, h.logger, "failed to query database", err)
+		sendQueryError(w, h.logger, err)
 	}
 
 	// Try to read file
