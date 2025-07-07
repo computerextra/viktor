@@ -47,6 +47,11 @@ func (a *App) loadPages(router *http.ServeMux) {
 	router.HandleFunc("DELETE /api/Angebot/{id}", h.DeleteAngebot)
 
 	// Jobs
+	router.HandleFunc("GET /api/Job", h.GetJobs)
+	router.HandleFunc("POST /api/Job", h.CreateJob)
+	router.HandleFunc("GET /api/Job/{id}", h.GetJob)
+	router.HandleFunc("POST /api/Job/{id}", h.UpdateJob)
+	router.HandleFunc("DELETE /api/Job/{id}", h.DeleteJob)
 
 	// Mitarbeiter
 
