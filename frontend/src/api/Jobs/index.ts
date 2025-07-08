@@ -7,7 +7,12 @@ const JobReponse = z.object({
   online: z.boolean(),
 });
 
-type JobReponse = z.infer<typeof JobReponse>;
+export type JobReponse = z.infer<typeof JobReponse>;
+
+export const JobProps = z.object({
+  name: z.string(),
+  online: z.boolean().default(false).optional(),
+});
 
 const GetJobs = async () => {
   const res = await client.get<JobReponse[]>("/Job", config);
@@ -19,16 +24,16 @@ const GetJob = async (id: string) => {
   return res.data ?? null;
 };
 
-const CreateJob = async (name: string) => {
+const CreateJob = async (props: z.infer<typeof JobProps>) => {
   const data = new FormData();
-  data.append("name", name);
+  data.append("name", props.name);
   const res = await client.post("/Job", data, config);
   return res.data ?? null;
 };
 
-const UpdateJob = async (id: string, name: string) => {
+const UpdateJob = async (id: string, props: z.infer<typeof JobProps>) => {
   const data = new FormData();
-  data.append("name", name);
+  data.append("name", props.name);
   const res = await client.post("/Job/" + id, data, config);
   return res.data ?? null;
 };

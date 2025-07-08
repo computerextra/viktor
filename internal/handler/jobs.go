@@ -9,7 +9,8 @@ import (
 )
 
 type JobProps struct {
-	Name string `schema:"name,required"`
+	Name   string `schema:"name,required"`
+	Online bool   `schema:"online,default:false"`
 }
 
 func (h *Handler) GetJobs(w http.ResponseWriter, r *http.Request) {
@@ -47,7 +48,7 @@ func (h *Handler) CreateJob(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNoContent)
 		return
 	}
-	res, err := h.db.Jobs.CreateOne(db.Jobs.Name.Set(props.Name)).Exec(ctx)
+	res, err := h.db.Jobs.CreateOne(db.Jobs.Name.Set(props.Name), db.Jobs.Online.Set(props.Online)).Exec(ctx)
 	if err != nil {
 		sendQueryError(w, h.logger, err)
 	}
@@ -73,6 +74,7 @@ func (h *Handler) UpdateJob(w http.ResponseWriter, r *http.Request) {
 	}
 	res, err := h.db.Jobs.FindUnique(db.Jobs.ID.Equals(id)).Update(
 		db.Jobs.Name.Set(props.Name),
+		db.Jobs.Online.Set(props.Online),
 	).Exec(ctx)
 	if err != nil {
 		sendQueryError(w, h.logger, err)
