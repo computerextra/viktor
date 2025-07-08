@@ -19,6 +19,7 @@ import Overview from "./Pages/CMS/Overview";
 import PartnerBearbeiten from "./Pages/CMS/Partner/id";
 import PartnerAnlegen from "./Pages/CMS/Partner/neu";
 import PartnerÜbersicht from "./Pages/CMS/Partner/page";
+import Home from "./Pages/Home";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -26,7 +27,7 @@ createRoot(document.getElementById("root")!).render(
       <Routes>
         <Route element={<Layout />}>
           <Route path="/">
-            <Route index element={<>Home</>} />
+            <Route index element={<Home />} />
             <Route path="CMS">
               <Route index element={<Overview />} />
               <Route path="Abteilungen">
