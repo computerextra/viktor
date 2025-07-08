@@ -1,5 +1,6 @@
+import { lazy } from "react";
 import BackBtn from "../_components/back-button";
-import JobForm from "./_components/form";
+const JobForm = lazy(() => import("./_components/form"));
 
 export default function JobAnlegen() {
   return (

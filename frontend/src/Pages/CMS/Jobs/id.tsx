@@ -1,6 +1,8 @@
+import { lazy } from "react";
 import { useParams } from "react-router";
 import BackBtn from "../_components/back-button";
-import JobForm from "./_components/form";
+
+const JobForm = lazy(() => import("./_components/form"));
 
 export default function JobBearbeiten() {
   const { id } = useParams();

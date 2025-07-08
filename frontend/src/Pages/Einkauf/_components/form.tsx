@@ -37,9 +37,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 import { z } from "zod";
 
-// TODO: Images
-
-export default function EinkaufForm({ id }: { id: string }) {
+export default function EinkaufForm({ id }: { id?: string }) {
   const navigate = useNavigate();
   const [Einkauf, setEinkauf] = useState<EinkaufRes | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(false);
@@ -47,11 +45,11 @@ export default function EinkaufForm({ id }: { id: string }) {
   const form = useForm<z.infer<typeof EinkaufProps>>({
     resolver: zodResolver(EinkaufProps),
     defaultValues: {
-      Abo: Einkauf?.Einkauf.Abonniert,
-      Dinge: Einkauf?.Einkauf.Dinge,
-      Geld: Einkauf?.Einkauf.Geld,
-      Pfand: Einkauf?.Einkauf.Pfand,
-      Paypal: Einkauf?.Einkauf.Paypal,
+      Abo: Einkauf?.Einkauf?.Abonniert,
+      Dinge: Einkauf?.Einkauf?.Dinge,
+      Geld: Einkauf?.Einkauf?.Geld,
+      Pfand: Einkauf?.Einkauf?.Pfand,
+      Paypal: Einkauf?.Einkauf?.Paypal,
     },
   });
 
@@ -80,6 +78,7 @@ export default function EinkaufForm({ id }: { id: string }) {
   if (isLoading) return <>Lädt ...</>;
 
   const onSubmit = async (values: z.infer<typeof EinkaufProps>) => {
+    if (id == null) return;
     await UpdateEinkauf(id, values);
     await navigate("/Einkauf");
   };
@@ -180,6 +179,11 @@ export default function EinkaufForm({ id }: { id: string }) {
                 </FormItem>
               )}
             />
+            <div>
+              <small className="text-center">
+                Bilder Upload ist aktuell abgestellt.
+              </small>
+            </div>
             <Button disabled={isLoading} type="submit">
               Speichern
             </Button>
@@ -190,11 +194,7 @@ export default function EinkaufForm({ id }: { id: string }) {
       {isLoading && (
         <p className="text-center text-6xl">Bitte warten, es lädt gerade</p>
       )}
-      <div className="mx-auto mt-5 grid max-w-4xl grid-cols-3 gap-8">
-        {/* <ImageUpload id={id} nr={1} setLoading={setIsLoading} />
-        <ImageUpload id={id} nr={2} setLoading={setIsLoading} />
-        <ImageUpload id={id} nr={3} setLoading={setIsLoading} /> */}
-      </div>
+      <div className="mx-auto mt-5 grid max-w-4xl grid-cols-3 gap-8"></div>
       <Separator className="my-8" />
       <div className="mx-auto grid max-w-[60%] grid-cols-2 gap-8">
         <AlertDialog>

@@ -1,6 +1,8 @@
+import { lazy } from "react";
 import { useParams } from "react-router";
 import BackBtn from "../_components/back-button";
-import PartnerForm from "./_components/form";
+
+const PartnerForm = lazy(() => import("./_components/form"));
 
 export default function PartnerBearbeiten() {
   const { id } = useParams();

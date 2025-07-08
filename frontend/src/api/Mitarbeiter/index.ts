@@ -67,9 +67,6 @@ const EinkaufListeRes = z.object({
   Abgeschickt: z.date().optional(),
   Geld: z.string().optional(),
   Pfand: z.string().optional(),
-  Bild1: z.string().optional(),
-  Bild2: z.string().optional(),
-  Bild3: z.string().optional(),
   Mitarbeiter: MitarbeiterRes,
 });
 export type EinkaufListeRes = z.infer<typeof EinkaufListeRes>;
@@ -101,9 +98,6 @@ const EinkaufRes = z.object({
     Abgeschickt: z.date().optional(),
     Geld: z.string().optional(),
     Pfand: z.string().optional(),
-    Bild1: z.string().optional(),
-    Bild2: z.string().optional(),
-    Bild3: z.string().optional(),
   }),
 });
 export type EinkaufRes = z.infer<typeof EinkaufRes>;

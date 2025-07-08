@@ -1,4 +1,6 @@
-import GeburtstagsListe from "@/components/geburtstags-liste";
+import { lazy } from "react";
+
+const GeburtstagsListe = lazy(() => import("@/components/geburtstags-liste"));
 
 export default function Home() {
   return (

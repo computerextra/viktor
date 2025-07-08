@@ -1,5 +1,6 @@
+import { lazy } from "react";
 import BackBtn from "../_components/back-button";
-import AngebotForm from "./_components/form";
+const AngebotForm = lazy(() => import("./_components/form"));
 
 export default function AngebotAnlegen() {
   return (

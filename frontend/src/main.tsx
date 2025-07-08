@@ -1,33 +1,34 @@
-import { StrictMode } from "react";
+import { lazy, StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { HashRouter, Route, Routes } from "react-router";
+import { BrowserRouter, Route, Routes } from "react-router";
 import "./index.css";
-import Layout from "./Layout";
-import Archive from "./Pages/Archiv/page";
-import AbteilungBearbeiten from "./Pages/CMS/Abteilungen/id";
-import AbteilungAnlegen from "./Pages/CMS/Abteilungen/neu";
-import AbteilungenÜbersicht from "./Pages/CMS/Abteilungen/page";
-import AngebotBearbeiten from "./Pages/CMS/Angebote/id";
-import AngebotAnlegen from "./Pages/CMS/Angebote/neu";
-import AngeboteÜbersicht from "./Pages/CMS/Angebote/page";
-import JobBearbeiten from "./Pages/CMS/Jobs/id";
-import JobAnlegen from "./Pages/CMS/Jobs/neu";
-import JobÜbersicht from "./Pages/CMS/Jobs/page";
-import MitarbeiterBearbeiten from "./Pages/CMS/Mitarbeiter/id";
-import MitarbeiterAnlegen from "./Pages/CMS/Mitarbeiter/neu";
-import MitarbeiterÜbersicht from "./Pages/CMS/Mitarbeiter/page";
-import Overview from "./Pages/CMS/Overview";
-import PartnerBearbeiten from "./Pages/CMS/Partner/id";
-import PartnerAnlegen from "./Pages/CMS/Partner/neu";
-import PartnerÜbersicht from "./Pages/CMS/Partner/page";
-import EinkaufBearbeiten from "./Pages/Einkauf/id";
-import Einkauf from "./Pages/Einkauf/page";
-import Home from "./Pages/Home";
-import Warenlieferung from "./Pages/Warenlieferung/page";
+
+const Layout = lazy(() => import("./Layout"));
+const Archive = lazy(() => import("./Pages/Archiv/page"));
+const AbteilungBearbeiten = lazy(() => import("./Pages/CMS/Abteilungen/id"));
+const AbteilungAnlegen = lazy(() => import("./Pages/CMS/Abteilungen/neu"));
+const AbteilungenÜbersicht = lazy(() => import("./Pages/CMS/Abteilungen/page"));
+const AngebotBearbeiten = lazy(() => import("./Pages/CMS/Angebote/id"));
+const AngebotAnlegen = lazy(() => import("./Pages/CMS/Angebote/neu"));
+const AngeboteÜbersicht = lazy(() => import("./Pages/CMS/Angebote/page"));
+const JobBearbeiten = lazy(() => import("./Pages/CMS/Jobs/id"));
+const JobAnlegen = lazy(() => import("./Pages/CMS/Jobs/neu"));
+const JobÜbersicht = lazy(() => import("./Pages/CMS/Jobs/page"));
+const MitarbeiterBearbeiten = lazy(() => import("./Pages/CMS/Mitarbeiter/id"));
+const MitarbeiterAnlegen = lazy(() => import("./Pages/CMS/Mitarbeiter/neu"));
+const MitarbeiterÜbersicht = lazy(() => import("./Pages/CMS/Mitarbeiter/page"));
+const Overview = lazy(() => import("./Pages/CMS/Overview"));
+const PartnerBearbeiten = lazy(() => import("./Pages/CMS/Partner/id"));
+const PartnerAnlegen = lazy(() => import("./Pages/CMS/Partner/neu"));
+const PartnerÜbersicht = lazy(() => import("./Pages/CMS/Partner/page"));
+const EinkaufBearbeiten = lazy(() => import("./Pages/Einkauf/id"));
+const Einkauf = lazy(() => import("./Pages/Einkauf/page"));
+const Home = lazy(() => import("./Pages/Home"));
+const Warenlieferung = lazy(() => import("./Pages/Warenlieferung/page"));
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <HashRouter>
+    <BrowserRouter>
       <Routes>
         <Route element={<Layout />}>
           <Route path="/">
@@ -69,6 +70,6 @@ createRoot(document.getElementById("root")!).render(
           </Route>
         </Route>
       </Routes>
-    </HashRouter>
+    </BrowserRouter>
   </StrictMode>
 );

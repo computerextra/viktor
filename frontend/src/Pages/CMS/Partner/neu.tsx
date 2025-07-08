@@ -1,5 +1,6 @@
+import { lazy } from "react";
 import BackBtn from "../_components/back-button";
-import PartnerForm from "./_components/form";
+const PartnerForm = lazy(() => import("./_components/form"));
 
 export default function PartnerAnlegen() {
   return (

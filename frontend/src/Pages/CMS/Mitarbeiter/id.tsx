@@ -1,6 +1,8 @@
+import { lazy } from "react";
 import { useParams } from "react-router";
 import BackBtn from "../_components/back-button";
-import MitarbeiterForm from "./_components/form";
+
+const MitarbeiterForm = lazy(() => import("./_components/form"));
 
 export default function MitarbeiterBearbeiten() {
   const { id } = useParams();

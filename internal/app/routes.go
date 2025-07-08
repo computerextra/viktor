@@ -76,9 +76,7 @@ func (a *App) loadPages(router *http.ServeMux) {
 	router.HandleFunc("POST /api/Archiv", h.SearchArchive)
 
 	// Einkauf
-	router.HandleFunc("GET /api/Einkauf/{id}/Image", h.GetImage)       // TODO
-	router.HandleFunc("POST /api/Einkauf/{id}/Image", h.UploadImage)   // TODO
-	router.HandleFunc("DELETE /api/Einkauf/{id}/Image", h.DeleteImage) // TODO
+	router.HandleFunc("GET /api/Einkauf/{id}/Image", h.GetImage) // TODO
 	router.HandleFunc("GET /api/Einkauf/{id}", h.GetEinkauf)
 	router.HandleFunc("GET /api/Einkauf", h.GetListe)
 	router.HandleFunc("POST /api/Einkauf/{id}/Skip", h.SkipEinkauf)

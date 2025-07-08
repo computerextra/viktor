@@ -1,10 +1,8 @@
 package handler
 
 import (
-	"fmt"
 	"log/slog"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/computerextra/viktor/db"
@@ -27,6 +25,7 @@ func (h *Handler) GetImage(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNoContent)
 		return
 	}
+
 	mitarbeiter, err := h.db.Mitarbeiter.FindUnique(db.Mitarbeiter.ID.Equals(id)).Exec(ctx)
 	if err != nil {
 		sendQueryError(w, h.logger, err)
@@ -40,115 +39,11 @@ func (h *Handler) GetImage(w http.ResponseWriter, r *http.Request) {
 		db.Einkauf.Bild2.Field(),
 		db.Einkauf.Bild3.Field(),
 	).Exec(ctx)
+
 	if err != nil {
 		sendQueryError(w, h.logger, err)
 	}
 	sendJsonData(marshalData(images, w, h.logger), w)
-}
-
-func (h *Handler) UploadImage(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-	id := r.PathValue("id")
-	if id == "" {
-		flash.SetFlashMessage(w, "error", "content cannot be empty")
-		w.WriteHeader(http.StatusNoContent)
-		return
-	}
-	r.ParseMultipartForm(10 << 20) // Max Header size (e.g. 10MB)
-	imageNr := r.FormValue("imagenr")
-	imageName := r.FormValue("imagename")
-	url, ok := os.LookupEnv("UPLOADTHING_URL")
-	if !ok {
-		h.logger.Error("failed to parse env", slog.String("key", "UPLOADTHING_URL"))
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-	path := fmt.Sprintf("%s%s", url, imageName)
-	mitarbeiter, err := h.db.Mitarbeiter.FindUnique(db.Mitarbeiter.ID.Equals(id)).Exec(ctx)
-	if err != nil {
-		sendQueryError(w, h.logger, err)
-	}
-	einkaufID, ok := mitarbeiter.EinkaufID()
-	if !ok {
-		einkaufNew, err := h.db.Einkauf.CreateOne(
-			db.Einkauf.Dinge.Set(""),
-			db.Einkauf.Abgeschickt.Set(time.Now().AddDate(1, 0, 0)),
-		).Exec(ctx)
-		if err != nil {
-			sendQueryError(w, h.logger, err)
-		}
-		einkaufID = einkaufNew.ID
-	}
-	switch imageNr {
-	case "1":
-		res, err := h.db.Einkauf.FindUnique(db.Einkauf.ID.Equals(einkaufID)).Update(db.Einkauf.Bild1.Set(path)).Exec(ctx)
-		if err != nil {
-			sendQueryError(w, h.logger, err)
-		}
-		sendJsonData(marshalData(res, w, h.logger), w)
-	case "2":
-		res, err := h.db.Einkauf.FindUnique(db.Einkauf.ID.Equals(einkaufID)).Update(db.Einkauf.Bild2.Set(path)).Exec(ctx)
-		if err != nil {
-			sendQueryError(w, h.logger, err)
-		}
-		sendJsonData(marshalData(res, w, h.logger), w)
-	case "3":
-		res, err := h.db.Einkauf.FindUnique(db.Einkauf.ID.Equals(einkaufID)).Update(db.Einkauf.Bild3.Set(path)).Exec(ctx)
-		if err != nil {
-			sendQueryError(w, h.logger, err)
-		}
-		sendJsonData(marshalData(res, w, h.logger), w)
-
-	}
-}
-
-func (h *Handler) DeleteImage(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-	id := r.PathValue("id")
-	if id == "" {
-		flash.SetFlashMessage(w, "error", "content cannot be empty")
-		w.WriteHeader(http.StatusNoContent)
-		return
-	}
-	r.ParseMultipartForm(10 << 20) // Max Header size (e.g. 10MB)
-	imageNr := r.FormValue("imagenr")
-	mitarbeiter, err := h.db.Mitarbeiter.FindUnique(db.Mitarbeiter.ID.Equals(id)).Exec(ctx)
-	if err != nil {
-		sendQueryError(w, h.logger, err)
-	}
-	einkaufID, ok := mitarbeiter.EinkaufID()
-	if !ok {
-		einkaufNew, err := h.db.Einkauf.CreateOne(
-			db.Einkauf.Dinge.Set(""),
-			db.Einkauf.Abgeschickt.Set(time.Now().AddDate(-1, 0, 0)),
-		).Exec(ctx)
-		if err != nil {
-			sendQueryError(w, h.logger, err)
-		}
-		einkaufID = einkaufNew.ID
-	}
-	var null *string
-	switch imageNr {
-	case "1":
-		res, err := h.db.Einkauf.FindUnique(db.Einkauf.ID.Equals(einkaufID)).Update(db.Einkauf.Bild1.SetIfPresent(null)).Exec(ctx)
-		if err != nil {
-			sendQueryError(w, h.logger, err)
-		}
-		sendJsonData(marshalData(res, w, h.logger), w)
-	case "2":
-		res, err := h.db.Einkauf.FindUnique(db.Einkauf.ID.Equals(einkaufID)).Update(db.Einkauf.Bild2.SetIfPresent(null)).Exec(ctx)
-		if err != nil {
-			sendQueryError(w, h.logger, err)
-		}
-		sendJsonData(marshalData(res, w, h.logger), w)
-	case "3":
-		res, err := h.db.Einkauf.FindUnique(db.Einkauf.ID.Equals(einkaufID)).Update(db.Einkauf.Bild3.SetIfPresent(null)).Exec(ctx)
-		if err != nil {
-			sendQueryError(w, h.logger, err)
-		}
-		sendJsonData(marshalData(res, w, h.logger), w)
-
-	}
 }
 
 func (h *Handler) GetEinkauf(w http.ResponseWriter, r *http.Request) {
@@ -239,6 +134,7 @@ func (h *Handler) UpdateEinkauf(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNoContent)
 		return
 	}
+
 	mitarbeiter, err := h.db.Mitarbeiter.FindUnique(db.Mitarbeiter.ID.Equals(mitarbeiterId)).Exec(ctx)
 	if err != nil {
 		sendQueryError(w, h.logger, err)

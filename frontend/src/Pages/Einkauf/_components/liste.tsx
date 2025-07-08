@@ -9,7 +9,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { cn } from "@/lib/utils";
 import {
   flexRender,
   getCoreRowModel,
@@ -90,39 +89,39 @@ export default function EinkaufListe() {
         return <pre className="font-sans">{x.Dinge}</pre>;
       },
     },
-    {
-      accessorKey: "Bild1",
-      header: "Bilder",
-      cell: ({ row }) => {
-        const x = row.original;
+    // {
+    //   accessorKey: "Bild1",
+    //   header: "Bilder",
+    //   cell: ({ row }) => {
+    //     const x = row.original;
 
-        let count = 0;
-        if (x.Bild1) count += 1;
-        if (x.Bild2) count += 1;
-        if (x.Bild3) count += 1;
+    //     let count = 0;
+    //     if (x.Bild1) count += 1;
+    //     if (x.Bild2) count += 1;
+    //     if (x.Bild3) count += 1;
 
-        return (
-          <div
-            className={cn(
-              "grid gap-1",
-              count == 1 && "grid-cols-1",
-              count == 2 && "grid-cols-2",
-              count == 3 && "grid-cols-3"
-            )}
-          >
-            {x.Bild1 && (
-              <img src={x.Bild1} alt={x.Bild1} width={75} height={75} />
-            )}
-            {x.Bild2 && (
-              <img src={x.Bild2} alt={x.Bild2} width={75} height={75} />
-            )}
-            {x.Bild3 && (
-              <img src={x.Bild3} alt={x.Bild3} width={75} height={75} />
-            )}
-          </div>
-        );
-      },
-    },
+    //     return (
+    //       <div
+    //         className={cn(
+    //           "grid gap-1",
+    //           count == 1 && "grid-cols-1",
+    //           count == 2 && "grid-cols-2",
+    //           count == 3 && "grid-cols-3"
+    //         )}
+    //       >
+    //         {x.Bild1 && (
+    //           <img src={x.Bild1} alt={x.Bild1} width={75} height={75} />
+    //         )}
+    //         {x.Bild2 && (
+    //           <img src={x.Bild2} alt={x.Bild2} width={75} height={75} />
+    //         )}
+    //         {x.Bild3 && (
+    //           <img src={x.Bild3} alt={x.Bild3} width={75} height={75} />
+    //         )}
+    //       </div>
+    //     );
+    //   },
+    // },
   ];
 
   return (
@@ -132,12 +131,12 @@ export default function EinkaufListe() {
       </div>
       <div className="hidden print:block">
         {Liste?.map((x) => {
-          let count = 0;
-          if (x.Bild1) count += 1;
-          if (x.Bild2) count += 1;
-          if (x.Bild3) count += 1;
+          // let count = 0;
+          // if (x.Bild1) count += 1;
+          // if (x.Bild2) count += 1;
+          // if (x.Bild3) count += 1;
           return (
-            <div key={x.id} className="mt-2 grid grid-cols-6 gap-2 border-b-2">
+            <div key={x.id} className="mt-2 grid grid-cols-4 gap-2 border-b-2">
               <div className="border-e-2">
                 <p>{x.Mitarbeiter.name}</p>
                 <p>Geld: {x.Geld} €</p>
@@ -152,8 +151,8 @@ export default function EinkaufListe() {
               <div className="col-span-3">
                 <pre className="font-sans">{x.Dinge}</pre>
               </div>
-              <div className="col-span-2">
-                <div
+              {/* <div className="col-span-2"> */}
+              {/* <div
                   className={cn(
                     "grid gap-1",
                     count == 1 && "grid-cols-1",
@@ -170,8 +169,8 @@ export default function EinkaufListe() {
                   {x.Bild3 && (
                     <img src={x.Bild3} alt={x.Bild3} width={75} height={75} />
                   )}
-                </div>
-              </div>
+                </div> */}
+              {/* </div> */}
             </div>
           );
         })}
