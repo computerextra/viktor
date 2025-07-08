@@ -55,6 +55,30 @@ func (h *Handler) CreateJob(w http.ResponseWriter, r *http.Request) {
 	sendJsonData(marshalData(res, w, h.logger), w)
 }
 
+func (h *Handler) ToggleJob(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	id := r.PathValue("id")
+
+	if id == "" {
+		flash.SetFlashMessage(w, "error", "content cannot be empty")
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
+
+	status, err := h.db.Jobs.FindUnique(db.Jobs.ID.Equals(id)).Exec(ctx)
+	if err != nil {
+		sendQueryError(w, h.logger, err)
+	}
+
+	res, err := h.db.Jobs.FindUnique(db.Jobs.ID.Equals(id)).Update(
+		db.Jobs.Online.Set(!status.Online),
+	).Exec(ctx)
+	if err != nil {
+		sendQueryError(w, h.logger, err)
+	}
+	sendJsonData(marshalData(res, w, h.logger), w)
+}
+
 func (h *Handler) UpdateJob(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	r.ParseMultipartForm(10 << 20) // Max Header size (e.g. 10MB)

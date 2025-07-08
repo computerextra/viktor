@@ -1,4 +1,4 @@
-import { DeleteJob, GetJobs, type JobReponse } from "@/api/Jobs";
+import { DeleteJob, GetJobs, ToggleJob, type JobReponse } from "@/api/Jobs";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -62,6 +62,15 @@ export default function JobTable() {
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem asChild>
                 <Link to={"/CMS/Jobs/" + x.id}>Bearbeiten</Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={async () => {
+                  await ToggleJob(x.id);
+                  location.reload();
+                }}
+              >
+                Toggle Online
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem

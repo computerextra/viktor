@@ -24,6 +24,11 @@ const GetJob = async (id: string) => {
   return res.data ?? null;
 };
 
+const ToggleJob = async (id: string) => {
+  const res = await client.post(`/Job/${id}/toggle`, {}, config);
+  return res.data ?? null;
+};
+
 const CreateJob = async (props: z.infer<typeof JobProps>) => {
   const data = new FormData();
   data.append("name", props.name);
@@ -43,4 +48,4 @@ const DeleteJob = async (id: string) => {
   return res.data ?? null;
 };
 
-export { CreateJob, DeleteJob, GetJob, GetJobs, UpdateJob };
+export { CreateJob, DeleteJob, GetJob, GetJobs, ToggleJob, UpdateJob };
