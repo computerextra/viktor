@@ -7,7 +7,7 @@ const PartnerRes = z.object({
   link: z.string(),
   image: z.string(),
 });
-type PartnerRes = z.infer<typeof PartnerRes>;
+export type PartnerRes = z.infer<typeof PartnerRes>;
 
 export const PartnerProps = z.object({
   name: z.string(),

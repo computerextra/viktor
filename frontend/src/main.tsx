@@ -16,6 +16,9 @@ import MitarbeiterBearbeiten from "./Pages/CMS/Mitarbeiter/id";
 import MitarbeiterAnlegen from "./Pages/CMS/Mitarbeiter/neu";
 import MitarbeiterÜbersicht from "./Pages/CMS/Mitarbeiter/page";
 import Overview from "./Pages/CMS/Overview";
+import PartnerBearbeiten from "./Pages/CMS/Partner/id";
+import PartnerAnlegen from "./Pages/CMS/Partner/neu";
+import PartnerÜbersicht from "./Pages/CMS/Partner/page";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -45,6 +48,11 @@ createRoot(document.getElementById("root")!).render(
                 <Route index element={<MitarbeiterÜbersicht />} />
                 <Route path="Neu" element={<MitarbeiterAnlegen />} />
                 <Route path=":id" element={<MitarbeiterBearbeiten />} />
+              </Route>
+              <Route path="Partner">
+                <Route index element={<PartnerÜbersicht />} />
+                <Route path="Neu" element={<PartnerAnlegen />} />
+                <Route path=":id" element={<PartnerBearbeiten />} />
               </Route>
             </Route>
           </Route>
