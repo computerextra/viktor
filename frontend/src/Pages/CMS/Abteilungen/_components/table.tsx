@@ -15,7 +15,7 @@ import {
 import type { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link } from "react-router";
 import CmsTable from "../../_components/cms-table";
 
 export default function AbteilungenTable() {
@@ -23,8 +23,6 @@ export default function AbteilungenTable() {
     GetAbteilungeRes[] | undefined
   >(undefined);
   const [loading, setLoading] = useState(false);
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     (async () => {
@@ -63,7 +61,7 @@ export default function AbteilungenTable() {
               <DropdownMenuItem
                 onClick={async () => {
                   await DeleteAbteilung(x.id);
-                  await navigate("/CMS/Abteilungen");
+                  location.reload();
                 }}
               >
                 Löschen

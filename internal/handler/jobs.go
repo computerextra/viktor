@@ -1,11 +1,16 @@
 package handler
 
 import (
+	"log/slog"
 	"net/http"
 
 	"github.com/computerextra/viktor/db"
 	"github.com/computerextra/viktor/internal/util/flash"
 )
+
+type JobProps struct {
+	Name string `schema:"name,required"`
+}
 
 func (h *Handler) GetJobs(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
@@ -33,14 +38,16 @@ func (h *Handler) GetJob(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) CreateJob(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	r.ParseForm()
-	Name := r.FormValue("name")
-	if Name == "" {
+	r.ParseMultipartForm(10 << 20) // Max Header size (e.g. 10MB)
+	var props JobProps
+	err := decoder.Decode(&props, r.PostForm)
+	if err != nil {
 		flash.SetFlashMessage(w, "error", "content cannot be empty")
+		h.logger.Error("failed to parse formdata", slog.Any("error", err))
 		w.WriteHeader(http.StatusNoContent)
 		return
 	}
-	res, err := h.db.Jobs.CreateOne(db.Jobs.Name.Set(Name)).Exec(ctx)
+	res, err := h.db.Jobs.CreateOne(db.Jobs.Name.Set(props.Name)).Exec(ctx)
 	if err != nil {
 		sendQueryError(w, h.logger, err)
 	}
@@ -49,21 +56,23 @@ func (h *Handler) CreateJob(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) UpdateJob(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	r.ParseForm()
+	r.ParseMultipartForm(10 << 20) // Max Header size (e.g. 10MB)
 	id := r.PathValue("id")
 	if id == "" {
 		flash.SetFlashMessage(w, "error", "content cannot be empty")
 		w.WriteHeader(http.StatusNoContent)
 		return
 	}
-	Name := r.FormValue("name")
-	if Name == "" {
+	var props JobProps
+	err := decoder.Decode(&props, r.PostForm)
+	if err != nil {
 		flash.SetFlashMessage(w, "error", "content cannot be empty")
+		h.logger.Error("failed to parse formdata", slog.Any("error", err))
 		w.WriteHeader(http.StatusNoContent)
 		return
 	}
 	res, err := h.db.Jobs.FindUnique(db.Jobs.ID.Equals(id)).Update(
-		db.Jobs.Name.Set(Name),
+		db.Jobs.Name.Set(props.Name),
 	).Exec(ctx)
 	if err != nil {
 		sendQueryError(w, h.logger, err)

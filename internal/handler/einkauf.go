@@ -54,7 +54,7 @@ func (h *Handler) UploadImage(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNoContent)
 		return
 	}
-	r.ParseForm()
+	r.ParseMultipartForm(10 << 20) // Max Header size (e.g. 10MB)
 	imageNr := r.FormValue("imagenr")
 	imageName := r.FormValue("imagename")
 	url, ok := os.LookupEnv("UPLOADTHING_URL")
@@ -110,7 +110,7 @@ func (h *Handler) DeleteImage(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNoContent)
 		return
 	}
-	r.ParseForm()
+	r.ParseMultipartForm(10 << 20) // Max Header size (e.g. 10MB)
 	imageNr := r.FormValue("imagenr")
 	mitarbeiter, err := h.db.Mitarbeiter.FindUnique(db.Mitarbeiter.ID.Equals(id)).Exec(ctx)
 	if err != nil {
@@ -230,7 +230,7 @@ func (h *Handler) DeleteEinkauf(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) UpdateEinkauf(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	mitarbeiterId := r.PathValue("id")
-	r.ParseForm()
+	r.ParseMultipartForm(10 << 20) // Max Header size (e.g. 10MB)
 	var einkauf EinkaufProps
 	err := decoder.Decode(&einkauf, r.PostForm)
 	if err != nil {

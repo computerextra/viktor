@@ -10,5 +10,6 @@ export const client = axios.create({
 export const config: AxiosRequestConfig = {
   headers: {
     Accept: "application/json",
+    "Content-Type": "multipart/form-data",
   } as RawAxiosRequestHeaders,
 };

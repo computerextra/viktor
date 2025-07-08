@@ -8,6 +8,12 @@ const GetAbteilungeRes = z.object({
 
 export type GetAbteilungeRes = z.infer<typeof GetAbteilungeRes>;
 
+export const AbteilungProps = z.object({
+  name: z
+    .string()
+    .min(3, { message: "Der Name muss mindestens 3 Zeichen lang sein!" }),
+});
+
 const GetAbteilungen = async () => {
   const res = await client.get<GetAbteilungeRes[]>("/Abteilung", config);
   return res.data ?? null;
@@ -18,16 +24,21 @@ const GetAbteilung = async (id: string) => {
   return res.data ?? null;
 };
 
-const CreateAbteilung = async (name: string) => {
+const CreateAbteilung = async (props: z.infer<typeof AbteilungProps>) => {
   const data = new FormData();
-  data.append("name", name);
+  data.append("name", props.name);
+
   const res = await client.post<GetAbteilungeRes>("/Abteilung", data, config);
+
   return res.data ?? null;
 };
 
-const UpdateAbteilung = async (id: string, name: string) => {
+const UpdateAbteilung = async (
+  id: string,
+  props: z.infer<typeof AbteilungProps>
+) => {
   const data = new FormData();
-  data.append("name", name);
+  data.append("name", props.name);
   const res = await client.post<GetAbteilungeRes>(
     "/Abteilung/" + id,
     data,
@@ -37,7 +48,7 @@ const UpdateAbteilung = async (id: string, name: string) => {
 };
 
 const DeleteAbteilung = async (id: string) => {
-  const res = await client.delete("/Abteilung" + id, config);
+  const res = await client.delete("/Abteilung/" + id, config);
   return res.data ?? null;
 };
 

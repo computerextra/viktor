@@ -66,7 +66,7 @@ type MitarbeiterProps struct {
 
 func (h *Handler) CreateMitarbeiter(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	r.ParseForm()
+	r.ParseMultipartForm(10 << 20) // Max Header size (e.g. 10MB)
 	var mitarbeiter MitarbeiterProps
 	err := decoder.Decode(&mitarbeiter, r.PostForm)
 	if err != nil {
@@ -111,7 +111,7 @@ func (h *Handler) CreateMitarbeiter(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) UpdateMitarbeiter(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	r.ParseForm()
+	r.ParseMultipartForm(10 << 20) // Max Header size (e.g. 10MB)
 	id := r.PathValue("id")
 	if id == "" {
 		flash.SetFlashMessage(w, "error", "content cannot be empty")

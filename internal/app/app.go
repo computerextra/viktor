@@ -51,6 +51,7 @@ func (a *App) Start(ctx context.Context) error {
 
 	c := cors.New(cors.Options{
 		AllowedOrigins: []string{"*"},
+		AllowedMethods: []string{http.MethodGet, http.MethodPost, http.MethodDelete},
 	})
 
 	port := getPort(3000)

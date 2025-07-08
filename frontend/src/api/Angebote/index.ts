@@ -19,7 +19,7 @@ export const AngeboteProps = z.object({
   link: z.string(),
   date_start: z.date(),
   date_stop: z.date(),
-  anzeigen: z.boolean(),
+  anzeigen: z.boolean().default(false).optional(),
 });
 
 export type AngeboteRes = z.infer<typeof AngeboteRes>;

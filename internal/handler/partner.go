@@ -8,6 +8,12 @@ import (
 	"github.com/computerextra/viktor/internal/util/flash"
 )
 
+type PartnerProps struct {
+	Name  string `schema:"name,required"`
+	Image string `schema:"image,required"`
+	Link  string `schema:"link,required"`
+}
+
 func (h *Handler) GetPartners(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	res, err := h.db.Partner.FindMany().OrderBy(db.Partner.Name.Order(db.SortOrderAsc)).Exec(ctx)
@@ -32,15 +38,9 @@ func (h *Handler) GetPartner(w http.ResponseWriter, r *http.Request) {
 	sendJsonData(marshalData(res, w, h.logger), w)
 }
 
-type PartnerProps struct {
-	Name  string `schema:"name,required"`
-	Image string `schema:"image,required"`
-	Link  string `schema:"link,required"`
-}
-
 func (h *Handler) CreatePartner(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	r.ParseForm()
+	r.ParseMultipartForm(10 << 20) // Max Header size (e.g. 10MB)
 	var partner PartnerProps
 	err := decoder.Decode(&partner, r.PostForm)
 	if err != nil {
@@ -62,7 +62,7 @@ func (h *Handler) CreatePartner(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) UpdatePartner(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	r.ParseForm()
+	r.ParseMultipartForm(10 << 20) // Max Header size (e.g. 10MB)
 	id := r.PathValue("id")
 	if id == "" {
 		flash.SetFlashMessage(w, "error", "content cannot be empty")

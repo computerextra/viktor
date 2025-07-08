@@ -2,6 +2,7 @@ package handler
 
 import (
 	"fmt"
+	"log/slog"
 	"net/http"
 	"os"
 	"path"
@@ -11,12 +12,18 @@ import (
 	"github.com/computerextra/viktor/internal/util/flash"
 )
 
+type ArchiveProps struct {
+	Search string `schema:"name,required"`
+}
+
 func (h *Handler) SearchArchive(w http.ResponseWriter, r *http.Request) {
 	r.Body = http.MaxBytesReader(w, r.Body, maxBodySize)
-	r.ParseForm()
-	search := r.FormValue("search")
-	if search == "" {
+	r.ParseMultipartForm(10 << 20) // Max Header size (e.g. 10MB)
+	var props ArchiveProps
+	err := decoder.Decode(&props, r.PostForm)
+	if err != nil {
 		flash.SetFlashMessage(w, "error", "content cannot be empty")
+		h.logger.Error("failed to parse formdata", slog.Any("error", err))
 		w.WriteHeader(http.StatusNoContent)
 		return
 	}
@@ -24,8 +31,8 @@ func (h *Handler) SearchArchive(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	searchResults, err := h.db.Pdfs.FindMany(db.Pdfs.Or(
-		db.Pdfs.Title.Contains(search),
-		db.Pdfs.Body.Contains(search),
+		db.Pdfs.Title.Contains(props.Search),
+		db.Pdfs.Body.Contains(props.Search),
 	),
 	).Select(db.Pdfs.Title.Field(), db.Pdfs.ID.Field()).Exec(ctx)
 	if err != nil {

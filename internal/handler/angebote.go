@@ -1,12 +1,23 @@
 package handler
 
 import (
+	"log/slog"
 	"net/http"
 	"time"
 
 	"github.com/computerextra/viktor/db"
 	"github.com/computerextra/viktor/internal/util/flash"
 )
+
+type AngeboteProps struct {
+	Title      string  `schema:"title,required"`
+	SubTitle   *string `schema:"subtitle"`
+	Image      string  `schema:"image,required"`
+	Link       string  `schema:"link,required"`
+	Date_start string  `schema:"date_start,required"`
+	Date_stop  string  `schema:"date_stop,required"`
+	Anzeigen   bool    `schema:"anzeigen,default:false"`
+}
 
 func (h *Handler) GetAngebote(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
@@ -37,50 +48,33 @@ func (h *Handler) GetAngebot(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) CreateAngebot(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	r.ParseForm()
-	Title := r.FormValue("title")
-	SubTitle := r.FormValue("subtitle")
-	Image := r.FormValue("image")
-	Link := r.FormValue("link")
-	date_start_string := r.FormValue("date_start")
-	date_stop_string := r.FormValue("date_stop")
-	Anzeigen_string := r.FormValue("anzeigen")
-
-	Anzeigen := false
-	var sub *string
-
-	if len(SubTitle) > 0 {
-		sub = &SubTitle
-	}
-
-	if Anzeigen_string == "true" {
-		Anzeigen = true
-	}
-
-	// Check requiered fields.
-	if len(Title) < 1 || len(Image) < 1 || len(Link) < 1 || len(date_start_string) < 1 || len(date_stop_string) < 1 {
+	r.ParseMultipartForm(10 << 20) // Max Header size (e.g. 10MB)
+	var props AngeboteProps
+	err := decoder.Decode(&props, r.PostForm)
+	if err != nil {
 		flash.SetFlashMessage(w, "error", "content cannot be empty")
+		h.logger.Error("failed to parse formdata", slog.Any("error", err))
 		w.WriteHeader(http.StatusNoContent)
 		return
 	}
 
-	Date_Start, err := time.Parse("02.01.2006", date_start_string)
+	Date_Start, err := time.Parse("02.01.2006", props.Date_start)
 	if err != nil {
 		sendError(w, h.logger, "failed to parse date", err)
 	}
-	Date_Stop, err := time.Parse("02.01.2006", date_stop_string)
+	Date_Stop, err := time.Parse("02.01.2006", props.Date_stop)
 	if err != nil {
 		sendError(w, h.logger, "failed to parse date", err)
 	}
 
 	res, err := h.db.Angebot.CreateOne(
-		db.Angebot.Title.Set(Title),
+		db.Angebot.Title.Set(props.Title),
 		db.Angebot.DateStart.Set(Date_Start),
 		db.Angebot.DateStop.Set(Date_Stop),
-		db.Angebot.Link.Set(Link),
-		db.Angebot.Image.Set(Image),
-		db.Angebot.Subtitle.SetIfPresent(sub),
-		db.Angebot.Anzeigen.Set(Anzeigen),
+		db.Angebot.Link.Set(props.Link),
+		db.Angebot.Image.Set(props.Image),
+		db.Angebot.Subtitle.SetIfPresent(props.SubTitle),
+		db.Angebot.Anzeigen.Set(props.Anzeigen),
 	).Exec(ctx)
 	if err != nil {
 		sendQueryError(w, h.logger, err)
@@ -114,39 +108,22 @@ func (h *Handler) ToggleAngebot(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) UpdateAngebot(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	r.ParseForm()
+	r.ParseMultipartForm(10 << 20) // Max Header size (e.g. 10MB)
 	id := r.PathValue("id")
-	Title := r.FormValue("title")
-	SubTitle := r.FormValue("subtitle")
-	Image := r.FormValue("image")
-	Link := r.FormValue("link")
-	date_start_string := r.FormValue("date_start")
-	date_stop_string := r.FormValue("date_stop")
-	Anzeigen_string := r.FormValue("anzeigen")
-
-	Anzeigen := false
-	var sub *string
-
-	if len(SubTitle) > 0 {
-		sub = &SubTitle
-	}
-
-	if Anzeigen_string == "true" {
-		Anzeigen = true
-	}
-
-	// Check requiered fields.
-	if len(Title) < 1 || len(Image) < 1 || len(Link) < 1 || len(date_start_string) < 1 || len(date_stop_string) < 1 {
+	var props AngeboteProps
+	err := decoder.Decode(&props, r.PostForm)
+	if err != nil {
 		flash.SetFlashMessage(w, "error", "content cannot be empty")
+		h.logger.Error("failed to parse formdata", slog.Any("error", err))
 		w.WriteHeader(http.StatusNoContent)
 		return
 	}
 
-	Date_Start, err := time.Parse("02.01.2006", date_start_string)
+	Date_Start, err := time.Parse("02.01.2006", props.Date_start)
 	if err != nil {
 		sendError(w, h.logger, "failed to parse date", err)
 	}
-	Date_Stop, err := time.Parse("02.01.2006", date_stop_string)
+	Date_Stop, err := time.Parse("02.01.2006", props.Date_stop)
 	if err != nil {
 		sendError(w, h.logger, "failed to parse date", err)
 	}
@@ -158,13 +135,13 @@ func (h *Handler) UpdateAngebot(w http.ResponseWriter, r *http.Request) {
 	}
 
 	res, err := h.db.Angebot.FindUnique(db.Angebot.ID.Equals(id)).Update(
-		db.Angebot.Title.Set(Title),
+		db.Angebot.Title.Set(props.Title),
 		db.Angebot.DateStart.Set(Date_Start),
 		db.Angebot.DateStop.Set(Date_Stop),
-		db.Angebot.Link.Set(Link),
-		db.Angebot.Image.Set(Image),
-		db.Angebot.Subtitle.SetIfPresent(sub),
-		db.Angebot.Anzeigen.Set(Anzeigen),
+		db.Angebot.Link.Set(props.Link),
+		db.Angebot.Image.Set(props.Image),
+		db.Angebot.Subtitle.SetIfPresent(props.SubTitle),
+		db.Angebot.Anzeigen.Set(props.Anzeigen),
 	).Exec(ctx)
 	if err != nil {
 		sendQueryError(w, h.logger, err)

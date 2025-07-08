@@ -1,6 +1,8 @@
 import { GetAbteilung, type GetAbteilungeRes } from "@/api/Abteilungen";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
+import BackBtn from "../_components/back-button";
+import AbteilungForm from "./_components/form";
 
 export default function AbteilungBearbeiten() {
   const { id } = useParams();
@@ -21,5 +23,11 @@ export default function AbteilungBearbeiten() {
 
   if (loading) return <>Lädt...</>;
 
-  return <>{Abteilung?.name}</>;
+  return (
+    <>
+      <BackBtn href="/CMS/Abteilungen" />
+      <h1 className="text-center">Abteilung: {Abteilung?.name} bearbeiten</h1>
+      <AbteilungForm id={id} />
+    </>
+  );
 }

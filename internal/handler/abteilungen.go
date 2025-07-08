@@ -1,11 +1,16 @@
 package handler
 
 import (
+	"log/slog"
 	"net/http"
 
 	"github.com/computerextra/viktor/db"
 	"github.com/computerextra/viktor/internal/util/flash"
 )
+
+type AbteilungProps struct {
+	Name string `schema:"name,required"`
+}
 
 func (h *Handler) GetAbteilungen(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
@@ -42,15 +47,17 @@ func (h *Handler) GetAbteilung(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) CreateAbteilung(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	r.ParseForm()
-	name := r.FormValue("name")
-	if name == "" {
+	r.ParseMultipartForm(10 << 20) // Max Header size (e.g. 10MB)
+	var props AbteilungProps
+	err := decoder.Decode(&props, r.PostForm)
+	if err != nil {
 		flash.SetFlashMessage(w, "error", "content cannot be empty")
+		h.logger.Error("failed to parse formdata", slog.Any("error", err))
 		w.WriteHeader(http.StatusNoContent)
 		return
 	}
 
-	res, err := h.db.Abteilung.CreateOne(db.Abteilung.Name.Set(name)).Exec(ctx)
+	res, err := h.db.Abteilung.CreateOne(db.Abteilung.Name.Set(props.Name)).Exec(ctx)
 	if err != nil {
 		sendQueryError(w, h.logger, err)
 	}
@@ -61,9 +68,16 @@ func (h *Handler) CreateAbteilung(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) UpdateAbteilung(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	r.ParseForm()
+	r.ParseMultipartForm(10 << 20) // Max Header size (e.g. 10MB)
 	id := r.PathValue("id")
-	name := r.FormValue("name")
+	var props AbteilungProps
+	err := decoder.Decode(&props, r.PostForm)
+	if err != nil {
+		flash.SetFlashMessage(w, "error", "content cannot be empty")
+		h.logger.Error("failed to parse formdata", slog.Any("error", err))
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
 
 	if id == "" {
 		flash.SetFlashMessage(w, "error", "content cannot be empty")
@@ -71,14 +85,8 @@ func (h *Handler) UpdateAbteilung(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if name == "" {
-		flash.SetFlashMessage(w, "error", "content cannot be empty")
-		w.WriteHeader(http.StatusNoContent)
-		return
-	}
-
 	res, err := h.db.Abteilung.FindUnique(db.Abteilung.ID.Equals(id)).Update(
-		db.Abteilung.Name.Set(name),
+		db.Abteilung.Name.Set(props.Name),
 	).Exec(ctx)
 	if err != nil {
 		sendQueryError(w, h.logger, err)
@@ -90,7 +98,6 @@ func (h *Handler) UpdateAbteilung(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) DeleteAbteilung(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-
 	id := r.PathValue("id")
 
 	if id == "" {
