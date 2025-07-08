@@ -76,13 +76,13 @@ func (h *Handler) CreateMitarbeiter(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var day time.Time
-	var bday db.DateTime
-	if len(*mitarbeiter.Geburtstag) > 0 {
+	var bday *db.DateTime
+	if mitarbeiter.Geburtstag != nil && len(*mitarbeiter.Geburtstag) > 0 {
 		day, err = time.Parse("02.01.2006", *mitarbeiter.Geburtstag)
 		if err != nil {
 			sendError(w, h.logger, "failed to parse date", err)
 		}
-		bday = day
+		bday = &day
 	}
 
 	res, err := h.db.Mitarbeiter.CreateOne(
@@ -94,7 +94,7 @@ func (h *Handler) CreateMitarbeiter(w http.ResponseWriter, r *http.Request) {
 		db.Mitarbeiter.Focus.SetIfPresent(mitarbeiter.Focus),
 		db.Mitarbeiter.Mail.SetIfPresent(mitarbeiter.Mail),
 		db.Mitarbeiter.Gruppenwahl.SetIfPresent(mitarbeiter.Gruppenwahl),
-		db.Mitarbeiter.Geburtstag.SetIfPresent(&bday),
+		db.Mitarbeiter.Geburtstag.SetIfPresent(bday),
 		db.Mitarbeiter.HomeOffice.SetIfPresent(mitarbeiter.HomeOffice),
 		db.Mitarbeiter.MobilPrivat.SetIfPresent(mitarbeiter.MobilPrivat),
 		db.Mitarbeiter.MobilBusiness.SetIfPresent(mitarbeiter.MobilBusiness),
@@ -102,6 +102,7 @@ func (h *Handler) CreateMitarbeiter(w http.ResponseWriter, r *http.Request) {
 		db.Mitarbeiter.TelefonIntern2.SetIfPresent(mitarbeiter.TelefonIntern2),
 		db.Mitarbeiter.TelefonPrivat.SetIfPresent(mitarbeiter.TelefonPrivat),
 		db.Mitarbeiter.TelefonBusiness.SetIfPresent(mitarbeiter.TelefonBusiness),
+		db.Mitarbeiter.Sex.Set(mitarbeiter.Sex),
 	).Exec(ctx)
 	if err != nil {
 		sendQueryError(w, h.logger, err)
@@ -127,13 +128,13 @@ func (h *Handler) UpdateMitarbeiter(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var day time.Time
-	var bday db.DateTime
-	if len(*mitarbeiter.Geburtstag) > 0 {
+	var bday *db.DateTime
+	if mitarbeiter.Geburtstag != nil && len(*mitarbeiter.Geburtstag) > 0 {
 		day, err = time.Parse("02.01.2006", *mitarbeiter.Geburtstag)
 		if err != nil {
 			sendError(w, h.logger, "failed to parse date", err)
 		}
-		bday = day
+		bday = &day
 	}
 	res, err := h.db.Mitarbeiter.FindUnique(db.Mitarbeiter.ID.Equals(id)).Update(
 		db.Mitarbeiter.Name.Set(mitarbeiter.Name),
@@ -144,7 +145,7 @@ func (h *Handler) UpdateMitarbeiter(w http.ResponseWriter, r *http.Request) {
 		db.Mitarbeiter.Focus.SetIfPresent(mitarbeiter.Focus),
 		db.Mitarbeiter.Mail.SetIfPresent(mitarbeiter.Mail),
 		db.Mitarbeiter.Gruppenwahl.SetIfPresent(mitarbeiter.Gruppenwahl),
-		db.Mitarbeiter.Geburtstag.SetIfPresent(&bday),
+		db.Mitarbeiter.Geburtstag.SetIfPresent(bday),
 		db.Mitarbeiter.HomeOffice.SetIfPresent(mitarbeiter.HomeOffice),
 		db.Mitarbeiter.MobilPrivat.SetIfPresent(mitarbeiter.MobilPrivat),
 		db.Mitarbeiter.MobilBusiness.SetIfPresent(mitarbeiter.MobilBusiness),
@@ -152,6 +153,7 @@ func (h *Handler) UpdateMitarbeiter(w http.ResponseWriter, r *http.Request) {
 		db.Mitarbeiter.TelefonIntern2.SetIfPresent(mitarbeiter.TelefonIntern2),
 		db.Mitarbeiter.TelefonPrivat.SetIfPresent(mitarbeiter.TelefonPrivat),
 		db.Mitarbeiter.TelefonBusiness.SetIfPresent(mitarbeiter.TelefonBusiness),
+		db.Mitarbeiter.Sex.Set(mitarbeiter.Sex),
 	).Exec(ctx)
 	if err != nil {
 		sendQueryError(w, h.logger, err)

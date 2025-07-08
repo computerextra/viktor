@@ -12,6 +12,9 @@ import AngeboteÜbersicht from "./Pages/CMS/Angebote/page";
 import JobBearbeiten from "./Pages/CMS/Jobs/id";
 import JobAnlegen from "./Pages/CMS/Jobs/neu";
 import JobÜbersicht from "./Pages/CMS/Jobs/page";
+import MitarbeiterBearbeiten from "./Pages/CMS/Mitarbeiter/id";
+import MitarbeiterAnlegen from "./Pages/CMS/Mitarbeiter/neu";
+import MitarbeiterÜbersicht from "./Pages/CMS/Mitarbeiter/page";
 import Overview from "./Pages/CMS/Overview";
 
 createRoot(document.getElementById("root")!).render(
@@ -37,6 +40,11 @@ createRoot(document.getElementById("root")!).render(
                 <Route index element={<JobÜbersicht />} />
                 <Route path="Neu" element={<JobAnlegen />} />
                 <Route path=":id" element={<JobBearbeiten />} />
+              </Route>
+              <Route path="Mitarbeiter">
+                <Route index element={<MitarbeiterÜbersicht />} />
+                <Route path="Neu" element={<MitarbeiterAnlegen />} />
+                <Route path=":id" element={<MitarbeiterBearbeiten />} />
               </Route>
             </Route>
           </Route>

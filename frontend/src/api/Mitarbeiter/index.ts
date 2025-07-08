@@ -16,10 +16,15 @@ const MitarbeiterRes = z.object({
   Mobil_Business: z.string().optional(),
   Mobil_Privat: z.string().optional(),
   Telefon_Business: z.string().optional(),
+  HomeOffice: z.string().optional(),
+  Telefon_Intern_1: z.string().optional(),
+  Telefon_Intern_2: z.string().optional(),
+  Telefon_Privat: z.string().optional(),
 });
 
-type MitarbeiterRes = z.infer<typeof MitarbeiterRes>;
-type MitarbeiterMitAbteilungRes = MitarbeiterRes & {
+export type MitarbeiterRes = z.infer<typeof MitarbeiterRes>;
+
+export type MitarbeiterMitAbteilungRes = MitarbeiterRes & {
   Abteilung: {
     id: string;
     name: string;
