@@ -3,8 +3,10 @@ import axios, {
   type RawAxiosRequestHeaders,
 } from "axios";
 
+export const baseURL = "http://localhost:3000/api";
+
 export const client = axios.create({
-  baseURL: "http://localhost:3000/api",
+  baseURL: baseURL,
 });
 
 export const config: AxiosRequestConfig = {

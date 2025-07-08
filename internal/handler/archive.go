@@ -13,7 +13,7 @@ import (
 )
 
 type ArchiveProps struct {
-	Search string `schema:"name,required"`
+	Search string `schema:"search,required"`
 }
 
 func (h *Handler) SearchArchive(w http.ResponseWriter, r *http.Request) {

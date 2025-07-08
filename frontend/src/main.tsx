@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { HashRouter, Route, Routes } from "react-router";
 import "./index.css";
 import Layout from "./Layout";
+import Archive from "./Pages/Archiv/page";
 import AbteilungBearbeiten from "./Pages/CMS/Abteilungen/id";
 import AbteilungAnlegen from "./Pages/CMS/Abteilungen/neu";
 import AbteilungenÜbersicht from "./Pages/CMS/Abteilungen/page";
@@ -56,6 +57,7 @@ createRoot(document.getElementById("root")!).render(
                 <Route path=":id" element={<PartnerBearbeiten />} />
               </Route>
             </Route>
+            <Route path="Archiv" element={<Archive />} />
           </Route>
         </Route>
       </Routes>
