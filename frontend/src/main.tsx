@@ -20,7 +20,10 @@ import Overview from "./Pages/CMS/Overview";
 import PartnerBearbeiten from "./Pages/CMS/Partner/id";
 import PartnerAnlegen from "./Pages/CMS/Partner/neu";
 import PartnerÜbersicht from "./Pages/CMS/Partner/page";
+import EinkaufBearbeiten from "./Pages/Einkauf/id";
+import Einkauf from "./Pages/Einkauf/page";
 import Home from "./Pages/Home";
+import Warenlieferung from "./Pages/Warenlieferung/page";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -58,6 +61,11 @@ createRoot(document.getElementById("root")!).render(
               </Route>
             </Route>
             <Route path="Archiv" element={<Archive />} />
+            <Route path="Warenlieferung" element={<Warenlieferung />} />
+            <Route path="Einkauf">
+              <Route index element={<Einkauf />} />
+              <Route path=":id" element={<EinkaufBearbeiten />} />
+            </Route>
           </Route>
         </Route>
       </Routes>

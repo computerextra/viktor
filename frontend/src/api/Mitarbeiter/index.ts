@@ -51,6 +51,63 @@ export const MitarbeiterProps = z.object({
   Telefon_Privat: z.string().optional(),
 });
 
+export const EinkaufProps = z.object({
+  Abo: z.boolean().default(false).optional(),
+  Paypal: z.boolean().default(false).optional(),
+  Dinge: z.string(),
+  Geld: z.string().optional(),
+  Pfand: z.string().optional(),
+});
+
+const EinkaufListeRes = z.object({
+  id: z.string(),
+  Paypal: z.boolean().default(false).optional(),
+  Abonniert: z.boolean().default(false).optional(),
+  Dinge: z.string(),
+  Abgeschickt: z.date().optional(),
+  Geld: z.string().optional(),
+  Pfand: z.string().optional(),
+  Bild1: z.string().optional(),
+  Bild2: z.string().optional(),
+  Bild3: z.string().optional(),
+  Mitarbeiter: MitarbeiterRes,
+});
+export type EinkaufListeRes = z.infer<typeof EinkaufListeRes>;
+
+const EinkaufRes = z.object({
+  id: z.string(),
+  name: z.string(),
+  short: z.string().optional(),
+  image: z.boolean(),
+  sex: z.string(),
+  focus: z.string().optional(),
+  mail: z.string().email().optional(),
+  abteilungId: z.string().optional(),
+  Azubi: z.boolean(),
+  Geburtstag: z.date().optional(),
+  Gruppenwahl: z.string().optional(),
+  Mobil_Business: z.string().optional(),
+  Mobil_Privat: z.string().optional(),
+  Telefon_Business: z.string().optional(),
+  HomeOffice: z.string().optional(),
+  Telefon_Intern_1: z.string().optional(),
+  Telefon_Intern_2: z.string().optional(),
+  Telefon_Privat: z.string().optional(),
+  Einkauf: z.object({
+    id: z.string(),
+    Paypal: z.boolean().default(false).optional(),
+    Abonniert: z.boolean().default(false).optional(),
+    Dinge: z.string(),
+    Abgeschickt: z.date().optional(),
+    Geld: z.string().optional(),
+    Pfand: z.string().optional(),
+    Bild1: z.string().optional(),
+    Bild2: z.string().optional(),
+    Bild3: z.string().optional(),
+  }),
+});
+export type EinkaufRes = z.infer<typeof EinkaufRes>;
+
 const GetMitarbeiters = async () => {
   const res = await client.get<MitarbeiterRes[]>("/Mitarbeiter", config);
   return res.data ?? null;
@@ -144,6 +201,41 @@ const UpdateMitarbeiter = async (
 
 const DeleteMitarbeiter = async (id: string) => {
   const res = await client.delete("/Mitarbeiter/" + id, config);
+  return res.data ?? null;
+};
+
+export const GetEinkauf = async (mitarbeiterId: string) => {
+  const res = await client.get<EinkaufRes>("/Einkauf/" + mitarbeiterId, config);
+  return res.data ?? null;
+};
+
+export const GetListe = async () => {
+  const res = await client.get<EinkaufListeRes[]>("/Einkauf", config);
+  return res.data ?? null;
+};
+
+export const SkipEinkauf = async (id: string) => {
+  const res = await client.post(`/Einkauf/${id}/Skip`, config);
+  return res.data ?? null;
+};
+
+export const DeleteEinkauf = async (id: string) => {
+  const res = await client.delete(`/Einkauf/${id}`, config);
+  return res.data ?? null;
+};
+
+export const UpdateEinkauf = async (
+  id: string,
+  props: z.infer<typeof EinkaufProps>
+) => {
+  const data = new FormData();
+  data.append("Abo", props.Abo ? "true" : "false");
+  data.append("Paypal", props.Paypal ? "true" : "false");
+  data.append("Dinge", props.Dinge);
+  if (props.Geld) data.append("Geld", props.Geld);
+  if (props.Pfand) data.append("Pfand", props.Pfand);
+
+  const res = await client.post("/Einkauf/" + id, data, config);
   return res.data ?? null;
 };
 
