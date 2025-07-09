@@ -1,5 +1,5 @@
-//go:generate bun install --cwd=frontend
-//go:generate bun run --cwd=frontend build
+//go:generate bunx @tailwindcss/cli -i ./input.css -o ./static/css/style.css --minify
+//go:generate templ generate
 //go:generate go run github.com/steebchen/prisma-client-go generate
 package main
 
@@ -14,8 +14,8 @@ import (
 	"github.com/joho/godotenv"
 )
 
-//go:embed frontend/dist
-var Frontend embed.FS
+//go:embed static
+var files embed.FS
 
 func main() {
 	godotenv.Load()
@@ -25,7 +25,7 @@ func main() {
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer cancel()
 
-	app, err := app.New(logger, app.Config{}, Frontend)
+	app, err := app.New(logger, app.Config{}, files)
 
 	if err != nil {
 		logger.Error("failed to create app", slog.Any("error", err))

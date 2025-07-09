@@ -14,27 +14,26 @@ import (
 	"github.com/computerextra/viktor/db"
 	"github.com/computerextra/viktor/internal/middleware"
 	"github.com/computerextra/viktor/internal/util/flash"
-	"github.com/rs/cors"
 )
 
 type App struct {
-	config   Config
-	frontend fs.FS
-	logger   *slog.Logger
-	db       *db.PrismaClient
+	config Config
+	files  fs.FS
+	logger *slog.Logger
+	db     *db.PrismaClient
 }
 
-func New(logger *slog.Logger, config Config, frontend fs.FS) (*App, error) {
+func New(logger *slog.Logger, config Config, files fs.FS) (*App, error) {
 	client := db.NewClient()
 	if err := client.Prisma.Connect(); err != nil {
 		return nil, fmt.Errorf("failed to connect to database: %w", err)
 	}
 
 	return &App{
-		config:   config,
-		logger:   logger,
-		frontend: frontend,
-		db:       client,
+		config: config,
+		logger: logger,
+		files:  files,
+		db:     client,
 	}, nil
 }
 
@@ -49,15 +48,10 @@ func (a *App) Start(ctx context.Context) error {
 		flash.Middleware,
 	)
 
-	c := cors.New(cors.Options{
-		AllowedOrigins: []string{"*"},
-		AllowedMethods: []string{http.MethodGet, http.MethodPost, http.MethodDelete},
-	})
-
 	port := getPort(3000)
 	srv := &http.Server{
 		Addr:           fmt.Sprintf(":%d", port),
-		Handler:        c.Handler(middlewares(router)),
+		Handler:        middlewares(router),
 		MaxHeaderBytes: 1 << 20, // Max Header size (e.g. 1MB)
 	}
 

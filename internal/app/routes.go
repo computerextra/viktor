@@ -4,27 +4,47 @@ import (
 	"fmt"
 	"io/fs"
 	"net/http"
+	"os"
 
+	"github.com/computerextra/viktor/frontend"
 	"github.com/computerextra/viktor/internal/handler"
 )
 
 func (a *App) loadRoutes() (http.Handler, error) {
+	static, err := a.loadStaticFiles()
+	if err != nil {
+		return nil, fmt.Errorf("failed to load static files: %w", err)
+	}
 	router := http.NewServeMux()
 
-	reactApp, err := fs.Sub(a.frontend, "frontend/dist")
-	if err != nil {
-		return nil, fmt.Errorf("error finding dist folder: %w", err)
-	}
-
-	router.Handle("GET /", http.FileServerFS(reactApp))
+	router.Handle("GET /static/", http.StripPrefix("/static", static))
 
 	a.loadPages(router)
 
 	return router, nil
 }
 
+func (a *App) loadStaticFiles() (http.Handler, error) {
+	if os.Getenv("BUILD_MODE") == "develop" {
+		return http.FileServer(http.Dir("./static")), nil
+	}
+	mode, ok := os.LookupEnv("MODE")
+	if ok && mode == "dev" {
+		return http.FileServer(http.Dir("./static")), nil
+	}
+
+	static, err := fs.Sub(a.files, "static")
+	if err != nil {
+		return nil, fmt.Errorf("failed to subdir static: %w", err)
+	}
+
+	return http.FileServerFS(static), nil
+}
+
 func (a *App) loadPages(router *http.ServeMux) {
 	h := handler.New(a.logger, a.db)
+
+	router.Handle("GET /{$}", handler.Component(frontend.Index()))
 
 	// CMS ROUTES BEGIN
 

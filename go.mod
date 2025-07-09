@@ -3,10 +3,12 @@ module github.com/computerextra/viktor
 go 1.24.4
 
 require (
+	github.com/Oudwins/tailwind-merge-go v0.2.1
+	github.com/a-h/templ v0.3.906
 	github.com/denisenkom/go-mssqldb v0.12.3
 	github.com/gorilla/schema v1.4.1
 	github.com/joho/godotenv v1.5.1
-	github.com/rs/cors v1.11.1
+	github.com/rotemhoresh/shadcn-templ v0.0.0-20241130210549-e4c263e78e5b
 	github.com/shopspring/decimal v1.4.0
 	gopkg.in/mail.v2 v2.3.1
 )

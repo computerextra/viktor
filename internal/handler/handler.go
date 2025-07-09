@@ -7,6 +7,7 @@ import (
 
 	"github.com/computerextra/viktor/db"
 
+	"github.com/a-h/templ"
 	"github.com/gorilla/schema"
 )
 
@@ -23,6 +24,13 @@ func New(
 		logger: logger,
 		db:     db,
 	}
+}
+
+func Component(comp templ.Component) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Add("Content-Type", "text/html")
+		comp.Render(r.Context(), w)
+	})
 }
 
 var decoder = schema.NewDecoder()
