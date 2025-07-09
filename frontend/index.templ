@@ -1,26 +1,7 @@
 package frontend
 
 import "github.com/computerextra/viktor/internal/util/flash"
-
-templ home() {
-	<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house-icon lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"></path><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
-}
-
-templ einkauf() {
-	<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shopping-cart-icon lucide-shopping-cart"><circle cx="8" cy="21" r="1"></circle><circle cx="19" cy="21" r="1"></circle><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"></path></svg>
-}
-
-templ archiv() {
-	<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-archive-icon lucide-archive"><rect width="20" height="5" x="2" y="3" rx="1"></rect><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"></path><path d="M10 12h4"></path></svg>
-}
-
-templ warenlieferung() {
-	<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-package-open-icon lucide-package-open"><path d="M12 22v-9"></path><path d="M15.17 2.21a1.67 1.67 0 0 1 1.63 0L21 4.57a1.93 1.93 0 0 1 0 3.36L8.82 14.79a1.655 1.655 0 0 1-1.64 0L3 12.43a1.93 1.93 0 0 1 0-3.36z"></path><path d="M20 13v3.87a2.06 2.06 0 0 1-1.11 1.83l-6 3.08a1.93 1.93 0 0 1-1.78 0l-6-3.08A2.06 2.06 0 0 1 4 16.87V13"></path><path d="M21 12.43a1.93 1.93 0 0 0 0-3.36L8.83 2.2a1.64 1.64 0 0 0-1.63 0L3 4.57a1.93 1.93 0 0 0 0 3.36l12.18 6.86a1.636 1.636 0 0 0 1.63 0z"></path></svg>
-}
-
-templ cms() {
-	<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-package-open-icon lucide-package-open"><path d="M12 22v-9"></path><path d="M15.17 2.21a1.67 1.67 0 0 1 1.63 0L21 4.57a1.93 1.93 0 0 1 0 3.36L8.82 14.79a1.655 1.655 0 0 1-1.64 0L3 12.43a1.93 1.93 0 0 1 0-3.36z"></path><path d="M20 13v3.87a2.06 2.06 0 0 1-1.11 1.83l-6 3.08a1.93 1.93 0 0 1-1.78 0l-6-3.08A2.06 2.06 0 0 1 4 16.87V13"></path><path d="M21 12.43a1.93 1.93 0 0 0 0-3.36L8.83 2.2a1.64 1.64 0 0 0-1.63 0L3 4.57a1.93 1.93 0 0 0 0 3.36l12.18 6.86a1.636 1.636 0 0 0 1.63 0z"></path></svg>
-}
+import "github.com/computerextra/viktor/frontend/ui"
 
 templ Page(title string) {
 	{{
@@ -48,9 +29,7 @@ templ Page(title string) {
 			<link href="/static/css/style.css" rel="stylesheet"/>
 			<title>Viktor | { title }</title>
 			// Alpine.js
-			<script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
-			<script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/focus@3.x.x/dist/cdn.min.js"></script>
-			<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+			<script src="//unpkg.com/alpinejs" defer></script>
 		</head>
 		<body>
 			<section class="py-6 z-50">
@@ -67,27 +46,27 @@ templ Page(title string) {
 									<a href={ item.Link } class={ buttonStyle }>
 										if item.Icon == "Home" {
 											<span class={ iconStyle }>
-												@home()
+												@ui.HouseIcon()
 											</span>
 										}
 										if item.Icon == "Einkauf" {
 											<span class={ iconStyle }>
-												@einkauf()
+												@ui.ShoppingCardIcon()
 											</span>
 										}
 										if item.Icon == "Archiv" {
 											<span class={ iconStyle }>
-												@archiv()
+												@ui.ArchiveIcon()
 											</span>
 										}
 										if item.Icon == "Warenlieferung" {
 											<span class={ iconStyle }>
-												@warenlieferung()
+												@ui.PackageOpenIcon()
 											</span>
 										}
 										if item.Icon == "CMS" {
 											<span class={ iconStyle }>
-												@cms()
+												@ui.DatabaseIcon()
 											</span>
 										}
 										<span>{ item.Name }</span>
@@ -113,6 +92,29 @@ templ Index() {
 			if errExist {
 				<div class="mt-4 text-sm font-medium text-red-600">{ errMsg }</div>
 			}
+			<div class="grid grid-cols-4 gap-5 items-center">
+				@ui.Button(ui.Default, ui.None) {
+					Test123
+				}
+				@ui.Button(ui.Alternative, ui.Check) {
+					Test123
+				}
+				@ui.Button(ui.Brutalist, ui.Check) {
+					Test123
+				}
+				@ui.Button(ui.Confirm, ui.Check) {
+					Test123
+				}
+				@ui.Button(ui.Cancel, ui.Cross) {
+					Test123
+				}
+				@ui.Button(ui.Warning, ui.Alert) {
+					Test123
+				}
+				@ui.Button(ui.Info, ui.InfoType) {
+					Test123
+				}
+			</div>
 		</div>
 	}
 }

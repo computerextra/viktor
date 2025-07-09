@@ -1,0 +1,131 @@
+package ui
+
+type IconType int
+
+const (
+	House IconType = iota
+	None
+	ShoppingCard
+	Archive
+	PackageOpen
+	Database
+	Check
+	Cross
+	InfoType
+	Alert
+)
+
+func (t IconType) String() string {
+	switch t {
+	case None:
+		return ""
+	case House:
+		return "HouseIcon"
+	case ShoppingCard:
+		return "ShoppingCardIcon"
+	case Archive:
+		return "ArchiveIcon"
+	case PackageOpen:
+		return "PackageOpenIcon"
+	case Database:
+		return "DatabaseIcon"
+	case Check:
+		return "CheckIcon"
+	case Cross:
+		return "CrossIcon"
+	case InfoType:
+		return "InfoIcon"
+	case Alert:
+		return "AlertIcon"
+	default:
+		return ""
+	}
+}
+
+type ButtonVariant int
+
+const (
+	Default ButtonVariant = iota
+	Alternative
+	Brutalist
+	Confirm
+	Cancel
+	Warning
+	Info
+)
+
+func (v ButtonVariant) ButtonClass() string {
+	switch v {
+	case Default:
+		return "group border-4 border-black bg-white px-6 py-3 text-lg font-bold uppercase text-black/80 shadow-[8px_8px_0_#000] transition-all duration-300 ease-in-out hover:translate-x-1 hover:translate-y-1 hover:text-black hover:shadow-[4px_4px_0_#000] active:translate-x-2 active:translate-y-2 active:shadow-none"
+	case Alternative:
+		return "group border-4 border-black bg-yellow-400 px-6 py-3 text-lg font-bold uppercase text-black/80 shadow-[8px_8px_0_#000] transition-all duration-300 ease-in-out hover:-rotate-2 hover:scale-105 active:rotate-0 active:scale-100 active:shadow-none"
+	case Brutalist:
+		return "group border-4 border-black bg-black px-6 py-3 text-lg font-bold uppercase text-white shadow-[8px_8px_0_#000] transition-all duration-300 ease-in-out hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[12px_12px_0_#00a4ef] active:translate-x-1 active:translate-y-1 active:bg-white active:text-black active:shadow-none"
+	case Confirm:
+		return "group border-4 border-black bg-green-500 px-6 py-3 text-lg font-bold uppercase text-black shadow-[8px_8px_0_#006400] transition-all duration-300 ease-in-out hover:translate-x-1 hover:translate-y-1 hover:bg-green-600 hover:shadow-[4px_4px_0_#006400] active:translate-x-2 active:translate-y-2 active:shadow-none"
+	case Cancel:
+		return "group border-4 border-black bg-red-500 px-6 py-3 text-lg font-bold uppercase text-white shadow-[8px_8px_0_#8B0000] transition-all duration-300 ease-in-out hover:-translate-x-1 hover:-translate-y-1 hover:bg-red-600 hover:shadow-[12px_12px_0_#8B0000] active:translate-x-1 active:translate-y-1 active:bg-red-700 active:shadow-none"
+	case Warning:
+		return "group border-4 border-black bg-orange-500 px-6 py-3 text-lg font-bold uppercase text-black shadow-[8px_8px_0_#CC5500] transition-all duration-300 ease-in-out hover:-translate-x-1 hover:-translate-y-1 hover:bg-orange-600 hover:shadow-[12px_12px_0_#CC5500] active:translate-x-1 active:translate-y-1 active:shadow-none"
+	case Info:
+		return "group border-4 border-black bg-blue-300 px-6 py-3 text-lg font-bold uppercase text-black shadow-[8px_8px_0_#0077BE] transition-all duration-300 ease-in-out hover:translate-x-1 hover:translate-y-1 hover:bg-blue-400 hover:shadow-[4px_4px_0_#0077BE] active:translate-x-2 active:translate-y-2 active:shadow-none"
+	default:
+		return "group border-4 border-black bg-white px-6 py-3 text-lg font-bold uppercase text-black/80 shadow-[8px_8px_0_#000] transition-all duration-300 ease-in-out hover:translate-x-1 hover:translate-y-1 hover:text-black hover:shadow-[4px_4px_0_#000] active:translate-x-2 active:translate-y-2 active:shadow-none"
+	}
+}
+
+func (v ButtonVariant) IconClass() string {
+	switch v {
+	case Default:
+		return "text-2xl group-hover:animate-bounce"
+	case Alternative:
+		return "text-2xl transition-transform duration-300 group-hover:rotate-12"
+	case Brutalist:
+		return "text-2xl transition-transform duration-300 group-hover:scale-110"
+	case Confirm:
+		return "text-2xl group-hover:animate-bounce"
+	case Cancel:
+		return "text-2xl transition-transform duration-300 rotate-45 group-hover:rotate-12"
+	case Warning:
+		return "text-2xl transition-transform duration-300 group-hover:scale-110"
+	case Info:
+		return "text-2xl group-hover:animate-bounce"
+	default:
+		return "text-2xl group-hover:animate-bounce"
+	}
+}
+
+templ Button(variant ButtonVariant, icon IconType) {
+	<button class={ variant.ButtonClass() }>
+		<div class="flex items-center justify-center space-x-2">
+			<div class={ variant.IconClass() }>
+				switch icon.String() {
+					case "HouseIcon":
+						@HouseIcon()
+					case "ShoppingCardIcon":
+						@ShoppingCardIcon()
+					case "ArchiveIcon":
+						@ArchiveIcon()
+					case "PackageOpenIcon":
+						@PackageOpenIcon()
+					case "DatabaseIcon":
+						@DatabaseIcon()
+					case "CheckIcon":
+						@CheckIcon()
+					case "CrossIcon":
+						@CrossIcon()
+					case "InfoIcon":
+						@InfoIcon()
+					case "AlertIcon":
+						@AlertIcon()
+					default:
+						<span></span>
+				}
+			</div>
+			<span>
+				{ children... }
+			</span>
+		</div>
+	</button>
+}
