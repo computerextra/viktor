@@ -1,0 +1,98 @@
+package frontend
+
+import "github.com/computerextra/viktor/frontend/ui/icons"
+
+templ Page(title string) {
+	{{
+		type NavItem struct {
+			Name string
+			Link string
+			Icon string
+		}
+		navItems := []NavItem{
+			{Name: "Start", Link: "/", Icon: "Home"},
+			{Name: "Einkauf", Link: "/Einkauf", Icon: "Einkauf"},
+			{Name: "CE Archiv", Link: "/Archiv", Icon: "Archiv"},
+			{Name: "Warenlieferung", Link: "/Warenlieferung", Icon: "Warenlieferung"},
+			{Name: "CMS", Link: "/CMS", Icon: "CMS"},
+		}
+
+		buttonStyle := "group border-4 text-black/80 hover:text-black border-black shadow-[8px_8px_0_#000] px-3 py-2 bg-white hover:translate-x-1 hover:translate-y-1 hover:shadow-[4px_4px_0_#000] active:translate-x-2 active:translate-y-2 active:shadow-none transition-all duration-300 ease-in-out font-bold uppercase flex items-center justify-center space-x-2"
+		iconStyle := "text-lg"
+	}}
+	<!DOCTYPE html>
+	<html lang="de">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<link href="/static/css/style.css" rel="stylesheet"/>
+			<title>Viktor | { title }</title>
+			// Alpine.js
+			<script src="//unpkg.com/alpinejs" defer></script>
+		</head>
+		<body>
+			<div class="relative bg-white overflow-hidden min-h-screen">
+				<div class="absolute inset-0 bg-white z-0">
+					<div class={ `absolute inset-0 bg-[${config.backgroundGradient}] bg-[length:60px_60px] opacity-50` }></div>
+					<div class="absolute inset-0 flex items-center justify-center overflow-hidden opacity-10">
+						<span class="text-[40vw] font-black text-black whitespace-nowrap transform -rotate-45">VIKTOR</span>
+					</div>
+				</div>
+				<div class="absolute inset-0 bg-white z-0">
+					<div class={ `absolute inset-0 bg-[${config.backgroundGradient}] bg-[length:60px_60px] opacity-50` }></div>
+					<div class="absolute inset-0 flex items-center justify-center overflow-hidden opacity-10">
+						<span class="text-[40vw] font-black text-black whitespace-nowrap transform -rotate-45">VIKTOR</span>
+					</div>
+					<section class="py-6 z-50">
+						<nav class="bg-white mx-4 md:mx-10 border-8 border-black shadow-[15px_15px_0_#000] p-3 md:p-4 mb-8 transform -rotate-1 transition-all duration-300 hover:rotate-0 hover:shadow-[20px_20px_0_#000]">
+							<div class="max-w-7xl mx-auto">
+								<div class="flex items-center justify-between">
+									<div class="group">
+										<div class="text-2xl md:text-3xl font-bold text-black bg-yellow-400 px-3 py-2 border-4 border-black transform rotate-2 transition-transform duration-[1000ms] ease-in-out hover:rotate-[-1deg] hover:translate-x-1 hover:scale-105">
+											Viktor
+										</div>
+									</div>
+									<div class="flex space-x-2 md:space-x-4">
+										for _, item := range navItems {
+											<a href={ item.Link } class={ buttonStyle }>
+												if item.Icon == "Home" {
+													<span class={ iconStyle }>
+														@icons.HouseIcon()
+													</span>
+												}
+												if item.Icon == "Einkauf" {
+													<span class={ iconStyle }>
+														@icons.ShoppingCardIcon()
+													</span>
+												}
+												if item.Icon == "Archiv" {
+													<span class={ iconStyle }>
+														@icons.ArchiveIcon()
+													</span>
+												}
+												if item.Icon == "Warenlieferung" {
+													<span class={ iconStyle }>
+														@icons.PackageOpenIcon()
+													</span>
+												}
+												if item.Icon == "CMS" {
+													<span class={ iconStyle }>
+														@icons.DatabaseIcon()
+													</span>
+												}
+												<span>{ item.Name }</span>
+											</a>
+										}
+									</div>
+								</div>
+							</div>
+						</nav>
+					</section>
+					<div class="relative overflow-hidden min-h-screen">
+						{ children... }
+					</div>
+				</div>
+			</div>
+		</body>
+	</html>
+}

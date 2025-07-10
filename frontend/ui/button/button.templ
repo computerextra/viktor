@@ -1,4 +1,6 @@
-package ui
+package button
+
+import "github.com/computerextra/viktor/frontend/ui/icons"
 
 type IconType int
 
@@ -102,23 +104,23 @@ templ Button(variant ButtonVariant, icon IconType) {
 			<div class={ variant.IconClass() }>
 				switch icon.String() {
 					case "HouseIcon":
-						@HouseIcon()
+						@icons.HouseIcon()
 					case "ShoppingCardIcon":
-						@ShoppingCardIcon()
+						@icons.ShoppingCardIcon()
 					case "ArchiveIcon":
-						@ArchiveIcon()
+						@icons.ArchiveIcon()
 					case "PackageOpenIcon":
-						@PackageOpenIcon()
+						@icons.PackageOpenIcon()
 					case "DatabaseIcon":
-						@DatabaseIcon()
+						@icons.DatabaseIcon()
 					case "CheckIcon":
-						@CheckIcon()
+						@icons.CheckIcon()
 					case "CrossIcon":
-						@CrossIcon()
+						@icons.CrossIcon()
 					case "InfoIcon":
-						@InfoIcon()
+						@icons.InfoIcon()
 					case "AlertIcon":
-						@AlertIcon()
+						@icons.AlertIcon()
 					default:
 						<span></span>
 				}

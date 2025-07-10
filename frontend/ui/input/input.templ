@@ -1,0 +1,50 @@
+package input
+
+import "github.com/computerextra/viktor/frontend/ui/icons"
+
+type InputType int
+
+const (
+	Default InputType = iota
+	Alternative
+	Brutalist
+	Search
+)
+
+func (t InputType) String() string {
+	switch t {
+	case Default:
+		return "bg-white shadow-[8px_8px_0_#000] group-hover:translate-x-1 group-hover:translate-y-1 group-hover:shadow-[4px_4px_0_#000] group-focus-within:translate-x-2 group-focus-within:translate-y-2 group-focus-within:shadow-none"
+	case Alternative:
+		return "bg-yellow-400 shadow-[8px_8px_0_#000] group-hover:-rotate-2 group-hover:scale-105 group-focus-within:rotate-0 group-focus-within:scale-100 group-focus-within:shadow-none"
+	case Brutalist:
+		return "bg-black text-white shadow-[8px_8px_0_#00a4ef] group-hover:-translate-x-1 group-hover:-translate-y-1 group-hover:shadow-[12px_12px_0_#00a4ef] group-focus-within:translate-x-0 group-focus-within:translate-y-0 group-focus-within:shadow-none group-focus-within:bg-white group-focus-within:text-black placeholder-gray-500 group-focus-within:placeholder-black"
+	case Search:
+		return "pl-10 bg-blue-200 shadow-[8px_8px_0_#0077BE] group-hover:translate-x-1 group-hover:translate-y-1 group-hover:shadow-[4px_4px_0_#0077BE] group-focus-within:translate-x-2 group-focus-within:translate-y-2 group-focus-within:shadow-none"
+	default:
+		return "bg-white shadow-[8px_8px_0_#000] group-hover:translate-x-1 group-hover:translate-y-1 group-hover:shadow-[4px_4px_0_#000] group-focus-within:translate-x-2 group-focus-within:translate-y-2 group-focus-within:shadow-none"
+	}
+}
+
+templ Input(InputType InputType, Label string, Type string, Placeholder string, id string) {
+	<div class="mb-4">
+		<label for={ id } class="block mb-2 font-bold text-lg uppercase">{ Label }</label>
+		<div class="relative group">
+			<input
+				type={ Type }
+				id={ id }
+				placeholder={ Placeholder }
+				class={
+					"w-full border-4 border-black px-4 py-2 font-bold transition-all duration-300 ease-in-out focus:outline-none",
+					InputType.String(),
+					"invalid:bg-red-200 shadow-[8px_8px_0_#8B0000] invalid:group-hover:translate-x-1 invalid:group-hover:translate-y-1 invalid:group-hover:shadow-[4px_4px_0_#8B0000] vgroup-focus-within:translate-x-2 invalid:group-focus-within:translate-y-2 invalid:group-focus-within:shadow-none",
+				}
+			/>
+			if InputType == Search {
+				<div class="text-blue-500 absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none transition-all duration-300 ease-in-out group-hover:translate-x-1 group-hover:translate-y-1 group-focus-within:translate-x-2 group-focus-within:translate-y-2">
+					@icons.SearchIcon()
+				</div>
+			}
+		</div>
+	</div>
+}
