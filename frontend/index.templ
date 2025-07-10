@@ -2,8 +2,10 @@ package frontend
 
 import "github.com/computerextra/viktor/internal/util/flash"
 import "github.com/computerextra/viktor/frontend/ui/toast"
+import "github.com/computerextra/viktor/frontend/components"
+import "github.com/computerextra/viktor/db"
 
-templ Index() {
+templ Index(Mitarbeiter []db.MitarbeiterModel) {
 	{{
 		errMsg, errExist := flash.GetFlashMessage(ctx, "error")
 	}}
@@ -21,6 +23,7 @@ templ Index() {
 						<br/>
 						Versprechen kann ich jedoch erstmal nichts.
 					</p>
+					@components.Geburtstagsliste(Mitarbeiter)
 				</div>
 			</div>
 		</div>

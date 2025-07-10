@@ -1,0 +1,49 @@
+package components
+
+import "github.com/computerextra/viktor/db"
+import "time"
+import "math"
+
+templ Geburtstagsliste(Mitarbeiter []db.MitarbeiterModel) {
+	{{
+	loc, _ := time.LoadLocation("Europe/Berlin")
+	var Heute []db.MitarbeiterModel
+	var Zukunft []db.MitarbeiterModel
+	var Vergangen []db.MitarbeiterModel
+
+	Year := time.Now().Year()
+	for _, ma := range Mitarbeiter {
+		geb, ok := ma.Geburtstag()
+		if ok {
+			Geburtstag := time.Date(Year, geb.Month(), geb.Day(), 0, 0, 0, 0, loc)
+			since := math.Ceil(time.Since(Geburtstag).Hours() * 24)
+
+			if since == 0 {
+				Heute = append(Heute, ma)
+			} else if since < 0 {
+				Zukunft = append(Zukunft, ma)
+			} else {
+				Vergangen = append(Vergangen, ma)
+			}
+		}
+	}
+	}}
+	<h1>Heute</h1>
+	for _, ma := range Heute {
+		<p>
+			{ ma.Name }
+		</p>
+	}
+	<h1>Zukunft</h1>
+	for _, ma := range Zukunft {
+		<p>
+			{ ma.Name }
+		</p>
+	}
+	<h1>Vergangen</h1>
+	for _, ma := range Vergangen {
+		<p>
+			{ ma.Name }
+		</p>
+	}
+}

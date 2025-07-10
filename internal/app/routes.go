@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/computerextra/viktor/frontend"
 	"github.com/computerextra/viktor/internal/handler"
 )
 
@@ -44,7 +43,7 @@ func (a *App) loadStaticFiles() (http.Handler, error) {
 func (a *App) loadPages(router *http.ServeMux) {
 	h := handler.New(a.logger, a.db)
 
-	router.Handle("GET /{$}", handler.Component(frontend.Index()))
+	router.HandleFunc("GET /{$}", h.GetIndex)
 
 	// CMS ROUTES BEGIN
 

@@ -6,8 +6,19 @@ import (
 	"time"
 
 	"github.com/computerextra/viktor/db"
+	"github.com/computerextra/viktor/frontend"
 	"github.com/computerextra/viktor/internal/util/flash"
 )
+
+func (h *Handler) GetIndex(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	res, err := h.db.Mitarbeiter.FindMany().OrderBy(db.Mitarbeiter.Name.Order(db.SortOrderAsc)).Exec(ctx)
+	if err != nil {
+		sendQueryError(w, h.logger, err)
+	}
+
+	frontend.Index(res).Render(ctx, w)
+}
 
 func (h *Handler) GetMitarbeiters(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
