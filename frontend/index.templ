@@ -1,6 +1,7 @@
 package frontend
 
 import "github.com/computerextra/viktor/internal/util/flash"
+import "github.com/computerextra/viktor/frontend/ui/toast"
 
 templ Index() {
 	{{
@@ -21,10 +22,14 @@ templ Index() {
 						Versprechen kann ich jedoch erstmal nichts.
 					</p>
 				</div>
-				if errExist {
-					<div class="mt-4 text-sm font-medium text-red-600">{ errMsg }</div>
-				}
 			</div>
 		</div>
+		if errExist {
+			<div class="container mx-auto">
+				<div class="W-full">
+					@toast.Toast(toast.Error, "Fehler", errMsg)
+				</div>
+			</div>
+		}
 	}
 }

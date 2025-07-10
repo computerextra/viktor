@@ -10,6 +10,5 @@ https://www.smarterkits.dev/tailwind/components/brutalism/brutalism-bento
 
 https://www.smarterkits.dev/tailwind/components/brutalism/brutalism-benefits
 
-https://www.smarterkits.dev/tailwind/components/brutalism/brutalism-toast
 
 https://www.smarterkits.dev/tailwind/components/brutalism/brutalism-artist-card
