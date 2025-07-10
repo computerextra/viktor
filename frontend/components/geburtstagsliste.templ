@@ -3,47 +3,109 @@ package components
 import "github.com/computerextra/viktor/db"
 import "time"
 import "math"
+import "sort"
+import "github.com/computerextra/viktor/frontend/ui/icons"
+
+type Geburtstag struct {
+	Name string
+	Diff int
+	Date time.Time
+}
 
 templ Geburtstagsliste(Mitarbeiter []db.MitarbeiterModel) {
 	{{
 	loc, _ := time.LoadLocation("Europe/Berlin")
-	var Heute []db.MitarbeiterModel
-	var Zukunft []db.MitarbeiterModel
-	var Vergangen []db.MitarbeiterModel
+	var Heute []Geburtstag
+	var Zukunft []Geburtstag
+	var Vergangen []Geburtstag
 
 	Year := time.Now().Year()
 	for _, ma := range Mitarbeiter {
 		geb, ok := ma.Geburtstag()
 		if ok {
-			Geburtstag := time.Date(Year, geb.Month(), geb.Day(), 0, 0, 0, 0, loc)
-			since := math.Ceil(time.Since(Geburtstag).Hours() * 24)
+			maGeburtstag := time.Date(Year, geb.Month(), geb.Day(), 0, 0, 0, 0, loc)
+			since := math.Ceil(time.Since(maGeburtstag).Hours() * 24)
 
 			if since == 0 {
-				Heute = append(Heute, ma)
+				Heute = append(Heute, Geburtstag{
+					Name: ma.Name,
+					Diff: int(since),
+					Date: maGeburtstag,
+				})
 			} else if since < 0 {
-				Zukunft = append(Zukunft, ma)
+				Zukunft = append(Zukunft, Geburtstag{
+					Name: ma.Name,
+					Diff: int(since),
+					Date: maGeburtstag,
+				})
 			} else {
-				Vergangen = append(Vergangen, ma)
+				Vergangen = append(Vergangen, Geburtstag{
+					Name: ma.Name,
+					Diff: int(since),
+					Date: maGeburtstag,
+				})
 			}
 		}
 	}
+	sort.SliceStable(Heute, func(i, j int) bool {
+		return Heute[i].Diff < Heute[j].Diff
+	})
+	sort.SliceStable(Zukunft, func(i, j int) bool {
+		return Zukunft[i].Diff < Zukunft[j].Diff
+	})
+	sort.SliceStable(Vergangen, func(i, j int) bool {
+		return Vergangen[i].Diff < Vergangen[j].Diff
+	})
 	}}
-	<h1>Heute</h1>
-	for _, ma := range Heute {
-		<p>
-			{ ma.Name }
-		</p>
+	if len(Heute) > 0 {
+		for _, ma := range Heute {
+			<div class="relative rotate-2 transform transition-all duration-300 hover:rotate-0 hover:scale-105">
+				<div class="absolute inset-0 bg-black translate-x-2 translate-y-2"></div>
+				<div class="relative bg-red-400 border-4 border-black p-4">
+					<div class="flex items-center gap-3">
+						<div class="bg-white border-4 border-black p-2">
+							<div class="text-xl text-black">
+								@icons.InfoIcon()
+							</div>
+						</div>
+						<p class="font-black uppercase">{ ma.Name } hat heute Geburtstag</p>
+					</div>
+				</div>
+			</div>
+		}
 	}
-	<h1>Zukunft</h1>
-	for _, ma := range Zukunft {
-		<p>
-			{ ma.Name }
-		</p>
+	if len(Zukunft) > 0 {
+		<h1>Zukünftige Geburtstage</h1>
+		<div class="w-[60%] mx-auto">
+			for _, ma := range Zukunft {
+				@geburtstagsToast(ma.Name, ma.Diff, ma.Date)
+			}
+		</div>
 	}
-	<h1>Vergangen</h1>
+	<h1>Vergangene Geburtstage</h1>
 	for _, ma := range Vergangen {
-		<p>
-			{ ma.Name }
-		</p>
+		@geburtstagsToast(ma.Name, ma.Diff, ma.Date)
 	}
+}
+
+templ geburtstagsToast(Name string, diff int, date time.Time) {
+	<div class="relative -rotate-2 transform transition-all duration-300 hover:rotate-0 hover:scale-105">
+		<div class="absolute inset-0 bg-black translate-x-2 translate-y-2"></div>
+		<div class="relative bg-white border-4 border-black p-4">
+			<div class="flex items-center gap-3">
+				<div>
+					<p class="font-black uppercase">
+						{ Name } - { date.Format("02.01.2006") }
+					</p>
+					<p class="text-sm font-bold">
+						if diff > 0 {
+							<span>In { diff } Tagen</span>
+						} else {
+							<span>Vor { diff*-1 } Tagen</span>
+						}
+					</p>
+				</div>
+			</div>
+		</div>
+	</div>
 }

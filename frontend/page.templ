@@ -54,7 +54,7 @@ templ Page(title string) {
 									</div>
 									<div class="flex space-x-2 md:space-x-4">
 										for _, item := range navItems {
-											<a href={ item.Link } class={ buttonStyle }>
+											<a href={ templ.SafeURL(item.Link) } class={ buttonStyle }>
 												if item.Icon == "Home" {
 													<span class={ iconStyle }>
 														@icons.HouseIcon()
