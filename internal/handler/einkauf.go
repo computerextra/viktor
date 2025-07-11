@@ -12,8 +12,8 @@ import (
 )
 
 type EinkaufProps struct {
-	Abo    string  `schema:"Abo,default:false"`
-	Paypal string  `schema:"Paypal,default:false"`
+	Abo    bool    `schema:"Abo,default:false"`
+	Paypal bool    `schema:"Paypal,default:false"`
 	Dinge  string  `schema:"Dinge,required"`
 	Geld   *string `schema:"Geld"`
 	Pfand  *string `schema:"Pfand"`
@@ -143,23 +143,13 @@ func (h *Handler) UpdateEinkauf(w http.ResponseWriter, r *http.Request) {
 	}
 	einkauId, _ := mitarbeiter.EinkaufID()
 
-	var Abo bool = false
-	var Paypal bool = false
-
-	if einkauf.Abo == "true" {
-		Abo = true
-	}
-	if einkauf.Paypal == "true" {
-		Paypal = true
-	}
-
 	_, err = h.db.Einkauf.UpsertOne(
 		db.Einkauf.ID.Equals(einkauId),
 	).Create(
 		db.Einkauf.Dinge.Set(einkauf.Dinge),
 		db.Einkauf.Abgeschickt.Set(time.Now()),
-		db.Einkauf.Abonniert.Set(Abo),
-		db.Einkauf.Paypal.Set(Paypal),
+		db.Einkauf.Abonniert.Set(einkauf.Abo),
+		db.Einkauf.Paypal.Set(einkauf.Paypal),
 		db.Einkauf.Geld.SetIfPresent(einkauf.Geld),
 		db.Einkauf.Pfand.SetIfPresent(einkauf.Pfand),
 		db.Einkauf.Mitarbeiter.Link(
@@ -168,8 +158,8 @@ func (h *Handler) UpdateEinkauf(w http.ResponseWriter, r *http.Request) {
 	).Update(
 		db.Einkauf.Dinge.Set(einkauf.Dinge),
 		db.Einkauf.Abgeschickt.Set(time.Now()),
-		db.Einkauf.Abonniert.Set(Abo),
-		db.Einkauf.Paypal.Set(Paypal),
+		db.Einkauf.Abonniert.Set(einkauf.Abo),
+		db.Einkauf.Paypal.Set(einkauf.Paypal),
 		db.Einkauf.Geld.SetIfPresent(einkauf.Geld),
 		db.Einkauf.Pfand.SetIfPresent(einkauf.Pfand),
 	).Exec(ctx)
