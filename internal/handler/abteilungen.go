@@ -1,10 +1,12 @@
 package handler
 
 import (
+	"fmt"
 	"log/slog"
 	"net/http"
 
 	"github.com/computerextra/viktor/db"
+	"github.com/computerextra/viktor/frontend"
 	"github.com/computerextra/viktor/internal/util/flash"
 )
 
@@ -22,8 +24,9 @@ func (h *Handler) GetAbteilungen(w http.ResponseWriter, r *http.Request) {
 		sendQueryError(w, h.logger, err)
 	}
 
-	data := marshalData(res, w, h.logger)
-	sendJsonData(data, w)
+	uri := getPath(r.URL.Path)
+
+	frontend.AbteilungsOverview(res, uri).Render(ctx, w)
 }
 
 func (h *Handler) GetAbteilung(w http.ResponseWriter, r *http.Request) {
@@ -43,6 +46,12 @@ func (h *Handler) GetAbteilung(w http.ResponseWriter, r *http.Request) {
 
 	data := marshalData(res, w, h.logger)
 	sendJsonData(data, w)
+}
+
+func (h *Handler) NewAbteilung(w http.ResponseWriter, r *http.Request) {
+	uri := getPath(r.URL.Path)
+
+	frontend.NeueAbteilung(uri).Render(r.Context(), w)
 }
 
 func (h *Handler) CreateAbteilung(w http.ResponseWriter, r *http.Request) {
@@ -106,10 +115,16 @@ func (h *Handler) DeleteAbteilung(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res, err := h.db.Abteilung.FindUnique(db.Abteilung.ID.Equals(id)).Delete().Exec(ctx)
+	_, err := h.db.Abteilung.FindUnique(db.Abteilung.ID.Equals(id)).Delete().Exec(ctx)
 	if err != nil {
 		sendQueryError(w, h.logger, err)
 	}
-	data := marshalData(res, w, h.logger)
-	sendJsonData(data, w)
+
+	host := r.Host
+	scheme := "http"
+	if r.TLS != nil {
+		scheme = "https"
+	}
+	uri := fmt.Sprintf("%s://%s/CMS/Abteilungen", scheme, host)
+	http.Redirect(w, r, uri, http.StatusFound)
 }

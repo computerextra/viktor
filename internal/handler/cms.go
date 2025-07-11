@@ -4,18 +4,12 @@ import (
 	"net/http"
 
 	"github.com/computerextra/viktor/db"
+	"github.com/computerextra/viktor/frontend"
+	"github.com/computerextra/viktor/internal"
 )
 
 func (h *Handler) GetCmsCounts(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-
-	type Counts struct {
-		Abteilungen int
-		Angebote    int
-		Jobs        int
-		Mitarbeiter int
-		Partner     int
-	}
 
 	resAbteilung, err := h.db.Abteilung.FindMany().Select(db.Abteilung.ID.Field()).Exec(ctx)
 	if err != nil {
@@ -38,7 +32,7 @@ func (h *Handler) GetCmsCounts(w http.ResponseWriter, r *http.Request) {
 		sendQueryError(w, h.logger, err)
 	}
 
-	count := Counts{
+	count := internal.Counts{
 		Abteilungen: len(resAbteilung),
 		Angebote:    len(resAngebote),
 		Jobs:        len(resJobs),
@@ -46,6 +40,7 @@ func (h *Handler) GetCmsCounts(w http.ResponseWriter, r *http.Request) {
 		Partner:     len(resPartner),
 	}
 
-	data := marshalData(count, w, h.logger)
-	sendJsonData(data, w)
+	uri := getPath(r.URL.Path)
+
+	frontend.CmsOverview(count, uri).Render(ctx, w)
 }

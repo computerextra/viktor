@@ -54,17 +54,20 @@ func (a *App) loadPages(router *http.ServeMux) {
 	router.HandleFunc("POST /Einkauf/{id}/Skip", h.SkipEinkauf)     // Einkauf auf morgen setzen
 	router.HandleFunc("POST /Einkauf/{id}/Delete", h.DeleteEinkauf) // Einkauf löschen
 
-	// CMS ROUTES BEGIN
-
 	// CMS
-	router.HandleFunc("GET /api/cms", h.GetCmsCounts)
+	router.HandleFunc("GET /CMS", h.GetCmsCounts)                           // CMS Übersicht
+	router.HandleFunc("GET /CMS/Abteilungen", h.GetAbteilungen)             // Abteilungsübersicht
+	router.HandleFunc("GET /CMS/Abteilungen/Neu", h.NewAbteilung)           // Neue Abteilung Formular
+	router.HandleFunc("POST /CMS/Abteilungen/Neu", h.CreateAbteilung)       // Abteilung anlegen
+	router.HandleFunc("GET /CMS/Abteilungen/{id}", h.GetAbteilung)          // Abteilung bearbeiten Form
+	router.HandleFunc("POST /CMS/Abteilungen/{id}", h.UpdateAbteilung)      // Abteilung bearbeiten
+	router.HandleFunc("POST /CMS/Abteilung/{id}/Delete", h.DeleteAbteilung) // Abteilung löschen
+	router.HandleFunc("GET /CMS/Angebote", h.GetAngebote)                   // Angebotsübersicht
+	router.HandleFunc("GET /CMS/Jobs", h.GetJobs)                           // Jobübersicht
+	router.HandleFunc("GET /CMS/Mitarbeiter", h.GetMitarbeiters)            // Mitarbeiter Übersicht
+	router.HandleFunc("GET /CMS/Partner", h.GetPartners)                    // Partner Übersicht
 
-	// Abteilungen
-	router.HandleFunc("GET /api/Abteilung", h.GetAbteilungen)
-	router.HandleFunc("POST /api/Abteilung", h.CreateAbteilung)
-	router.HandleFunc("GET /api/Abteilung/{id}", h.GetAbteilung)
-	router.HandleFunc("POST /api/Abteilung/{id}", h.UpdateAbteilung)
-	router.HandleFunc("DELETE /api/Abteilung/{id}", h.DeleteAbteilung)
+	// CMS ROUTES BEGIN
 
 	// Angebote
 	router.HandleFunc("GET /api/Angebot", h.GetAngebote)
