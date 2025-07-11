@@ -1,4 +1,4 @@
-https://www.smarterkits.dev/tailwind/collections/brutalism
+
 
 https://lucide.dev/icons/
 
@@ -6,9 +6,4 @@ https://templ.guide/
 
 https://github.com/dreamsofcode-io/zenbin
 
-https://www.smarterkits.dev/tailwind/components/brutalism/brutalism-bento
-
-https://www.smarterkits.dev/tailwind/components/brutalism/brutalism-benefits
-
-
-https://www.smarterkits.dev/tailwind/components/brutalism/brutalism-artist-card
+https://preline.co/docs/buttons.html
