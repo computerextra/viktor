@@ -1,36 +1,37 @@
 package frontend
 
 import "github.com/computerextra/viktor/internal/util/flash"
-import "github.com/computerextra/viktor/frontend/ui/toast"
 import "github.com/computerextra/viktor/frontend/components"
 import "github.com/computerextra/viktor/db"
 
-templ Index(Mitarbeiter []db.MitarbeiterModel) {
+templ Index(Mitarbeiter []db.MitarbeiterModel, uri string) {
 	{{
 		errMsg, errExist := flash.GetFlashMessage(ctx, "error")
 	}}
-	@Page("Startseite") {
-		<div class="container mx-auto mt-12 flex justify-center">
-			<div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-				<div class="space-y-8">
-					<h1 class="text-6xl md:text-8xl font-extrabold text-black leading-none tracking-tighter">
-						Tach auf
-						<br/>
-						<span class="inline-block transform -rotate-3 text-white bg-black px-4 py-2">Viktor</span>
-					</h1>
-					<p class="text-xl text-gray-800 max-w-lg font-mono">
-						Leider fehlen hier noch einige Funktionen, diese sollten jedoch in einiger Zeit reinkommen. 
-						<br/>
-						Versprechen kann ich jedoch erstmal nichts.
-					</p>
-					@components.Geburtstagsliste(Mitarbeiter)
+	@Page("Startseite", uri) {
+		<div class="container mx-auto mt-12">
+			<div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+				<div>
+					<div class="space-y-8">
+						<h1 class="text-6xl md:text-8xl font-extrabold text-black leading-none tracking-tighter">
+							Tach auf
+							<br/>
+							<span class="inline-block transform -rotate-3 text-white bg-black px-4 py-2">Viktor</span>
+						</h1>
+						<p class="text-xl text-gray-800 max-w-lg font-mono">
+							Leider fehlen hier noch einige Funktionen, diese sollten jedoch in einiger Zeit reinkommen. 
+							<br/>
+							Versprechen kann ich jedoch erstmal nichts.
+						</p>
+					</div>
 				</div>
 			</div>
+			@components.Geburtstagsliste(Mitarbeiter)
 		</div>
 		if errExist {
 			<div class="container mx-auto">
-				<div class="W-full">
-					@toast.Toast(toast.Error, "Fehler", errMsg)
+				<div class="mt-2 bg-red-500 text-sm text-white rounded-lg p-4" role="alert" tabindex="-1" aria-labelledby="hs-solid-color-danger-label">
+					<span id="hs-solid-color-danger-label" class="font-bold">Fehler</span> { errMsg }
 				</div>
 			</div>
 		}

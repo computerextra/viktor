@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log/slog"
 	"net/http"
+	"strings"
 
 	"github.com/computerextra/viktor/db"
 
@@ -57,6 +58,19 @@ func marshalData(data any, w http.ResponseWriter, l *slog.Logger) []byte {
 		return nil
 	}
 	return d
+}
+
+func getPath(path string) string {
+	parts := strings.Split(path, "/")
+	var uri string
+	switch len(parts) {
+	case 1:
+		uri = "/"
+	default:
+		uri = parts[1]
+	}
+
+	return uri
 }
 
 func sendJsonData(data []byte, w http.ResponseWriter) {

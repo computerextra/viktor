@@ -25,10 +25,12 @@ func (a *App) loadRoutes() (http.Handler, error) {
 
 func (a *App) loadStaticFiles() (http.Handler, error) {
 	if os.Getenv("BUILD_MODE") == "develop" {
+		a.logger.Info("Running in develop Mode")
 		return http.FileServer(http.Dir("./static")), nil
 	}
 	mode, ok := os.LookupEnv("MODE")
 	if ok && mode == "dev" {
+		a.logger.Info("Running in dev Mode from .env")
 		return http.FileServer(http.Dir("./static")), nil
 	}
 
@@ -44,6 +46,13 @@ func (a *App) loadPages(router *http.ServeMux) {
 	h := handler.New(a.logger, a.db)
 
 	router.HandleFunc("GET /{$}", h.GetIndex)
+
+	// Einkauf
+	router.HandleFunc("GET /Einkauf", h.GetListe)                   // Get Einkaufsliste
+	router.HandleFunc("GET /Einkauf/{id}", h.GetEinkauf)            // Get Einkauf von Ma
+	router.HandleFunc("POST /Einkauf/{id}", h.UpdateEinkauf)        // Update Einkauf von Ma
+	router.HandleFunc("POST /Einkauf/{id}/Skip", h.SkipEinkauf)     // Einkauf auf morgen setzen
+	router.HandleFunc("POST /Einkauf/{id}/Delete", h.DeleteEinkauf) // Einkauf löschen
 
 	// CMS ROUTES BEGIN
 
@@ -93,14 +102,6 @@ func (a *App) loadPages(router *http.ServeMux) {
 	// Archive
 	router.HandleFunc("GET /api/Archiv/{id}", h.GetArchive)
 	router.HandleFunc("POST /api/Archiv", h.SearchArchive)
-
-	// Einkauf
-	router.HandleFunc("GET /api/Einkauf/{id}/Image", h.GetImage) // TODO
-	router.HandleFunc("GET /api/Einkauf/{id}", h.GetEinkauf)
-	router.HandleFunc("GET /api/Einkauf", h.GetListe)
-	router.HandleFunc("POST /api/Einkauf/{id}/Skip", h.SkipEinkauf)
-	router.HandleFunc("DELETE /api/Einkauf/{id}", h.DeleteEinkauf)
-	router.HandleFunc("POST /api/Einkauf/{id}", h.UpdateEinkauf)
 
 	// Warenlieferung
 	router.HandleFunc("POST /api/Warenlieferung/Generate", h.GenerateWarenlieferung)
