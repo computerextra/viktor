@@ -282,6 +282,9 @@
   .min-h-screen {
     min-height: 100vh;
   }
+  .w-\[60\%\] {
+    width: 60%;
+  }
   .w-full {
     width: 100%;
   }
@@ -301,6 +304,9 @@
   }
   .-rotate-1 {
     rotate: calc(1deg * -1);
+  }
+  .-rotate-2 {
+    rotate: calc(2deg * -1);
   }
   .-rotate-3 {
     rotate: calc(3deg * -1);
