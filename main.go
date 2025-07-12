@@ -1,3 +1,4 @@
+//go:generate bun install
 //go:generate bunx @tailwindcss/cli -i ./input.css -o ./static/css/style.css --minify
 //go:generate templ generate
 //go:generate go run github.com/steebchen/prisma-client-go generate
