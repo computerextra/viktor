@@ -47,6 +47,9 @@ func (a *App) loadPages(router *http.ServeMux) {
 
 	router.HandleFunc("GET /{$}", h.GetIndex)
 
+	// Status
+	router.HandleFunc("GET /Status", h.GetStatus)
+
 	// Einkauf
 	router.HandleFunc("GET /Einkauf", h.GetListe)                   // Get Einkaufsliste
 	router.HandleFunc("GET /Einkauf/{id}", h.GetEinkauf)            // Get Einkauf von Ma
