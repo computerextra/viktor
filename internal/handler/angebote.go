@@ -1,11 +1,13 @@
 package handler
 
 import (
+	"fmt"
 	"log/slog"
 	"net/http"
 	"time"
 
 	"github.com/computerextra/viktor/db"
+	"github.com/computerextra/viktor/frontend"
 	"github.com/computerextra/viktor/internal/util/flash"
 )
 
@@ -19,6 +21,11 @@ type AngeboteProps struct {
 	Anzeigen   bool    `schema:"anzeigen,default:false"`
 }
 
+func (h *Handler) NewAngebot(w http.ResponseWriter, r *http.Request) {
+	uri := getPath(r.URL.Path)
+
+	frontend.NeuesAngebot(uri).Render(r.Context(), w)
+}
 func (h *Handler) GetAngebote(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
@@ -28,7 +35,8 @@ func (h *Handler) GetAngebote(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		sendQueryError(w, h.logger, err)
 	}
-	sendJsonData(marshalData(res, w, h.logger), w)
+	uri := getPath(r.URL.Path)
+	frontend.AngeboteOverview(res, uri).Render(ctx, w)
 }
 
 func (h *Handler) GetAngebot(w http.ResponseWriter, r *http.Request) {
@@ -43,7 +51,8 @@ func (h *Handler) GetAngebot(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		sendQueryError(w, h.logger, err)
 	}
-	sendJsonData(marshalData(res, w, h.logger), w)
+	uri := getPath(r.URL.Path)
+	frontend.AngebotBearbeiten(*res, uri).Render(ctx, w)
 }
 
 func (h *Handler) CreateAngebot(w http.ResponseWriter, r *http.Request) {
@@ -67,7 +76,7 @@ func (h *Handler) CreateAngebot(w http.ResponseWriter, r *http.Request) {
 		sendError(w, h.logger, "failed to parse date", err)
 	}
 
-	res, err := h.db.Angebot.CreateOne(
+	_, err = h.db.Angebot.CreateOne(
 		db.Angebot.Title.Set(props.Title),
 		db.Angebot.DateStart.Set(Date_Start),
 		db.Angebot.DateStop.Set(Date_Stop),
@@ -79,7 +88,13 @@ func (h *Handler) CreateAngebot(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		sendQueryError(w, h.logger, err)
 	}
-	sendJsonData(marshalData(res, w, h.logger), w)
+	host := r.Host
+	scheme := "http"
+	if r.TLS != nil {
+		scheme = "https"
+	}
+	uri := fmt.Sprintf("%s://%s/CMS/Abteilungen", scheme, host)
+	http.Redirect(w, r, uri, http.StatusFound)
 }
 
 func (h *Handler) ToggleAngebot(w http.ResponseWriter, r *http.Request) {
@@ -97,13 +112,19 @@ func (h *Handler) ToggleAngebot(w http.ResponseWriter, r *http.Request) {
 		sendQueryError(w, h.logger, err)
 	}
 
-	res, err := h.db.Angebot.FindUnique(db.Angebot.ID.Equals(id)).Update(
+	_, err = h.db.Angebot.FindUnique(db.Angebot.ID.Equals(id)).Update(
 		db.Angebot.Anzeigen.Set(!status.Anzeigen),
 	).Exec(ctx)
 	if err != nil {
 		sendQueryError(w, h.logger, err)
 	}
-	sendJsonData(marshalData(res, w, h.logger), w)
+	host := r.Host
+	scheme := "http"
+	if r.TLS != nil {
+		scheme = "https"
+	}
+	uri := fmt.Sprintf("%s://%s/CMS/Abteilungen", scheme, host)
+	http.Redirect(w, r, uri, http.StatusFound)
 }
 
 func (h *Handler) UpdateAngebot(w http.ResponseWriter, r *http.Request) {
@@ -134,7 +155,7 @@ func (h *Handler) UpdateAngebot(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res, err := h.db.Angebot.FindUnique(db.Angebot.ID.Equals(id)).Update(
+	_, err = h.db.Angebot.FindUnique(db.Angebot.ID.Equals(id)).Update(
 		db.Angebot.Title.Set(props.Title),
 		db.Angebot.DateStart.Set(Date_Start),
 		db.Angebot.DateStop.Set(Date_Stop),
@@ -146,7 +167,13 @@ func (h *Handler) UpdateAngebot(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		sendQueryError(w, h.logger, err)
 	}
-	sendJsonData(marshalData(res, w, h.logger), w)
+	host := r.Host
+	scheme := "http"
+	if r.TLS != nil {
+		scheme = "https"
+	}
+	uri := fmt.Sprintf("%s://%s/CMS/Abteilungen", scheme, host)
+	http.Redirect(w, r, uri, http.StatusFound)
 }
 
 func (h *Handler) DeleteAngebot(w http.ResponseWriter, r *http.Request) {
@@ -157,9 +184,15 @@ func (h *Handler) DeleteAngebot(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNoContent)
 		return
 	}
-	res, err := h.db.Angebot.FindUnique(db.Angebot.ID.Equals(id)).Delete().Exec(ctx)
+	_, err := h.db.Angebot.FindUnique(db.Angebot.ID.Equals(id)).Delete().Exec(ctx)
 	if err != nil {
 		sendQueryError(w, h.logger, err)
 	}
-	sendJsonData(marshalData(res, w, h.logger), w)
+	host := r.Host
+	scheme := "http"
+	if r.TLS != nil {
+		scheme = "https"
+	}
+	uri := fmt.Sprintf("%s://%s/CMS/Abteilungen", scheme, host)
+	http.Redirect(w, r, uri, http.StatusFound)
 }

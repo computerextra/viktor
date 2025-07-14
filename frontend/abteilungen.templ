@@ -39,7 +39,7 @@ templ AbteilungsOverview(abteilungen []db.AbteilungModel, uri string) {
 								</thead>
 								<tbody class="divide-y divide-gray-200 dark:divide-neutral-700">
 									for _, abteilung := range abteilungen {
-										@row(abteilung.Name, abteilung.ID)
+										@abteilungRow(abteilung.Name, abteilung.ID)
 									}
 								</tbody>
 							</table>
@@ -51,7 +51,7 @@ templ AbteilungsOverview(abteilungen []db.AbteilungModel, uri string) {
 	}
 }
 
-templ row(Name string, id string) {
+templ abteilungRow(Name string, id string) {
 	<tr class="hover:bg-gray-100 dark:hover:bg-neutral-700">
 		<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">
 			<a href={ templ.SafeURL(fmt.Sprintf("/CMS/Abteilungen/%s", id)) }>

@@ -60,16 +60,21 @@ func (a *App) loadPages(router *http.ServeMux) {
 	// CMS
 	router.HandleFunc("GET /CMS", h.GetCmsCounts) // CMS Übersicht
 	// Abteilungen
-	router.HandleFunc("GET /CMS/Abteilungen", h.GetAbteilungen)   // Abteilungsübersicht
-	router.HandleFunc("GET /CMS/Abteilungen/Neu", h.NewAbteilung) // Neue Abteilung Formular
-	// TODO: BUG: Abteilungen werden doppelt angelegt?
-	router.HandleFunc("POST /CMS/Abteilungen/Neu", h.CreateAbteilung)  // Abteilung anlegen
-	router.HandleFunc("GET /CMS/Abteilungen/{id}", h.GetAbteilung)     // Abteilung bearbeiten Form
-	router.HandleFunc("POST /CMS/Abteilungen/{id}", h.UpdateAbteilung) // Abteilung bearbeiten
-	// TODO: BUG: Abteilung wird gelöscht, es wird aber nicht korrekt weitergeleitet
+	router.HandleFunc("GET /CMS/Abteilungen", h.GetAbteilungen)               // Abteilungsübersicht
+	router.HandleFunc("GET /CMS/Abteilungen/Neu", h.NewAbteilung)             // Neue Abteilung Formular
+	router.HandleFunc("POST /CMS/Abteilungen/Neu", h.CreateAbteilung)         // Abteilung anlegen
+	router.HandleFunc("GET /CMS/Abteilungen/{id}", h.GetAbteilung)            // Abteilung bearbeiten Form
+	router.HandleFunc("POST /CMS/Abteilungen/{id}", h.UpdateAbteilung)        // Abteilung bearbeiten
 	router.HandleFunc("POST /CMS/Abteilungen/{id}/Delete", h.DeleteAbteilung) // Abteilung löschen
+	// Angebote
+	router.HandleFunc("GET /CMS/Angebote", h.GetAngebote)                // Angebotsübersicht
+	router.HandleFunc("GET /CMS/Angebote/Neu", h.NewAngebot)             // Neue Angebot Formular
+	router.HandleFunc("POST /CMS/Angebote/Neu", h.CreateAngebot)         // Angebot anlegen
+	router.HandleFunc("GET /CMS/Angebote/{id}", h.GetAngebot)            // Angebot bearbeiten Form
+	router.HandleFunc("POST /CMS/Angebote/{id}", h.UpdateAngebot)        // Angebot bearbeiten
+	router.HandleFunc("POST /CMS/Angebote/{id}/toggle", h.ToggleAngebot) // Angebot bearbeiten
+	router.HandleFunc("POST /CMS/Angebote/{id}/Delete", h.DeleteAngebot) // Angebot bearbeiten
 
-	router.HandleFunc("GET /CMS/Angebote", h.GetAngebote)        // Angebotsübersicht
 	router.HandleFunc("GET /CMS/Jobs", h.GetJobs)                // Jobübersicht
 	router.HandleFunc("GET /CMS/Mitarbeiter", h.GetMitarbeiters) // Mitarbeiter Übersicht
 	router.HandleFunc("GET /CMS/Partner", h.GetPartners)         // Partner Übersicht
