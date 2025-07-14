@@ -43,9 +43,8 @@ func (h *Handler) GetAbteilung(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		sendQueryError(w, h.logger, err)
 	}
-
-	data := marshalData(res, w, h.logger)
-	sendJsonData(data, w)
+	uri := getPath(r.URL.Path)
+	frontend.AbteilungBearbeiten(*res, uri).Render(ctx, w)
 }
 
 func (h *Handler) NewAbteilung(w http.ResponseWriter, r *http.Request) {
@@ -66,13 +65,18 @@ func (h *Handler) CreateAbteilung(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res, err := h.db.Abteilung.CreateOne(db.Abteilung.Name.Set(props.Name)).Exec(ctx)
+	_, err = h.db.Abteilung.CreateOne(db.Abteilung.Name.Set(props.Name)).Exec(ctx)
 	if err != nil {
 		sendQueryError(w, h.logger, err)
 	}
 
-	data := marshalData(res, w, h.logger)
-	sendJsonData(data, w)
+	host := r.Host
+	scheme := "http"
+	if r.TLS != nil {
+		scheme = "https"
+	}
+	uri := fmt.Sprintf("%s://%s/CMS/Abteilungen", scheme, host)
+	http.Redirect(w, r, uri, http.StatusFound)
 }
 
 func (h *Handler) UpdateAbteilung(w http.ResponseWriter, r *http.Request) {
@@ -94,15 +98,19 @@ func (h *Handler) UpdateAbteilung(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res, err := h.db.Abteilung.FindUnique(db.Abteilung.ID.Equals(id)).Update(
+	_, err = h.db.Abteilung.FindUnique(db.Abteilung.ID.Equals(id)).Update(
 		db.Abteilung.Name.Set(props.Name),
 	).Exec(ctx)
 	if err != nil {
 		sendQueryError(w, h.logger, err)
 	}
-
-	data := marshalData(res, w, h.logger)
-	sendJsonData(data, w)
+	host := r.Host
+	scheme := "http"
+	if r.TLS != nil {
+		scheme = "https"
+	}
+	uri := fmt.Sprintf("%s://%s/CMS/Abteilungen", scheme, host)
+	http.Redirect(w, r, uri, http.StatusFound)
 }
 
 func (h *Handler) DeleteAbteilung(w http.ResponseWriter, r *http.Request) {

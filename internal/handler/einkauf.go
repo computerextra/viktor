@@ -126,7 +126,7 @@ func (h *Handler) UpdateEinkauf(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	mitarbeiterId := r.PathValue("id")
 	r.ParseMultipartForm(10 << 20) // Max Header size (e.g. 10MB)
-	h.logger.Info("Einkauf", slog.Any("data", r.PostForm))
+
 	var einkauf EinkaufProps
 	err := decoder.Decode(&einkauf, r.PostForm)
 	if err != nil {
@@ -135,7 +135,6 @@ func (h *Handler) UpdateEinkauf(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNoContent)
 		return
 	}
-	h.logger.Info("Einkauf", slog.Any("data", r.PostForm))
 
 	mitarbeiter, err := h.db.Mitarbeiter.FindUnique(db.Mitarbeiter.ID.Equals(mitarbeiterId)).Exec(ctx)
 	if err != nil {
