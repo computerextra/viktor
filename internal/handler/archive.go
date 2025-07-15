@@ -9,11 +9,17 @@ import (
 	"strconv"
 
 	"github.com/computerextra/viktor/db"
+	"github.com/computerextra/viktor/frontend"
 	"github.com/computerextra/viktor/internal/util/flash"
 )
 
 type ArchiveProps struct {
 	Search string `schema:"search,required"`
+}
+
+func (h *Handler) Archive(w http.ResponseWriter, r *http.Request) {
+	uri := getPath(r.URL.Path)
+	frontend.Archiv(uri, nil, "").Render(r.Context(), w)
 }
 
 func (h *Handler) SearchArchive(w http.ResponseWriter, r *http.Request) {
@@ -39,8 +45,8 @@ func (h *Handler) SearchArchive(w http.ResponseWriter, r *http.Request) {
 		sendQueryError(w, h.logger, err)
 	}
 
-	data := marshalData(searchResults, w, h.logger)
-	sendJsonData(data, w)
+	uri := getPath(r.URL.Path)
+	frontend.Archiv(uri, searchResults, props.Search).Render(r.Context(), w)
 }
 
 func (h *Handler) GetArchive(w http.ResponseWriter, r *http.Request) {

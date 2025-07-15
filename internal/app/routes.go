@@ -98,11 +98,8 @@ func (a *App) loadPages(router *http.ServeMux) {
 	router.HandleFunc("POST /CMS/Partner/{id}/Delete", h.DeletePartner) // Partner löschen
 
 	// Archive
-	// TODO: Implement
-	router.HandleFunc("GET /Archiv", h.SearchArchive)
-	// TODO: Implement
+	router.HandleFunc("GET /Archiv", h.Archive)
 	router.HandleFunc("POST /Archiv", h.SearchArchive)
-	// TODO: Implement
 	router.HandleFunc("GET /Archiv/{id}", h.GetArchive)
 
 	// Warenlieferung
