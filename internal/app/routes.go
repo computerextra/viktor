@@ -98,12 +98,26 @@ func (a *App) loadPages(router *http.ServeMux) {
 	router.HandleFunc("POST /CMS/Partner/{id}/Delete", h.DeletePartner) // Partner löschen
 
 	// Archive
-	router.HandleFunc("GET /api/Archiv/{id}", h.GetArchive)
-	router.HandleFunc("POST /api/Archiv", h.SearchArchive)
+	// TODO: Implement
+	router.HandleFunc("GET /Archiv", h.SearchArchive)
+	// TODO: Implement
+	router.HandleFunc("POST /Archiv", h.SearchArchive)
+	// TODO: Implement
+	router.HandleFunc("GET /Archiv/{id}", h.GetArchive)
 
 	// Warenlieferung
-	router.HandleFunc("POST /api/Warenlieferung/Generate", h.GenerateWarenlieferung)
-	router.HandleFunc("POST /api/Warenlieferung/Send", h.SendWarenlieferung)
+	// TODO: Implement
+	router.HandleFunc("GET /Warenlieferung", h.GenerateWarenlieferung)
+	// TODO: Implement
+	router.HandleFunc("POST /Warenlieferung/Generate", h.GenerateWarenlieferung)
+	// TODO: Implement
+	router.HandleFunc("POST /Warenlieferung/Send", h.SendWarenlieferung)
+
+	// Lieferanten
+	// TODO: Implement
+
+	// Kunden
+	// TODO: Implement
 
 	router.HandleFunc("POST /api/health", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
