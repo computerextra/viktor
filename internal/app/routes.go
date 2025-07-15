@@ -72,7 +72,7 @@ func (a *App) loadPages(router *http.ServeMux) {
 	router.HandleFunc("POST /CMS/Angebote/Neu", h.CreateAngebot)         // Angebot anlegen
 	router.HandleFunc("GET /CMS/Angebote/{id}", h.GetAngebot)            // Angebot bearbeiten Form
 	router.HandleFunc("POST /CMS/Angebote/{id}", h.UpdateAngebot)        // Angebot bearbeiten
-	router.HandleFunc("POST /CMS/Angebote/{id}/toggle", h.ToggleAngebot) // Angebot bearbeiten
+	router.HandleFunc("POST /CMS/Angebote/{id}/Toggle", h.ToggleAngebot) // Angebot bearbeiten
 	router.HandleFunc("POST /CMS/Angebote/{id}/Delete", h.DeleteAngebot) // Angebot bearbeiten
 
 	router.HandleFunc("GET /CMS/Jobs", h.GetJobs)                // Jobübersicht

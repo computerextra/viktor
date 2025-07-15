@@ -67,11 +67,11 @@ func (h *Handler) CreateAngebot(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	Date_Start, err := time.Parse("02.01.2006", props.Date_start)
+	Date_Start, err := time.Parse("2006-01-02", props.Date_start)
 	if err != nil {
 		sendError(w, h.logger, "failed to parse date", err)
 	}
-	Date_Stop, err := time.Parse("02.01.2006", props.Date_stop)
+	Date_Stop, err := time.Parse("2006-01-02", props.Date_stop)
 	if err != nil {
 		sendError(w, h.logger, "failed to parse date", err)
 	}
@@ -93,7 +93,7 @@ func (h *Handler) CreateAngebot(w http.ResponseWriter, r *http.Request) {
 	if r.TLS != nil {
 		scheme = "https"
 	}
-	uri := fmt.Sprintf("%s://%s/CMS/Abteilungen", scheme, host)
+	uri := fmt.Sprintf("%s://%s/CMS/Angebote", scheme, host)
 	http.Redirect(w, r, uri, http.StatusFound)
 }
 
@@ -123,7 +123,7 @@ func (h *Handler) ToggleAngebot(w http.ResponseWriter, r *http.Request) {
 	if r.TLS != nil {
 		scheme = "https"
 	}
-	uri := fmt.Sprintf("%s://%s/CMS/Abteilungen", scheme, host)
+	uri := fmt.Sprintf("%s://%s/CMS/Angebote", scheme, host)
 	http.Redirect(w, r, uri, http.StatusFound)
 }
 
@@ -140,11 +140,11 @@ func (h *Handler) UpdateAngebot(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	Date_Start, err := time.Parse("02.01.2006", props.Date_start)
+	Date_Start, err := time.Parse("2006-01-02", props.Date_start)
 	if err != nil {
 		sendError(w, h.logger, "failed to parse date", err)
 	}
-	Date_Stop, err := time.Parse("02.01.2006", props.Date_stop)
+	Date_Stop, err := time.Parse("2006-01-02", props.Date_stop)
 	if err != nil {
 		sendError(w, h.logger, "failed to parse date", err)
 	}
@@ -172,7 +172,7 @@ func (h *Handler) UpdateAngebot(w http.ResponseWriter, r *http.Request) {
 	if r.TLS != nil {
 		scheme = "https"
 	}
-	uri := fmt.Sprintf("%s://%s/CMS/Abteilungen", scheme, host)
+	uri := fmt.Sprintf("%s://%s/CMS/Angebote", scheme, host)
 	http.Redirect(w, r, uri, http.StatusFound)
 }
 
@@ -193,6 +193,6 @@ func (h *Handler) DeleteAngebot(w http.ResponseWriter, r *http.Request) {
 	if r.TLS != nil {
 		scheme = "https"
 	}
-	uri := fmt.Sprintf("%s://%s/CMS/Abteilungen", scheme, host)
+	uri := fmt.Sprintf("%s://%s/CMS/Angebote", scheme, host)
 	http.Redirect(w, r, uri, http.StatusFound)
 }
