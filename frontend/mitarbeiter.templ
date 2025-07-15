@@ -1,0 +1,893 @@
+package frontend
+
+import (
+	"fmt"
+	"github.com/computerextra/viktor/db"
+	"time"
+)
+
+templ MitarbeiterOverview(mitarbeiter []db.MitarbeiterModel, uri string) {
+	@Page("CMS | Mitarbeiter", uri) {
+		<div class="container mx-auto mt-10">
+			@BackButton("/CMS")
+			<h1 class="text-center">CMS - Mitarbeiter</h1>
+			<a
+				class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-hidden focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
+				href="/CMS/Mitarbeiter/Neu"
+			>
+				Neuen Mitarbeiter anlegen
+			</a>
+			<div class="flex flex-col mt-5  mx-auto">
+				<div class="-m-1.5 overflow-x-auto">
+					<div class="p-1.5 min-w-full inline-block align-middle">
+						<div class="overflow-hidden">
+							<table class="min-w-full divide-y divide-gray-200 dark:divide-neutral-700">
+								<thead>
+									<tr>
+										<th
+											scope="col"
+											class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500"
+										>
+											Name
+										</th>
+										<th
+											scope="col"
+											class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500"
+										>
+											Mail
+										</th>
+										<th
+											scope="col"
+											class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500"
+										>
+											Abteilung
+										</th>
+										<th
+											scope="col"
+											class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500"
+										>
+											Geburtstag
+										</th>
+										<th
+											scope="col"
+											class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500"
+										>
+											Intern
+										</th>
+										<th
+											scope="col"
+											class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500"
+										>
+											Extern
+										</th>
+										<th
+											scope="col"
+											class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase dark:text-neutral-500"
+										>
+											Action
+										</th>
+									</tr>
+								</thead>
+								<tbody class="divide-y divide-gray-200 dark:divide-neutral-700">
+									for _, x := range mitarbeiter {
+										@mitarbeiterRow(x)
+									}
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	}
+}
+
+templ mitarbeiterRow(mitarbeiter db.MitarbeiterModel) {
+	{{
+	loc, _ := time.LoadLocation("Europe/Berlin")
+	var AbteilungName string
+	var GeburtstagString string
+	Mail, Mail_ok := mitarbeiter.Mail()
+	Geburtstag, Geburtstag_ok := mitarbeiter.Geburtstag()
+	HomeOffice, HomeOffice_ok := mitarbeiter.HomeOffice()
+	MobilPrivat, MobilPrivat_ok := mitarbeiter.MobilPrivat()
+	MobilBusiness, MobilBusiness_ok := mitarbeiter.MobilBusiness()
+	TelefonBusiness, TelefonBusiness_ok := mitarbeiter.TelefonBusiness()
+	TelefonIntern1, TelefonIntern1_ok := mitarbeiter.TelefonIntern1()
+	TelefonIntern2, TelefonIntern2_ok := mitarbeiter.TelefonIntern2()
+	TelefonPrivat, TelefonPrivat_ok := mitarbeiter.TelefonPrivat()
+	Abteilung, Abteilung_ok := mitarbeiter.Abteilung()
+	Gruppenwahl, Gruppenwahl_ok := mitarbeiter.Gruppenwahl()
+	if Abteilung_ok {
+		AbteilungName = Abteilung.Name
+	}
+	if Geburtstag_ok {
+		maGeburtstag := time.Date(time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), 0, 0, 0, 0, loc).Year(), Geburtstag.Month(), Geburtstag.Day(), 0, 0, 0, 0, loc)
+		GeburtstagString = maGeburtstag.Format("02.01.2006")
+	}
+	}}
+	<tr class="hover:bg-gray-100 dark:hover:bg-neutral-700">
+		<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">
+			<a href={ templ.SafeURL(fmt.Sprintf("/CMS/Mitarbeiter/%s", mitarbeiter.ID)) }>
+				{ mitarbeiter.Name }
+			</a>
+		</td>
+		<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">
+			if Mail_ok {
+				<a href={ templ.SafeURL(fmt.Sprintf("mailto:%s", Mail)) } class="underline">{ Mail }</a>
+			} else {
+				-
+			}
+		</td>
+		<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">
+			if Abteilung_ok {
+				{ AbteilungName }
+			} else {
+				-
+			}
+		</td>
+		<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">
+			if Geburtstag_ok {
+				{ GeburtstagString }
+			} else {
+				-
+			}
+		</td>
+		<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">
+			if Gruppenwahl_ok {
+				Gruppe: { Gruppenwahl }
+			} else {
+				Gruppe: -
+			}
+			<br/>
+			if TelefonIntern1_ok {
+				Intern: { TelefonIntern1 }
+			} else {
+				Intern: -
+			}
+			<br/>
+			if TelefonIntern2_ok {
+				Intern 2: { TelefonIntern2 }
+			} else {
+				Intern 2: -
+			}
+			<br/>
+			if HomeOffice_ok {
+				Homeoffice: { HomeOffice }
+			} else {
+				Homeoffice: -
+			}
+		</td>
+		<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">
+			if TelefonPrivat_ok {
+				FN Privat: <a href={ templ.SafeURL(fmt.Sprintf("tel:%s", TelefonPrivat)) } class="underline">{ TelefonPrivat }</a>
+			} else {
+				FN Privat: -
+			}
+			<br/>
+			if TelefonBusiness_ok {
+				FN Busi: <a href={ templ.SafeURL(fmt.Sprintf("tel:%s", TelefonBusiness)) } class="underline">{ TelefonBusiness }</a>
+			} else {
+				FN Busi: -
+			}
+			<br/>
+			if MobilPrivat_ok {
+				Mob Privat: <a href={ templ.SafeURL(fmt.Sprintf("tel:%s", MobilPrivat)) } class="underline">{ MobilPrivat }</a>
+			} else {
+				Mob Privat: -
+			}
+			<br/>
+			if MobilBusiness_ok {
+				Mob Busi: <a href={ templ.SafeURL(fmt.Sprintf("tel:%s", MobilBusiness)) } class="underline">{ MobilBusiness }</a>
+			} else {
+				Mob Busi: -
+			}
+		</td>
+		<td class="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
+			<form action={ templ.SafeURL(fmt.Sprintf("/CMS/Mitarbeiter/%s/Delete", mitarbeiter.ID)) } method="post">
+				<button
+					type="submit"
+					class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 focus:outline-hidden focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-500 dark:hover:text-blue-400 dark:focus:text-blue-400"
+				>
+					Löschen
+				</button>
+			</form>
+		</td>
+	</tr>
+}
+
+templ NeuerMitarbeiter(abteilungen []db.AbteilungModel, uri string) {
+	@Page("Neuer Mitarbeiter", uri) {
+		<div class="container mx-auto mt-5 mb-5">
+			@BackButton("/CMS/Mitarbeiter")
+			<h1 class="text-center">Neuen Mitarbeiter anlegen</h1>
+			@mitarbeiterForm(nil, abteilungen)
+		</div>
+	}
+}
+
+templ MitarbeiterBearbeiten(mitarbeiter *db.MitarbeiterModel, abteilungen []db.AbteilungModel, uri string) {
+	@Page("Mitarbeiter bearbeiten", uri) {
+		<div class="container mx-auto mt-5 mb-5">
+			@BackButton("/CMS/Mitarbeiter")
+			<h1 class="text-center">{ mitarbeiter.Name } bearbeiten</h1>
+			@mitarbeiterForm(mitarbeiter, abteilungen)
+		</div>
+	}
+}
+
+templ mitarbeiterForm(mitarbeiter *db.MitarbeiterModel, abteilungen []db.AbteilungModel) {
+	{{
+var action string
+if mitarbeiter == nil {
+	action = "/CMS/Mitarbeiter/Neu"
+} else {
+	action = fmt.Sprintf("/CMS/Mitarbeiter/%s", mitarbeiter.ID)
+}
+	}}
+	<form action={ templ.SafeURL(action) } method="post" class="space-y-8 max-w-[60%] mx-auto mt-10">
+		<div class="grid grid-cols-2 gap-8">
+			<!-- Name -->
+			<div>
+				<label
+					for="name"
+					class="block text-sm font-medium mb-2 dark:text-white"
+				>Name*</label>
+				if mitarbeiter == nil {
+					<input
+						type="text"
+						id="name"
+						name="name"
+						required
+						class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+						placeholder="you@site.com"
+					/>
+				} else {
+					<input
+						type="text"
+						id="name"
+						value={ mitarbeiter.Name }
+						name="name"
+						required
+						class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+						placeholder="you@site.com"
+					/>
+				}
+			</div>
+			<!-- Short -->
+			<div>
+				<label
+					for="short"
+					class="block text-sm font-medium mb-2 dark:text-white"
+				>Short</label>
+				if mitarbeiter != nil {
+					{{
+	Short, Short_ok := mitarbeiter.Short()
+					}}
+					if Short_ok {
+						<input
+							type="text"
+							id="short"
+							value={ Short }
+							name="short"
+							class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+							placeholder="you@site.com"
+						/>
+					} else {
+						<input
+							type="text"
+							id="short"
+							name="short"
+							class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+							placeholder="you@site.com"
+						/>
+					}
+				} else {
+					<input
+						type="text"
+						id="short"
+						name="short"
+						class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+						placeholder="you@site.com"
+					/>
+				}
+			</div>
+			<!-- Sex -->
+			<div>
+				<label
+					for="sex"
+					class="block text-sm font-medium mb-2 dark:text-white"
+				>Geschlecht*</label>
+				if mitarbeiter != nil {
+					{{ Sex, Sex_ok := mitarbeiter.Sex() }}
+					if Sex_ok {
+						<select
+							id="sex"
+							required
+							name="sex"
+							class="py-3 px-4 pe-9 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+						>
+							if Sex == "w" {
+								<option value="w" selected>Weiblich</option>
+							} else {
+								<option value="w">Weiblich</option>
+							}
+							if Sex == "m" {
+								<option value="m" selected>Männlich</option>
+							} else {
+								<option value="m">Männlich</option>
+							}
+						</select>
+					}
+				} else {
+					<select
+						id="sex"
+						required
+						name="sex"
+						class="py-3 px-4 pe-9 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+					>
+						<option selected>Bitte Auswählen</option>
+						<option value="w">Weiblich</option>
+						<option value="m">Männlich</option>
+					</select>
+				}
+			</div>
+			<!-- Abteilung -->
+			<div>
+				<label
+					for="abteilungId"
+					class="block text-sm font-medium mb-2 dark:text-white"
+				>Abteilung</label>
+				if mitarbeiter != nil {
+					<select
+						id="abteilungId"
+						name="abteilungId"
+						class="py-3 px-4 pe-9 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+					>
+						{{
+	abteilungId, abteilungId_ok := mitarbeiter.AbteilungID()
+						}}
+						if !abteilungId_ok {
+							<option selected value="">...</option>
+						}
+						for _, abteilung := range abteilungen {
+							if abteilungId_ok && abteilungId == abteilung.ID {
+								<option value={ abteilung.ID } selected>{ abteilung.Name }</option>
+							} else {
+								<option value={ abteilung.ID }>{ abteilung.Name }</option>
+							}
+						}
+					</select>
+				} else {
+					<select
+						id="abteilungId"
+						name="abteilungId"
+						class="py-3 px-4 pe-9 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+					>
+						<option selected value="">...</option>
+						for _, abteilung := range abteilungen {
+							<option value={ abteilung.ID }>{ abteilung.Name }</option>
+						}
+					</select>
+				}
+			</div>
+		</div>
+		<div class="grid grid-cols-1 gap-8">
+			<!-- Image -->
+			<div class="flex items-center gap-x-3">
+				<label for="online" class="relative inline-block w-13 h-7 cursor-pointer">
+					if mitarbeiter != nil && mitarbeiter.Image {
+						<input
+							type="checkbox"
+							id="image"
+							checked
+							name="image"
+							class="peer sr-only"
+						/>
+					} else {
+						<input
+							type="checkbox"
+							id="image"
+							name="image"
+							class="peer sr-only"
+						/>
+					}
+					<span class="absolute inset-0 bg-gray-200 rounded-full transition-colors duration-200 ease-in-out peer-checked:bg-blue-600 dark:bg-neutral-700 dark:peer-checked:bg-blue-500 peer-disabled:opacity-50 peer-disabled:pointer-events-none"></span>
+					<span class="absolute top-1/2 start-0.5 -translate-y-1/2 size-6 bg-white rounded-full shadow-xs transition-transform duration-200 ease-in-out peer-checked:translate-x-full dark:bg-neutral-400 dark:peer-checked:bg-white"></span>
+					<!-- Left Icon (Off) -->
+					<span class="absolute top-1/2 start-1 -translate-y-1/2 flex justify-center items-center size-5 text-gray-500 peer-checked:text-white transition-colors duration-200 dark:text-neutral-500">
+						<svg class="shrink-0 size-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M18 6 6 18"></path>
+							<path d="m6 6 12 12"></path>
+						</svg>
+					</span>
+					<!-- Right Icon (On) -->
+					<span class="absolute top-1/2 end-1 -translate-y-1/2 flex justify-center items-center size-5 text-gray-500 peer-checked:text-blue-600 transition-colors duration-200 dark:text-neutral-500">
+						<svg class="shrink-0 size-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+							<polyline points="20 6 9 17 4 12"></polyline>
+						</svg>
+					</span>
+				</label>
+				<label
+					for="image"
+					class="text-sm text-gray-500 dark:text-neutral-400"
+				>Bild auf Webseite?</label>
+			</div>
+			<!-- Focus -->
+			<div>
+				<label
+					for="focus"
+					class="block text-sm font-medium mb-2 dark:text-white"
+				>Focus (Komma getrennt)</label>
+				if mitarbeiter != nil {
+					{{
+	Focus, Focus_ok := mitarbeiter.Focus()
+					}}
+					if Focus_ok {
+						<input
+							type="text"
+							id="focus"
+							value={ Focus }
+							name="focus"
+							class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+							placeholder="you@site.com"
+						/>
+					} else {
+						<input
+							type="text"
+							id="focus"
+							name="focus"
+							class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+							placeholder="you@site.com"
+						/>
+					}
+				} else {
+					<input
+						type="text"
+						id="focus"
+						name="focus"
+						class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+						placeholder="you@site.com"
+					/>
+				}
+			</div>
+			<!-- Mail -->
+			<div>
+				<label
+					for="mail"
+					class="block text-sm font-medium mb-2 dark:text-white"
+				>E-Mail</label>
+				if mitarbeiter != nil {
+					{{
+	Mail, Mail_ok := mitarbeiter.Mail()
+					}}
+					if Mail_ok {
+						<input
+							type="text"
+							id="mail"
+							value={ Mail }
+							name="mail"
+							class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+							placeholder="you@site.com"
+						/>
+					} else {
+						<input
+							type="text"
+							id="mail"
+							name="mail"
+							class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+							placeholder="you@site.com"
+						/>
+					}
+				} else {
+					<input
+						type="text"
+						id="mail"
+						name="mail"
+						class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+						placeholder="you@site.com"
+					/>
+				}
+			</div>
+		</div>
+		<div class="grid grid-cols-2 gap-8">
+			<!-- Gruppenwahl -->
+			<div>
+				<label
+					for="Gruppenwahl"
+					class="block text-sm font-medium mb-2 dark:text-white"
+				>Gruppenwahl</label>
+				if mitarbeiter != nil {
+					{{
+	Gruppenwahl, Gruppenwahl_ok := mitarbeiter.Gruppenwahl()
+					}}
+					if Gruppenwahl_ok {
+						<input
+							type="text"
+							id="Gruppenwahl"
+							value={ Gruppenwahl }
+							name="Gruppenwahl"
+							class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+							placeholder="you@site.com"
+						/>
+					} else {
+						<input
+							type="text"
+							id="Gruppenwahl"
+							name="Gruppenwahl"
+							class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+							placeholder="you@site.com"
+						/>
+					}
+				} else {
+					<input
+						type="text"
+						id="Gruppenwahl"
+						name="Gruppenwahl"
+						class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+						placeholder="you@site.com"
+					/>
+				}
+			</div>
+			<!-- TelefonIntern1 -->
+			<div>
+				<label
+					for="Telefon_Intern_1"
+					class="block text-sm font-medium mb-2 dark:text-white"
+				>TelefonIntern1</label>
+				if mitarbeiter != nil {
+					{{
+	TelefonIntern1, TelefonIntern1_ok := mitarbeiter.TelefonIntern1()
+					}}
+					if TelefonIntern1_ok {
+						<input
+							type="text"
+							id="Telefon_Intern_1"
+							value={ TelefonIntern1 }
+							name="Telefon_Intern_1"
+							class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+							placeholder="you@site.com"
+						/>
+					} else {
+						<input
+							type="text"
+							id="Telefon_Intern_1"
+							name="Telefon_Intern_1"
+							class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+							placeholder="you@site.com"
+						/>
+					}
+				} else {
+					<input
+						type="text"
+						id="Telefon_Intern_1"
+						name="Telefon_Intern_1"
+						class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+						placeholder="you@site.com"
+					/>
+				}
+			</div>
+			<!-- TelefonIntern2 -->
+			<div>
+				<label
+					for="Telefon_Intern_2"
+					class="block text-sm font-medium mb-2 dark:text-white"
+				>TelefonIntern2</label>
+				if mitarbeiter != nil {
+					{{
+	TelefonIntern2, TelefonIntern2_ok := mitarbeiter.TelefonIntern2()
+					}}
+					if TelefonIntern2_ok {
+						<input
+							type="text"
+							id="Telefon_Intern_2"
+							value={ TelefonIntern2 }
+							name="Telefon_Intern_2"
+							class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+							placeholder="you@site.com"
+						/>
+					} else {
+						<input
+							type="text"
+							id="Telefon_Intern_2"
+							name="Telefon_Intern_2"
+							class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+							placeholder="you@site.com"
+						/>
+					}
+				} else {
+					<input
+						type="text"
+						id="Telefon_Intern_2"
+						name="Telefon_Intern_2"
+						class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+						placeholder="you@site.com"
+					/>
+				}
+			</div>
+			<!-- HomeOffice -->
+			<div>
+				<label
+					for="HomeOffice"
+					class="block text-sm font-medium mb-2 dark:text-white"
+				>HomeOffice</label>
+				if mitarbeiter != nil {
+					{{
+	HomeOffice, HomeOffice_ok := mitarbeiter.HomeOffice()
+					}}
+					if HomeOffice_ok {
+						<input
+							type="text"
+							id="HomeOffice"
+							value={ HomeOffice }
+							name="HomeOffice"
+							class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+							placeholder="you@site.com"
+						/>
+					} else {
+						<input
+							type="text"
+							id="HomeOffice"
+							name="HomeOffice"
+							class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+							placeholder="you@site.com"
+						/>
+					}
+				} else {
+					<input
+						type="text"
+						id="HomeOffice"
+						name="HomeOffice"
+						class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+						placeholder="you@site.com"
+					/>
+				}
+			</div>
+			<!-- TelefonPrivat -->
+			<div>
+				<label
+					for="Telefon_Privat"
+					class="block text-sm font-medium mb-2 dark:text-white"
+				>TelefonPrivat</label>
+				if mitarbeiter != nil {
+					{{
+	TelefonPrivat, TelefonPrivat_ok := mitarbeiter.TelefonPrivat()
+					}}
+					if TelefonPrivat_ok {
+						<input
+							type="text"
+							id="Telefon_Privat"
+							value={ TelefonPrivat }
+							name="Telefon_Privat"
+							class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+							placeholder="you@site.com"
+						/>
+					} else {
+						<input
+							type="text"
+							id="Telefon_Privat"
+							name="Telefon_Privat"
+							class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+							placeholder="you@site.com"
+						/>
+					}
+				} else {
+					<input
+						type="text"
+						id="Telefon_Privat"
+						name="Telefon_Privat"
+						class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+						placeholder="you@site.com"
+					/>
+				}
+			</div>
+			<!-- TelefonBusiness -->
+			<div>
+				<label
+					for="Telefon_Business"
+					class="block text-sm font-medium mb-2 dark:text-white"
+				>TelefonBusiness</label>
+				if mitarbeiter != nil {
+					{{
+	TelefonBusiness, TelefonBusiness_ok := mitarbeiter.TelefonBusiness()
+					}}
+					if TelefonBusiness_ok {
+						<input
+							type="text"
+							id="Telefon_Business"
+							value={ TelefonBusiness }
+							name="Telefon_Business"
+							class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+							placeholder="you@site.com"
+						/>
+					} else {
+						<input
+							type="text"
+							id="Telefon_Business"
+							name="Telefon_Business"
+							class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+							placeholder="you@site.com"
+						/>
+					}
+				} else {
+					<input
+						type="text"
+						id="Telefon_Business"
+						name="Telefon_Business"
+						class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+						placeholder="you@site.com"
+					/>
+				}
+			</div>
+			<!-- MobilPrivat -->
+			<div>
+				<label
+					for="Mobil_Privat"
+					class="block text-sm font-medium mb-2 dark:text-white"
+				>MobilPrivat</label>
+				if mitarbeiter != nil {
+					{{
+	MobilPrivat, MobilPrivat_ok := mitarbeiter.MobilPrivat()
+					}}
+					if MobilPrivat_ok {
+						<input
+							type="text"
+							id="Mobil_Privat"
+							value={ MobilPrivat }
+							name="Mobil_Privat"
+							class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+							placeholder="you@site.com"
+						/>
+					} else {
+						<input
+							type="text"
+							id="Mobil_Privat"
+							name="Mobil_Privat"
+							class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+							placeholder="you@site.com"
+						/>
+					}
+				} else {
+					<input
+						type="text"
+						id="Mobil_Privat"
+						name="Mobil_Privat"
+						class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+						placeholder="you@site.com"
+					/>
+				}
+			</div>
+			<!-- MobilBusiness -->
+			<div>
+				<label
+					for="Mobil_Business"
+					class="block text-sm font-medium mb-2 dark:text-white"
+				>MobilBusiness</label>
+				if mitarbeiter != nil {
+					{{
+	MobilBusiness, MobilBusiness_ok := mitarbeiter.MobilBusiness()
+					}}
+					if MobilBusiness_ok {
+						<input
+							type="text"
+							id="Mobil_Business"
+							value={ MobilBusiness }
+							name="Mobil_Business"
+							class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+							placeholder="you@site.com"
+						/>
+					} else {
+						<input
+							type="text"
+							id="Mobil_Business"
+							name="Mobil_Business"
+							class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+							placeholder="you@site.com"
+						/>
+					}
+				} else {
+					<input
+						type="text"
+						id="Mobil_Business"
+						name="Mobil_Business"
+						class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+						placeholder="you@site.com"
+					/>
+				}
+			</div>
+		</div>
+		<div class="grid grid-cols-1 gap-8">
+			<!-- Azubi -->
+			<div class="flex items-center gap-x-3">
+				<label for="online" class="relative inline-block w-13 h-7 cursor-pointer">
+					if mitarbeiter != nil && mitarbeiter.Azubi {
+						<input
+							type="checkbox"
+							id="Azubi"
+							checked
+							name="Azubi"
+							class="peer sr-only"
+						/>
+					} else {
+						<input
+							type="checkbox"
+							id="Azubi"
+							name="Azubi"
+							class="peer sr-only"
+						/>
+					}
+					<span class="absolute inset-0 bg-gray-200 rounded-full transition-colors duration-200 ease-in-out peer-checked:bg-blue-600 dark:bg-neutral-700 dark:peer-checked:bg-blue-500 peer-disabled:opacity-50 peer-disabled:pointer-events-none"></span>
+					<span class="absolute top-1/2 start-0.5 -translate-y-1/2 size-6 bg-white rounded-full shadow-xs transition-transform duration-200 ease-in-out peer-checked:translate-x-full dark:bg-neutral-400 dark:peer-checked:bg-white"></span>
+					<!-- Left Icon (Off) -->
+					<span class="absolute top-1/2 start-1 -translate-y-1/2 flex justify-center items-center size-5 text-gray-500 peer-checked:text-white transition-colors duration-200 dark:text-neutral-500">
+						<svg class="shrink-0 size-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M18 6 6 18"></path>
+							<path d="m6 6 12 12"></path>
+						</svg>
+					</span>
+					<!-- Right Icon (On) -->
+					<span class="absolute top-1/2 end-1 -translate-y-1/2 flex justify-center items-center size-5 text-gray-500 peer-checked:text-blue-600 transition-colors duration-200 dark:text-neutral-500">
+						<svg class="shrink-0 size-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+							<polyline points="20 6 9 17 4 12"></polyline>
+						</svg>
+					</span>
+				</label>
+				<label
+					for="Azubi"
+					class="text-sm text-gray-500 dark:text-neutral-400"
+				>Azubi?</label>
+			</div>
+			<!-- Geburtstag -->
+			{{
+			loc, _ := time.LoadLocation("Europe/Berlin")
+			}}
+			<div>
+				<label
+					for="date_start"
+					class="block text-sm font-medium mb-2 dark:text-white"
+				>Geburtstag</label>
+				if mitarbeiter == nil {
+					<input
+						type="date"
+						name="Geburtstag"
+						id="Geburtstag"
+						class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-200 dark:placeholder-neutral-400 dark:focus:ring-neutral-600"
+						placeholder="Geburtstag"
+					/>
+				} else {
+					{{
+	var geb time.Time
+	geburtstag, geburtstag_ok := mitarbeiter.Geburtstag()
+	if geburtstag_ok {
+		geb = time.Date(geburtstag.Year(), geburtstag.Month(), geburtstag.Day(), 0, 0, 0, 0, loc)
+	}
+					}}
+					if geburtstag_ok {
+						<input
+							type="date"
+							name="Geburtstag"
+							id="Geburtstag"
+							class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-200 dark:placeholder-neutral-400 dark:focus:ring-neutral-600"
+							placeholder="Geburtstag"
+							value={ geb.Format("2006-01-02") }
+						/>
+					} else {
+						<input
+							type="date"
+							name="Geburtstag"
+							id="Geburtstag"
+							class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-200 dark:placeholder-neutral-400 dark:focus:ring-neutral-600"
+							placeholder="Geburtstag"
+						/>
+					}
+				}
+			</div>
+		</div>
+		<button
+			type="submit"
+			class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-hidden focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
+		>
+			Speichern
+		</button>
+	</form>
+}
