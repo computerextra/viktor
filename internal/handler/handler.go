@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"encoding/json"
 	"log/slog"
 	"net/http"
 	"strings"
@@ -47,33 +46,16 @@ func sendQueryError(w http.ResponseWriter, logger *slog.Logger, err error) {
 	sendError(w, logger, "failed to query db", err)
 }
 
-func sendMarshalError(w http.ResponseWriter, logger *slog.Logger, err error) {
-	sendError(w, logger, "failed to marshal data", err)
-}
-
-func marshalData(data any, w http.ResponseWriter, l *slog.Logger) []byte {
-	d, err := json.MarshalIndent(data, "", " ")
-	if err != nil {
-		sendMarshalError(w, l, err)
-		return nil
-	}
-	return d
-}
-
 func getPath(path string) string {
 	parts := strings.Split(path, "/")
 	var uri string
 	switch len(parts) {
+	case 0:
 	case 1:
-		uri = "/"
+		uri = ""
 	default:
 		uri = parts[1]
 	}
 
 	return uri
-}
-
-func sendJsonData(data []byte, w http.ResponseWriter) {
-	w.Header().Set("Content-Type", "application/jason")
-	w.Write(data)
 }

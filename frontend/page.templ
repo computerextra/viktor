@@ -1,5 +1,7 @@
 package frontend
 
+import "fmt"
+
 templ Page(title string, uri string) {
 	{{
 		type NavItem struct {
@@ -9,13 +11,12 @@ templ Page(title string, uri string) {
 		navItems := []NavItem{
 			{Name: "Start", Link: "/"},
 			{Name: "Einkauf", Link: "/Einkauf"},
-			{Name: "Mitarbeiter", Link: "/CMS/Mitarbeiter"},
+			{Name: "Mitarbeiter", Link: "/Mitarbeiter"},
 			{Name: "Lieferanten (NYI)", Link: "/Lieferanten"},
-			{Name: "CE Archiv (NYI)", Link: "/Archiv"},
+			{Name: "CE Archiv", Link: "/Archiv"},
 			{Name: "Kunden (NYI)", Link: "/Kunden"},
 			{Name: "Warenlieferung (NYI)", Link: "/Warenlieferung"},
 			{Name: "CMS", Link: "/CMS"},
-			{Name: "Status", Link: "/Status"},
 		}
 	}}
 	<!DOCTYPE html>
@@ -29,6 +30,8 @@ templ Page(title string, uri string) {
 			<script src="/static/js/preline.js" defer></script>
 			// Alpine.js
 			<script src="//unpkg.com/alpinejs" defer></script>
+			// Status JS
+			<script src="/static/js/status.js" defer></script>
 		</head>
 		<body class="bg-white dark:bg-neutral-600 antialiased">
 			<header class="relative flex flex-wrap sm:justify-start sm:flex-nowrap w-full bg-white text-sm py-3 dark:bg-neutral-800 print:hidden">
@@ -50,12 +53,17 @@ templ Page(title string, uri string) {
 							for idx, item := range navItems {
 								<a
 									data-idx={ idx }
-									class={ "font-medium", templ.KV("text-blue-500 focus:outline-hidden", uri == item.Link), templ.KV("text-gray-600 hover:text-gray-400 focus:outline-hidden focus:text-gray-400 dark:text-neutral-400 dark:hover:text-neutral-500 dark:focus:text-neutral-500", uri != item.Link) }
+									class={ "font-medium", templ.KV("!text-blue-500 focus:outline-hidden", fmt.Sprintf("/%s", uri) == item.Link), templ.KV("!text-gray-600 !hover:text-gray-400 focus:outline-hidden !focus:text-gray-400 !dark:text-neutral-400 !dark:hover:text-neutral-500 !dark:focus:text-neutral-500", fmt.Sprintf("/%s", uri) != item.Link) }
 									href={ templ.SafeURL(item.Link) }
 								>
 									{ item.Name }
 								</a>
 							}
+							<div class="border-s-2 border-s-gray-600">
+								<p class="ms-2 text-sm">
+									<span id="status"></span>
+								</p>
+							</div>
 						</div>
 					</div>
 				</nav>

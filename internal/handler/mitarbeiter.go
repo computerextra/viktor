@@ -38,9 +38,8 @@ func (h *Handler) GetIndex(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		sendQueryError(w, h.logger, err)
 	}
-	uri := r.URL.Path
 
-	frontend.Index(res, uri).Render(ctx, w)
+	frontend.Index(res, "").Render(ctx, w)
 }
 
 func (h *Handler) getAbteilungen(ctx context.Context) ([]db.AbteilungModel, error) {
