@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"github.com/computerextra/viktor/db"
+	"github.com/computerextra/viktor/frontend"
 	_ "github.com/denisenkom/go-mssqldb"
 
 	gomail "gopkg.in/mail.v2"
@@ -130,6 +131,11 @@ func getSageConnectionString() string {
 	return sageurl
 }
 
+func (h *Handler) Warenlieferung(w http.ResponseWriter, r *http.Request) {
+	uri := getPath(r.URL.Path)
+	frontend.Warenlieferung(uri, false, false).Render(r.Context(), w)
+}
+
 func (h *Handler) GenerateWarenlieferung(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
@@ -186,7 +192,8 @@ func (h *Handler) GenerateWarenlieferung(w http.ResponseWriter, r *http.Request)
 			}
 		}
 	}
-	w.WriteHeader(http.StatusOK)
+	uri := getPath(r.URL.Path)
+	frontend.Warenlieferung(uri, true, false).Render(r.Context(), w)
 }
 
 func (h *Handler) SendWarenlieferung(w http.ResponseWriter, r *http.Request) {
@@ -451,7 +458,8 @@ func (h *Handler) SendWarenlieferung(w http.ResponseWriter, r *http.Request) {
 			m.Reset()
 		}
 	}
-	w.WriteHeader(http.StatusOK)
+	uri := getPath(r.URL.Path)
+	frontend.Warenlieferung(uri, true, true).Render(r.Context(), w)
 }
 
 func sortProducts(Products []db.WarenlieferungModel) ([]Warenlieferung, []Warenlieferung, []Warenlieferung, error) {

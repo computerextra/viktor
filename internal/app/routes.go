@@ -104,11 +104,9 @@ func (a *App) loadPages(router *http.ServeMux) {
 	router.HandleFunc("GET /Archiv/{id}", h.GetArchive)
 
 	// Warenlieferung
-	// TODO: Implement
-	router.HandleFunc("GET /Warenlieferung", h.GenerateWarenlieferung)
-	// TODO: Implement
+
+	router.HandleFunc("GET /Warenlieferung", h.Warenlieferung)
 	router.HandleFunc("POST /Warenlieferung/Generate", h.GenerateWarenlieferung)
-	// TODO: Implement
 	router.HandleFunc("POST /Warenlieferung/Send", h.SendWarenlieferung)
 
 	// Lieferanten

@@ -1,0 +1,28 @@
+package frontend
+
+templ Warenlieferung(uri string, generated bool, send bool) {
+	@Page("Warenlieferung", uri) {
+		<div class="container mx-auto mt-10">
+			<h1 class="text-center">Warenlieferung</h1>
+			<div class="flex justify-center mt-10">
+				if !generated && !send {
+					<form action="/Warenlieferung/Generate" method="post">
+						<button type="submit" class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-hidden focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
+							Generieren
+						</button>
+					</form>
+				}
+				if generated && !send {
+					<form action="/Warenlieferung/Send" method="post">
+						<button type="submit" class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-hidden focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
+							Senden
+						</button>
+					</form>
+				}
+				if generated && send {
+					<h2 class="text-center">Warenlieferung wurde generiert und gesendet</h2>
+				}
+			</div>
+		</div>
+	}
+}
