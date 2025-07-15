@@ -31,7 +31,7 @@ model Ansprechpartner {
   mobil       String?
   mail        String?
   lieferantId String
-  Lieferant   Lieferant @relation(fields: [lieferantId], references: [id])
+  Lieferant   Lieferant @relation(fields: [lieferantId], references: [id], onDelete: Cascade)
 
   @@index([lieferantId], map: "Ansprechpartner_lieferantId_fkey")
 }
@@ -94,7 +94,7 @@ model Mitarbeiter {
   Telefon_Intern_2 String?
   Telefon_Privat   String?
   Abteilung        Abteilung? @relation(fields: [abteilungId], references: [id])
-  Einkauf          Einkauf?   @relation(fields: [einkaufId], references: [id])
+  Einkauf          Einkauf?   @relation(fields: [einkaufId], references: [id], onDelete: Cascade)
 
   @@index([abteilungId], map: "Mitarbeiter_abteilungId_fkey")
 }
