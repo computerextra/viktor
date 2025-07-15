@@ -1,0 +1,231 @@
+package frontend
+
+import (
+	"fmt"
+	"github.com/computerextra/viktor/db"
+)
+
+templ ParnterOverview(partner []db.PartnerModel, uri string) {
+	@Page("CMS | Partner", uri) {
+		<div class="container mx-auto mt-10">
+			@BackButton("/CMS")
+			<h1 class="text-center">CMS - Partner</h1>
+			<a
+				class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-hidden focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
+				href="/CMS/Partner/Neu"
+			>
+				Neuen Parnter anlegen
+			</a>
+			<div class="flex flex-col mt-5 max-w-[60%] mx-auto">
+				<div class="-m-1.5 overflow-x-auto">
+					<div class="p-1.5 min-w-full inline-block align-middle">
+						<div class="overflow-hidden">
+							<table class="min-w-full divide-y divide-gray-200 dark:divide-neutral-700">
+								<thead>
+									<tr>
+										<th
+											scope="col"
+											class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500"
+										>
+											Name
+										</th>
+										<th
+											scope="col"
+											class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500"
+										>
+											Bild
+										</th>
+										<th
+											scope="col"
+											class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500"
+										>
+											Link
+										</th>
+										<th
+											scope="col"
+											class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase dark:text-neutral-500"
+										>
+											Action
+										</th>
+									</tr>
+								</thead>
+								<tbody class="divide-y divide-gray-200 dark:divide-neutral-700">
+									for _, x := range partner {
+										@partnerRow(x)
+									}
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	}
+}
+
+templ partnerRow(partner db.PartnerModel) {
+	<tr class="hover:bg-gray-100 dark:hover:bg-neutral-700">
+		<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">
+			<a href={ templ.SafeURL(fmt.Sprintf("/CMS/Partner/%s", partner.ID)) }>
+				{ partner.Name }
+			</a>
+		</td>
+		<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">
+			<div class="hs-tooltip inline-block">
+				<div class="max-w-[200px] overflow-hidden hs-tooltip-toggle">
+					{ partner.Image }
+				</div>
+				<span class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 transition-opacity inline-block absolute invisible z-10 py-1 px-2 bg-gray-900 text-xs font-medium text-white rounded-md shadow-2xs dark:bg-neutral-700" role="tooltip">
+					<img
+						src={ templ.SafeURL(fmt.Sprintf("https://computer-extra.de/Images/Partner/%s", partner.Image)) }
+						alt={ partner.Image }
+						width="250"
+						height="250"
+					/>
+				</span>
+			</div>
+		</td>
+		<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">
+			<div class="hs-tooltip inline-block">
+				<div class="max-w-[200px] overflow-hidden hs-tooltip-toggle">
+					<a href={ templ.SafeURL(partner.Link) } target="_blank" rel="noopener noreferrer" class="text-ellipsis">
+						{ partner.Link }
+					</a>
+				</div>
+				<span class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 transition-opacity inline-block absolute invisible z-10 py-1 px-2 bg-gray-900 text-xs font-medium text-white rounded-md shadow-2xs dark:bg-neutral-700" role="tooltip">
+					{ partner.Link }
+				</span>
+			</div>
+		</td>
+		<td class="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
+			<form action={ templ.SafeURL(fmt.Sprintf("/CMS/Partner/%s/Delete", partner.ID)) } method="post">
+				<button
+					type="submit"
+					class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 focus:outline-hidden focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-500 dark:hover:text-blue-400 dark:focus:text-blue-400"
+				>
+					Löschen
+				</button>
+			</form>
+		</td>
+	</tr>
+}
+
+templ NeuerPartner(uri string) {
+	@Page("Neuer Partner", uri) {
+		<div class="container mx-auto mt-5">
+			@BackButton("/CMS/Partner")
+			<h1 class="text-center">Neuen Partner anlegen</h1>
+			@PartnerForm(nil)
+		</div>
+	}
+}
+
+templ PartnerBearbeiten(partner *db.PartnerModel, uri string) {
+	@Page("Partner bearbeiten", uri) {
+		<div class="container mx-auto mt-5">
+			@BackButton("/CMS/Partner")
+			<h1 class="text-center">{ partner.Name } bearbeiten</h1>
+			@PartnerForm(partner)
+		</div>
+	}
+}
+
+templ PartnerForm(partner *db.PartnerModel) {
+	{{
+var action string
+if partner == nil {
+	action = "/CMS/Partner/Neu"
+} else {
+	action = fmt.Sprintf("/CMS/Partner/%s", partner.ID)
+}
+	}}
+	<form action={ templ.SafeURL(action) } method="post" class="space-y-8">
+		<!-- Name -->
+		<div class="max-w-sm">
+			<label
+				for="name"
+				class="block text-sm font-medium mb-2 dark:text-white"
+			>Name</label>
+			if partner == nil {
+				<input
+					type="text"
+					id="name"
+					name="name"
+					required
+					class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+					placeholder="you@site.com"
+				/>
+			} else {
+				<input
+					type="text"
+					id="name"
+					value={ partner.Name }
+					name="name"
+					required
+					class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+					placeholder="you@site.com"
+				/>
+			}
+		</div>
+		<!-- Image -->
+		<div class="max-w-sm">
+			<label
+				for="name"
+				class="block text-sm font-medium mb-2 dark:text-white"
+			>Image</label>
+			if partner == nil {
+				<input
+					type="text"
+					id="image"
+					required
+					name="image"
+					class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+					placeholder="you@site.com"
+				/>
+			} else {
+				<input
+					type="text"
+					id="image"
+					required
+					value={ partner.Image }
+					name="image"
+					class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+					placeholder="you@site.com"
+				/>
+			}
+		</div>
+		<!-- Link -->
+		<div class="max-w-sm">
+			<label
+				for="name"
+				class="block text-sm font-medium mb-2 dark:text-white"
+			>Link</label>
+			if partner == nil {
+				<input
+					type="text"
+					id="link"
+					required
+					name="link"
+					class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+					placeholder="you@site.com"
+				/>
+			} else {
+				<input
+					type="text"
+					id="link"
+					required
+					value={ partner.Link }
+					name="link"
+					class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+					placeholder="you@site.com"
+				/>
+			}
+		</div>
+		<button
+			type="submit"
+			class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-hidden focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
+		>
+			Speichern
+		</button>
+	</form>
+}

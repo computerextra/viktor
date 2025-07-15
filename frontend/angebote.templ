@@ -7,7 +7,7 @@ import (
 )
 
 templ AngeboteOverview(angebote []db.AngebotModel, uri string) {
-	@Page("CMS | Abteilungen", uri) {
+	@Page("CMS | Angebote", uri) {
 		<div class="container mx-auto mt-10">
 			@BackButton("/CMS")
 			<h1 class="text-center">CMS - Abteilungen</h1>
@@ -129,8 +129,19 @@ templ angebotRow(angebot db.AngebotModel) {
 			{ dateStop }
 		</td>
 		<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">
-			<!-- TODO: Image Preview -->
-			{ angebot.Image }
+			<div class="hs-tooltip inline-block">
+				<div class="max-w-[200px] overflow-hidden hs-tooltip-toggle">
+					{ angebot.Image }
+				</div>
+				<span class="hs-tooltip-content hs-tooltip-shown:opacity-100 hs-tooltip-shown:visible opacity-0 transition-opacity inline-block absolute invisible z-10 py-1 px-2 bg-gray-900 text-xs font-medium text-white rounded-md shadow-2xs dark:bg-neutral-700" role="tooltip">
+					<img
+						src={ templ.SafeURL(fmt.Sprintf("https://computer-extra.de/Images/Angebote/%s", angebot.Image)) }
+						alt={ angebot.Image }
+						width="250"
+						height="250"
+					/>
+				</span>
+			</div>
 		</td>
 		<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">
 			if angebot.Anzeigen {

@@ -84,42 +84,13 @@ func (a *App) loadPages(router *http.ServeMux) {
 	router.HandleFunc("POST /CMS/Jobs/{id}/Delete", h.DeleteJob) // Job löschen
 
 	router.HandleFunc("GET /CMS/Mitarbeiter", h.GetMitarbeiters) // Mitarbeiter Übersicht
-	router.HandleFunc("GET /CMS/Partner", h.GetPartners)         // Partner Übersicht
-
-	// CMS ROUTES BEGIN
-
-	// Angebote
-	router.HandleFunc("GET /api/Angebot", h.GetAngebote)
-	router.HandleFunc("POST /api/Angebot", h.CreateAngebot)
-	router.HandleFunc("GET /api/Angebot/{id}", h.GetAngebot)
-	router.HandleFunc("POST /api/Angebot/{id}", h.UpdateAngebot)
-	router.HandleFunc("POST /api/Angebot/{id}/toggle", h.ToggleAngebot)
-	router.HandleFunc("DELETE /api/Angebot/{id}", h.DeleteAngebot)
-
-	// Jobs
-	router.HandleFunc("GET /api/Job", h.GetJobs)
-	router.HandleFunc("POST /api/Job", h.CreateJob)
-	router.HandleFunc("GET /api/Job/{id}", h.GetJob)
-	router.HandleFunc("POST /api/Job/{id}", h.UpdateJob)
-	router.HandleFunc("POST /api/Job/{id}/toggle", h.ToggleJob)
-	router.HandleFunc("DELETE /api/Job/{id}", h.DeleteJob)
-
-	// Mitarbeiter
-	router.HandleFunc("GET /api/Mitarbeiter", h.GetMitarbeiters)
-	router.HandleFunc("GET /api/Mitarbeiter/Abteilung", h.GetMitarbeitersWithAbteilung)
-	router.HandleFunc("POST /api/Mitarbeiter", h.CreateMitarbeiter)
-	router.HandleFunc("GET /api/Mitarbeiter/{id}", h.GetMitarbeiter)
-	router.HandleFunc("POST /api/Mitarbeiter/{id}", h.UpdateMitarbeiter)
-	router.HandleFunc("DELETE /api/Mitarbeiter/{id}", h.DeleteMitarbeiter)
-
 	// Partner
-	router.HandleFunc("GET /api/Partner", h.GetPartners)
-	router.HandleFunc("POST /api/Partner", h.CreatePartner)
-	router.HandleFunc("GET /api/Partner/{id}", h.GetPartner)
-	router.HandleFunc("POST /api/Partner/{id}", h.UpdatePartner)
-	router.HandleFunc("DELETE /api/Partner/{id}", h.DeletePartner)
-
-	// CMS ROUTES END
+	router.HandleFunc("GET /CMS/Partner", h.GetPartners)                // Partnerübersicht
+	router.HandleFunc("GET /CMS/Partner/Neu", h.NewPartner)             // Neuer Partner Formular
+	router.HandleFunc("POST /CMS/Partner/Neu", h.CreatePartner)         // Partner anlegen
+	router.HandleFunc("GET /CMS/Partner/{id}", h.GetPartner)            // Partner bearbeiten Form
+	router.HandleFunc("POST /CMS/Partner/{id}", h.UpdatePartner)        // Partner bearbeiten
+	router.HandleFunc("POST /CMS/Partner/{id}/Delete", h.DeletePartner) // Partner löschen
 
 	// Archive
 	router.HandleFunc("GET /api/Archiv/{id}", h.GetArchive)

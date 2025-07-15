@@ -1,10 +1,12 @@
 package handler
 
 import (
+	"fmt"
 	"log/slog"
 	"net/http"
 
 	"github.com/computerextra/viktor/db"
+	"github.com/computerextra/viktor/frontend"
 	"github.com/computerextra/viktor/internal/util/flash"
 )
 
@@ -14,13 +16,19 @@ type PartnerProps struct {
 	Link  string `schema:"link,required"`
 }
 
+func (h *Handler) NewPartner(w http.ResponseWriter, r *http.Request) {
+	uri := getPath(r.URL.Path)
+	frontend.NeuerPartner(uri).Render(r.Context(), w)
+}
+
 func (h *Handler) GetPartners(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	res, err := h.db.Partner.FindMany().OrderBy(db.Partner.Name.Order(db.SortOrderAsc)).Exec(ctx)
 	if err != nil {
 		sendQueryError(w, h.logger, err)
 	}
-	sendJsonData(marshalData(res, w, h.logger), w)
+	uri := getPath(r.URL.Path)
+	frontend.ParnterOverview(res, uri).Render(ctx, w)
 }
 
 func (h *Handler) GetPartner(w http.ResponseWriter, r *http.Request) {
@@ -35,7 +43,8 @@ func (h *Handler) GetPartner(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		sendQueryError(w, h.logger, err)
 	}
-	sendJsonData(marshalData(res, w, h.logger), w)
+	uri := getPath(r.URL.Path)
+	frontend.PartnerBearbeiten(res, uri).Render(ctx, w)
 }
 
 func (h *Handler) CreatePartner(w http.ResponseWriter, r *http.Request) {
@@ -49,7 +58,7 @@ func (h *Handler) CreatePartner(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNoContent)
 		return
 	}
-	res, err := h.db.Partner.CreateOne(
+	_, err = h.db.Partner.CreateOne(
 		db.Partner.Name.Set(partner.Name),
 		db.Partner.Link.Set(partner.Link),
 		db.Partner.Image.Set(partner.Image),
@@ -57,7 +66,14 @@ func (h *Handler) CreatePartner(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		sendQueryError(w, h.logger, err)
 	}
-	sendJsonData(marshalData(res, w, h.logger), w)
+	host := r.Host
+	scheme := "http"
+	if r.TLS != nil {
+		scheme = "https"
+	}
+	uri := fmt.Sprintf("%s://%s/CMS/Partner", scheme, host)
+	http.Redirect(w, r, uri, http.StatusFound)
+
 }
 
 func (h *Handler) UpdatePartner(w http.ResponseWriter, r *http.Request) {
@@ -78,7 +94,7 @@ func (h *Handler) UpdatePartner(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNoContent)
 		return
 	}
-	res, err := h.db.Partner.FindUnique(db.Partner.ID.Equals(id)).Update(
+	_, err = h.db.Partner.FindUnique(db.Partner.ID.Equals(id)).Update(
 		db.Partner.Name.Set(partner.Name),
 		db.Partner.Link.Set(partner.Link),
 		db.Partner.Image.Set(partner.Image),
@@ -86,7 +102,13 @@ func (h *Handler) UpdatePartner(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		sendQueryError(w, h.logger, err)
 	}
-	sendJsonData(marshalData(res, w, h.logger), w)
+	host := r.Host
+	scheme := "http"
+	if r.TLS != nil {
+		scheme = "https"
+	}
+	uri := fmt.Sprintf("%s://%s/CMS/Partner", scheme, host)
+	http.Redirect(w, r, uri, http.StatusFound)
 }
 
 func (h *Handler) DeletePartner(w http.ResponseWriter, r *http.Request) {
@@ -97,9 +119,15 @@ func (h *Handler) DeletePartner(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNoContent)
 		return
 	}
-	res, err := h.db.Partner.FindUnique(db.Partner.ID.Equals(id)).Delete().Exec(ctx)
+	_, err := h.db.Partner.FindUnique(db.Partner.ID.Equals(id)).Delete().Exec(ctx)
 	if err != nil {
 		sendQueryError(w, h.logger, err)
 	}
-	sendJsonData(marshalData(res, w, h.logger), w)
+	host := r.Host
+	scheme := "http"
+	if r.TLS != nil {
+		scheme = "https"
+	}
+	uri := fmt.Sprintf("%s://%s/CMS/Partner", scheme, host)
+	http.Redirect(w, r, uri, http.StatusFound)
 }
