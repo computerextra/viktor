@@ -25,6 +25,7 @@ func (h *Handler) GetJobs(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	res, err := h.db.Jobs.FindMany().OrderBy(db.Jobs.Name.Order(db.SortOrderAsc)).Exec(ctx)
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		sendQueryError(w, h.logger, err)
 	}
 
@@ -42,6 +43,7 @@ func (h *Handler) GetJob(w http.ResponseWriter, r *http.Request) {
 	}
 	res, err := h.db.Jobs.FindUnique(db.Jobs.ID.Equals(id)).Exec(ctx)
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		sendQueryError(w, h.logger, err)
 	}
 	uri := getPath(r.URL.Path)
@@ -54,7 +56,7 @@ func (h *Handler) CreateJob(w http.ResponseWriter, r *http.Request) {
 	var props JobProps
 	err := decoder.Decode(&props, r.PostForm)
 	if err != nil {
-		flash.SetFlashMessage(w, "error", "content cannot be empty")
+		flash.SetFlashMessage(w, "error", err.Error())
 		h.logger.Error("failed to parse formdata", slog.Any("error", err))
 		w.WriteHeader(http.StatusNoContent)
 		return
@@ -84,6 +86,7 @@ func (h *Handler) ToggleJob(w http.ResponseWriter, r *http.Request) {
 
 	status, err := h.db.Jobs.FindUnique(db.Jobs.ID.Equals(id)).Exec(ctx)
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		sendQueryError(w, h.logger, err)
 	}
 
@@ -91,6 +94,7 @@ func (h *Handler) ToggleJob(w http.ResponseWriter, r *http.Request) {
 		db.Jobs.Online.Set(!status.Online),
 	).Exec(ctx)
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		sendQueryError(w, h.logger, err)
 	}
 	host := r.Host
@@ -114,7 +118,7 @@ func (h *Handler) UpdateJob(w http.ResponseWriter, r *http.Request) {
 	var props JobProps
 	err := decoder.Decode(&props, r.PostForm)
 	if err != nil {
-		flash.SetFlashMessage(w, "error", "content cannot be empty")
+		flash.SetFlashMessage(w, "error", err.Error())
 		h.logger.Error("failed to parse formdata", slog.Any("error", err))
 		w.WriteHeader(http.StatusNoContent)
 		return
@@ -124,6 +128,7 @@ func (h *Handler) UpdateJob(w http.ResponseWriter, r *http.Request) {
 		db.Jobs.Online.Set(props.Online),
 	).Exec(ctx)
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		sendQueryError(w, h.logger, err)
 	}
 	host := r.Host
@@ -145,6 +150,7 @@ func (h *Handler) DeleteJob(w http.ResponseWriter, r *http.Request) {
 	}
 	_, err := h.db.Jobs.FindUnique(db.Jobs.ID.Equals(id)).Delete().Exec(ctx)
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		sendQueryError(w, h.logger, err)
 	}
 	host := r.Host

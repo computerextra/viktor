@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"flag"
 	"fmt"
-	"log"
 	"log/slog"
 	"net/http"
 	"os"
@@ -17,6 +16,7 @@ import (
 
 	"github.com/computerextra/viktor/db"
 	"github.com/computerextra/viktor/frontend"
+	"github.com/computerextra/viktor/internal/util/flash"
 	_ "github.com/denisenkom/go-mssqldb"
 
 	gomail "gopkg.in/mail.v2"
@@ -141,11 +141,13 @@ func (h *Handler) GenerateWarenlieferung(w http.ResponseWriter, r *http.Request)
 
 	AlleArtikel, err := h.db.Warenlieferung.FindMany().Exec(ctx)
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		sendQueryError(w, h.logger, err)
 	}
 
 	neueArtikel, geliefert, neuePreise, err := sortProducts(AlleArtikel)
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		h.logger.Error("failed to connect to sage", slog.Any("error", err))
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -159,6 +161,7 @@ func (h *Handler) GenerateWarenlieferung(w http.ResponseWriter, r *http.Request)
 		).Exec(ctx)
 
 		if err != nil {
+			flash.SetFlashMessage(w, "error", err.Error())
 			sendQueryError(w, h.logger, err)
 		}
 	}
@@ -168,6 +171,7 @@ func (h *Handler) GenerateWarenlieferung(w http.ResponseWriter, r *http.Request)
 		).Exec(ctx)
 
 		if err != nil {
+			flash.SetFlashMessage(w, "error", err.Error())
 			sendQueryError(w, h.logger, err)
 		}
 	}
@@ -188,6 +192,7 @@ func (h *Handler) GenerateWarenlieferung(w http.ResponseWriter, r *http.Request)
 				db.Warenlieferung.NeuerPreis.Set(neuFloat),
 			).Exec(ctx)
 			if err != nil {
+				flash.SetFlashMessage(w, "error", err.Error())
 				sendQueryError(w, h.logger, err)
 			}
 		}
@@ -204,81 +209,97 @@ func (h *Handler) SendWarenlieferung(w http.ResponseWriter, r *http.Request) {
 		),
 	).Exec(ctx)
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		sendQueryError(w, h.logger, err)
 	}
 	var NeueArtikel []db.WarenlieferungModel
 	err = h.db.Prisma.QueryRaw("SELECT * FROM Warenlieferung WHERE DATE_FORMAT(angelegt, '%Y-%m-%d') = DATE_FORMAT(NOW(), '%Y-%m-%d') ORDER BY Artikelnummer ASC").Exec(ctx, &NeueArtikel)
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		sendQueryError(w, h.logger, err)
 	}
 	var GelieferteArtikel []db.WarenlieferungModel
 	err = h.db.Prisma.QueryRaw("SELECT * FROM Warenlieferung WHERE DATE_FORMAT(geliefert, '%Y-%m-%d') = DATE_FORMAT(NOW(), '%Y-%m-%d') AND DATE_FORMAT(angelegt, '%Y-%m-%d') != DATE_FORMAT(NOW(), '%Y-%m-%d') ORDER BY Artikelnummer ASC").Exec(ctx, &GelieferteArtikel)
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		sendQueryError(w, h.logger, err)
 	}
 	var NeuePreise []db.WarenlieferungModel
 	err = h.db.Prisma.QueryRaw("SELECT * FROM Warenlieferung WHERE DATE_FORMAT(Preis, '%Y-%m-%d') = DATE_FORMAT(NOW(), '%Y-%m-%d') AND DATE_FORMAT(angelegt, '%Y-%m-%d') != DATE_FORMAT(NOW(), '%Y-%m-%d') ORDER BY Artikelnummer ASC").Exec(ctx, &NeuePreise)
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		sendQueryError(w, h.logger, err)
 	}
 	wertBestand, wertVerfügbar, err := getLagerWert()
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		sendQueryError(w, h.logger, err)
 	}
 	teureArtikel, err := getHighestSum()
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		sendQueryError(w, h.logger, err)
 	}
 	teureVerfArtikel, err := getHighestVerfSum()
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		sendQueryError(w, h.logger, err)
 	}
 	leichen, err := getLeichen()
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		sendQueryError(w, h.logger, err)
 	}
 	SN, err := getAlteSeriennummern()
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		sendQueryError(w, h.logger, err)
 	}
 	Verbrecher, gesamtWert, err := getOldAuftraege()
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		sendQueryError(w, h.logger, err)
 	}
 
 	// Mail Versand
 	from, ok := os.LookupEnv("SMTP_FROM")
 	if !ok {
+		flash.SetFlashMessage(w, "error", "failed to parse env")
 		h.logger.Error("failed to parse env", slog.String("key", "SMTP_FROM"))
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 	server, ok := os.LookupEnv("SMTP_HOST")
 	if !ok {
+		flash.SetFlashMessage(w, "error", "failed to parse env")
 		h.logger.Error("failed to parse env", slog.String("key", "SMTP_HOST"))
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 	user, ok := os.LookupEnv("SMTP_USER")
 	if !ok {
+		flash.SetFlashMessage(w, "error", "failed to parse env")
 		h.logger.Error("failed to parse env", slog.String("key", "SMTP_USER"))
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 	pass, ok := os.LookupEnv("SMTP_PASS")
 	if !ok {
+		flash.SetFlashMessage(w, "error", "failed to parse env")
 		h.logger.Error("failed to parse env", slog.String("key", "SMTP_PASS"))
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 	portStr, ok := os.LookupEnv("SMTP_PORT")
 	if !ok {
+		flash.SetFlashMessage(w, "error", "failed to parse env")
 		h.logger.Error("failed to parse env", slog.String("key", "SMTP_PORT"))
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 	port, err := strconv.Atoi(portStr)
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		h.logger.Error("failed to parse env", slog.Any("error", err))
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -354,7 +375,8 @@ func (h *Handler) SendWarenlieferung(w http.ResponseWriter, r *http.Request) {
 			tmp := strings.Split(strings.Replace(strings.Split(SN[i].GeBeginn, "T")[0], "-", ".", -1), ".")
 			year_tmp, err := strconv.Atoi(tmp[0])
 			if err != nil {
-				log.Fatal("SendMail: Fehler beim voncertieren von string zu int (year) in GetAlteSeriennummern!", err)
+				flash.SetFlashMessage(w, "error", err.Error())
+				h.logger.Error("SendMail: Fehler beim voncertieren von string zu int (year) in GetAlteSeriennummern!", slog.Any("error", err))
 			}
 
 			GarantieBeginn := fmt.Sprintf("%s.%s.%s", tmp[2], tmp[1], tmp[0])
@@ -437,6 +459,7 @@ func (h *Handler) SendWarenlieferung(w http.ResponseWriter, r *http.Request) {
 	d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
 	s, err := d.Dial()
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		h.logger.Error("failed to dial smtp server", slog.Any("error", err))
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -451,6 +474,7 @@ func (h *Handler) SendWarenlieferung(w http.ResponseWriter, r *http.Request) {
 			m.SetHeader("Subject", fmt.Sprintf("Warenlieferung vom %v", time.Now().Format(time.DateOnly)))
 			m.SetBody("text/html", body)
 			if err := gomail.Send(s, m); err != nil {
+				flash.SetFlashMessage(w, "error", err.Error())
 				h.logger.Error("failed to send mail", slog.Any("error", err))
 				w.WriteHeader(http.StatusInternalServerError)
 				return
@@ -465,6 +489,7 @@ func (h *Handler) SendWarenlieferung(w http.ResponseWriter, r *http.Request) {
 func sortProducts(Products []db.WarenlieferungModel) ([]Warenlieferung, []Warenlieferung, []Warenlieferung, error) {
 	Sage, err := getAllProductsFromSage()
 	if err != nil {
+
 		return nil, nil, nil, err
 	}
 	History, err := getLagerHistory()

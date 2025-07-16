@@ -43,7 +43,7 @@ func (h *Handler) SucheKunde(w http.ResponseWriter, r *http.Request) {
 	var props SearchProps
 	err := decoder.Decode(&props, r.PostForm)
 	if err != nil {
-		flash.SetFlashMessage(w, "error", "content cannot be empty")
+		flash.SetFlashMessage(w, "error", err.Error())
 		h.logger.Error("failed to parse formdata", slog.Any("error", err))
 		w.WriteHeader(http.StatusNoContent)
 		return
@@ -52,6 +52,7 @@ func (h *Handler) SucheKunde(w http.ResponseWriter, r *http.Request) {
 	connString := getSageConnectionString()
 	conn, err := sql.Open("sqlserver", connString)
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		h.logger.Error("failed to connect to sage", slog.Any("error", err))
 		w.WriteHeader(http.StatusNoContent)
 		return
@@ -61,6 +62,7 @@ func (h *Handler) SucheKunde(w http.ResponseWriter, r *http.Request) {
 
 	reverse, err := regexp.MatchString("^(\\d|[+]49)", props.Search)
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		h.logger.Error("failed to matchstring", slog.Any("error", err))
 		w.WriteHeader(http.StatusNoContent)
 		return
@@ -85,6 +87,7 @@ func (h *Handler) SucheKunde(w http.ResponseWriter, r *http.Request) {
 
 		rows, err := conn.Query(query, query, query, query)
 		if err != nil {
+			flash.SetFlashMessage(w, "error", err.Error())
 			h.logger.Error("failed to matchstring", slog.Any("error", err))
 			w.WriteHeader(http.StatusNoContent)
 			return
@@ -108,6 +111,7 @@ func (h *Handler) SucheKunde(w http.ResponseWriter, r *http.Request) {
 				&x.KundUmsatz,
 				&x.LiefUmsatz,
 			); err != nil {
+				flash.SetFlashMessage(w, "error", err.Error())
 				h.logger.Error("failed to matchstring", slog.Any("error", err))
 				w.WriteHeader(http.StatusNoContent)
 				return
@@ -152,6 +156,7 @@ func (h *Handler) SucheKunde(w http.ResponseWriter, r *http.Request) {
 		OR KundNr LIKE @SearchWord 
 		OR LiefNr LIKE @SearchWord;`, props.Search))
 		if err != nil {
+			flash.SetFlashMessage(w, "error", err.Error())
 			h.logger.Error("failed to matchstring", slog.Any("error", err))
 			w.WriteHeader(http.StatusNoContent)
 			return
@@ -175,6 +180,7 @@ func (h *Handler) SucheKunde(w http.ResponseWriter, r *http.Request) {
 				&x.KundUmsatz,
 				&x.LiefUmsatz,
 			); err != nil {
+				flash.SetFlashMessage(w, "error", err.Error())
 				h.logger.Error("failed to matchstring", slog.Any("error", err))
 				w.WriteHeader(http.StatusNoContent)
 				return

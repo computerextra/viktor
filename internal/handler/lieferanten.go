@@ -5,6 +5,7 @@ import (
 
 	"github.com/computerextra/viktor/db"
 	"github.com/computerextra/viktor/frontend"
+	"github.com/computerextra/viktor/internal/util/flash"
 )
 
 type LieferantProps struct {
@@ -18,6 +19,7 @@ func (h *Handler) GetLieferanten(w http.ResponseWriter, r *http.Request) {
 		db.Lieferant.Ansprechpartner.Fetch(),
 	).OrderBy(db.Lieferant.Firma.Order(db.SortOrderAsc)).Exec(ctx)
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		sendQueryError(w, h.logger, err)
 	}
 

@@ -28,7 +28,7 @@ func (h *Handler) SearchArchive(w http.ResponseWriter, r *http.Request) {
 	var props ArchiveProps
 	err := decoder.Decode(&props, r.PostForm)
 	if err != nil {
-		flash.SetFlashMessage(w, "error", "content cannot be empty")
+		flash.SetFlashMessage(w, "error", err.Error())
 		h.logger.Error("failed to parse formdata", slog.Any("error", err))
 		w.WriteHeader(http.StatusNoContent)
 		return
@@ -42,6 +42,7 @@ func (h *Handler) SearchArchive(w http.ResponseWriter, r *http.Request) {
 	),
 	).Select(db.Pdfs.Title.Field(), db.Pdfs.ID.Field()).Exec(ctx)
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		sendQueryError(w, h.logger, err)
 	}
 
@@ -54,23 +55,27 @@ func (h *Handler) GetArchive(w http.ResponseWriter, r *http.Request) {
 	idStr := r.PathValue("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		sendError(w, h.logger, "failed to convert string to int", err)
 	}
 
 	// Find File
 	res, err := h.db.Pdfs.FindUnique(db.Pdfs.ID.Equals(id)).Exec(ctx)
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		sendQueryError(w, h.logger, err)
 	}
 
 	// Try to read file
 	archivePath, ok := os.LookupEnv("ARCHIVE_PATH")
 	if !ok {
+		flash.SetFlashMessage(w, "error", "failed to find archive path")
 		sendError(w, h.logger, "failed to find archive path", err)
 	}
 
 	body, err := os.ReadFile(path.Join(archivePath, res.Title))
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		sendError(w, h.logger, "failed read file", err)
 	}
 

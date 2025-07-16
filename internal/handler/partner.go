@@ -25,6 +25,7 @@ func (h *Handler) GetPartners(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	res, err := h.db.Partner.FindMany().OrderBy(db.Partner.Name.Order(db.SortOrderAsc)).Exec(ctx)
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		sendQueryError(w, h.logger, err)
 	}
 	uri := getPath(r.URL.Path)
@@ -41,6 +42,7 @@ func (h *Handler) GetPartner(w http.ResponseWriter, r *http.Request) {
 	}
 	res, err := h.db.Partner.FindUnique(db.Partner.ID.Equals(id)).Exec(ctx)
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		sendQueryError(w, h.logger, err)
 	}
 	uri := getPath(r.URL.Path)
@@ -53,7 +55,7 @@ func (h *Handler) CreatePartner(w http.ResponseWriter, r *http.Request) {
 	var partner PartnerProps
 	err := decoder.Decode(&partner, r.PostForm)
 	if err != nil {
-		flash.SetFlashMessage(w, "error", "content cannot be empty")
+		flash.SetFlashMessage(w, "error", err.Error())
 		h.logger.Error("failed to parse formdata", slog.Any("error", err))
 		w.WriteHeader(http.StatusNoContent)
 		return
@@ -89,7 +91,7 @@ func (h *Handler) UpdatePartner(w http.ResponseWriter, r *http.Request) {
 	var partner PartnerProps
 	err := decoder.Decode(&partner, r.PostForm)
 	if err != nil {
-		flash.SetFlashMessage(w, "error", "content cannot be empty")
+		flash.SetFlashMessage(w, "error", err.Error())
 		h.logger.Error("failed to parse formdata", slog.Any("error", err))
 		w.WriteHeader(http.StatusNoContent)
 		return
@@ -100,6 +102,7 @@ func (h *Handler) UpdatePartner(w http.ResponseWriter, r *http.Request) {
 		db.Partner.Image.Set(partner.Image),
 	).Exec(ctx)
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		sendQueryError(w, h.logger, err)
 	}
 	host := r.Host
@@ -121,6 +124,7 @@ func (h *Handler) DeletePartner(w http.ResponseWriter, r *http.Request) {
 	}
 	_, err := h.db.Partner.FindUnique(db.Partner.ID.Equals(id)).Delete().Exec(ctx)
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		sendQueryError(w, h.logger, err)
 	}
 	host := r.Host

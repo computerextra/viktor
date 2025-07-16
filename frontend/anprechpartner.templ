@@ -1,9 +1,35 @@
 package frontend
 
+import "github.com/computerextra/viktor/internal/util/flash"
+
 templ NeuerAnsprechpartner() {
+	{{
+		errMsg, errExist := flash.GetFlashMessage(ctx, "error")
+	}}
+	@Page("Neuer Ansprechpartner") {
+		if errExist {
+			<div class="container mx-auto">
+				<div class="mt-2 bg-red-500 text-sm text-white rounded-lg p-4" role="alert" tabindex="-1" aria-labelledby="hs-solid-color-danger-label">
+					<span id="hs-solid-color-danger-label" class="font-bold">Fehler</span> { errMsg }
+				</div>
+			</div>
+		}
+	}
 }
 
 templ AnsprechpartnerEdit() {
+	{{
+		errMsg, errExist := flash.GetFlashMessage(ctx, "error")
+	}}
+	@Page("Ansprechpartner bearbeiten") {
+		if errExist {
+			<div class="container mx-auto">
+				<div class="mt-2 bg-red-500 text-sm text-white rounded-lg p-4" role="alert" tabindex="-1" aria-labelledby="hs-solid-color-danger-label">
+					<span id="hs-solid-color-danger-label" class="font-bold">Fehler</span> { errMsg }
+				</div>
+			</div>
+		}
+	}
 }
 
 templ ansprechpartnerForm() {

@@ -3,9 +3,13 @@ package frontend
 import (
 	"fmt"
 	"github.com/computerextra/viktor/db"
+	"github.com/computerextra/viktor/internal/util/flash"
 )
 
 templ ParnterOverview(partner []db.PartnerModel, uri string) {
+	{{
+		errMsg, errExist := flash.GetFlashMessage(ctx, "error")
+	}}
 	@Page("CMS | Partner", uri) {
 		<div class="container mx-auto mt-10">
 			@BackButton("/CMS")
@@ -60,6 +64,13 @@ templ ParnterOverview(partner []db.PartnerModel, uri string) {
 				</div>
 			</div>
 		</div>
+		if errExist {
+			<div class="container mx-auto">
+				<div class="mt-2 bg-red-500 text-sm text-white rounded-lg p-4" role="alert" tabindex="-1" aria-labelledby="hs-solid-color-danger-label">
+					<span id="hs-solid-color-danger-label" class="font-bold">Fehler</span> { errMsg }
+				</div>
+			</div>
+		}
 	}
 }
 
@@ -111,22 +122,42 @@ templ partnerRow(partner db.PartnerModel) {
 }
 
 templ NeuerPartner(uri string) {
+	{{
+		errMsg, errExist := flash.GetFlashMessage(ctx, "error")
+	}}
 	@Page("Neuer Partner", uri) {
 		<div class="container mx-auto mt-5">
 			@BackButton("/CMS/Partner")
 			<h1 class="text-center">Neuen Partner anlegen</h1>
 			@PartnerForm(nil)
 		</div>
+		if errExist {
+			<div class="container mx-auto">
+				<div class="mt-2 bg-red-500 text-sm text-white rounded-lg p-4" role="alert" tabindex="-1" aria-labelledby="hs-solid-color-danger-label">
+					<span id="hs-solid-color-danger-label" class="font-bold">Fehler</span> { errMsg }
+				</div>
+			</div>
+		}
 	}
 }
 
 templ PartnerBearbeiten(partner *db.PartnerModel, uri string) {
+	{{
+		errMsg, errExist := flash.GetFlashMessage(ctx, "error")
+	}}
 	@Page("Partner bearbeiten", uri) {
 		<div class="container mx-auto mt-5">
 			@BackButton("/CMS/Partner")
 			<h1 class="text-center">{ partner.Name } bearbeiten</h1>
 			@PartnerForm(partner)
 		</div>
+		if errExist {
+			<div class="container mx-auto">
+				<div class="mt-2 bg-red-500 text-sm text-white rounded-lg p-4" role="alert" tabindex="-1" aria-labelledby="hs-solid-color-danger-label">
+					<span id="hs-solid-color-danger-label" class="font-bold">Fehler</span> { errMsg }
+				</div>
+			</div>
+		}
 	}
 }
 

@@ -3,9 +3,13 @@ package frontend
 import (
 	"fmt"
 	"github.com/computerextra/viktor/db"
+	"github.com/computerextra/viktor/internal/util/flash"
 )
 
 templ JobsOverview(jobs []db.JobsModel, uri string) {
+	{{
+		errMsg, errExist := flash.GetFlashMessage(ctx, "error")
+	}}
 	@Page("CMS | Jobs", uri) {
 		<div class="container mx-auto mt-10">
 			@BackButton("/CMS")
@@ -54,6 +58,13 @@ templ JobsOverview(jobs []db.JobsModel, uri string) {
 				</div>
 			</div>
 		</div>
+		if errExist {
+			<div class="container mx-auto">
+				<div class="mt-2 bg-red-500 text-sm text-white rounded-lg p-4" role="alert" tabindex="-1" aria-labelledby="hs-solid-color-danger-label">
+					<span id="hs-solid-color-danger-label" class="font-bold">Fehler</span> { errMsg }
+				</div>
+			</div>
+		}
 	}
 }
 
@@ -112,22 +123,42 @@ templ jobRow(job db.JobsModel) {
 }
 
 templ NeuerJob(uri string) {
+	{{
+		errMsg, errExist := flash.GetFlashMessage(ctx, "error")
+	}}
 	@Page("Neue Abteilung", uri) {
 		<div class="container mx-auto mt-5">
 			@BackButton("/CMS/Jobs")
 			<h1 class="text-center">Neuen Job anlegen</h1>
 			@JobForm(nil)
 		</div>
+		if errExist {
+			<div class="container mx-auto">
+				<div class="mt-2 bg-red-500 text-sm text-white rounded-lg p-4" role="alert" tabindex="-1" aria-labelledby="hs-solid-color-danger-label">
+					<span id="hs-solid-color-danger-label" class="font-bold">Fehler</span> { errMsg }
+				</div>
+			</div>
+		}
 	}
 }
 
 templ JobBearbeiten(job *db.JobsModel, uri string) {
+	{{
+		errMsg, errExist := flash.GetFlashMessage(ctx, "error")
+	}}
 	@Page("Abteilung bearbeiten", uri) {
 		<div class="container mx-auto mt-5">
 			@BackButton("/CMS/Jobs")
 			<h1 class="text-center">{ job.Name } bearbeiten</h1>
 			@JobForm(job)
 		</div>
+		if errExist {
+			<div class="container mx-auto">
+				<div class="mt-2 bg-red-500 text-sm text-white rounded-lg p-4" role="alert" tabindex="-1" aria-labelledby="hs-solid-color-danger-label">
+					<span id="hs-solid-color-danger-label" class="font-bold">Fehler</span> { errMsg }
+				</div>
+			</div>
+		}
 	}
 }
 

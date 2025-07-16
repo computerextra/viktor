@@ -33,6 +33,7 @@ func (h *Handler) GetEinkauf(w http.ResponseWriter, r *http.Request) {
 		db.Mitarbeiter.Einkauf.Fetch(),
 	).Exec(ctx)
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		sendQueryError(w, h.logger, err)
 	}
 
@@ -87,6 +88,7 @@ func (h *Handler) SkipEinkauf(w http.ResponseWriter, r *http.Request) {
 		db.Einkauf.Abgeschickt.Set(time.Now().AddDate(0, 0, 1)),
 	).Exec(ctx)
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		sendQueryError(w, h.logger, err)
 	}
 	host := r.Host
@@ -111,6 +113,7 @@ func (h *Handler) DeleteEinkauf(w http.ResponseWriter, r *http.Request) {
 		db.Einkauf.Abonniert.Set(false),
 	).Exec(ctx)
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		sendQueryError(w, h.logger, err)
 	}
 	host := r.Host
@@ -130,7 +133,7 @@ func (h *Handler) UpdateEinkauf(w http.ResponseWriter, r *http.Request) {
 	var einkauf EinkaufProps
 	err := decoder.Decode(&einkauf, r.PostForm)
 	if err != nil {
-		flash.SetFlashMessage(w, "error", "content cannot be empty")
+		flash.SetFlashMessage(w, "error", err.Error())
 		h.logger.Error("failed to parse formdata", slog.Any("error", err))
 		w.WriteHeader(http.StatusNoContent)
 		return
@@ -138,6 +141,7 @@ func (h *Handler) UpdateEinkauf(w http.ResponseWriter, r *http.Request) {
 
 	mitarbeiter, err := h.db.Mitarbeiter.FindUnique(db.Mitarbeiter.ID.Equals(mitarbeiterId)).Exec(ctx)
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		sendQueryError(w, h.logger, err)
 	}
 	einkauId, _ := mitarbeiter.EinkaufID()
@@ -163,6 +167,7 @@ func (h *Handler) UpdateEinkauf(w http.ResponseWriter, r *http.Request) {
 		db.Einkauf.Pfand.SetIfPresent(einkauf.Pfand),
 	).Exec(ctx)
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		sendQueryError(w, h.logger, err)
 	}
 

@@ -33,6 +33,7 @@ func (h *Handler) GetAngebote(w http.ResponseWriter, r *http.Request) {
 		db.Angebot.Title.Order(db.SortOrderAsc),
 	).Exec(ctx)
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		sendQueryError(w, h.logger, err)
 	}
 	uri := getPath(r.URL.Path)
@@ -49,6 +50,7 @@ func (h *Handler) GetAngebot(w http.ResponseWriter, r *http.Request) {
 	}
 	res, err := h.db.Angebot.FindUnique(db.Angebot.ID.Equals(id)).Exec(ctx)
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		sendQueryError(w, h.logger, err)
 	}
 	uri := getPath(r.URL.Path)
@@ -61,7 +63,7 @@ func (h *Handler) CreateAngebot(w http.ResponseWriter, r *http.Request) {
 	var props AngeboteProps
 	err := decoder.Decode(&props, r.PostForm)
 	if err != nil {
-		flash.SetFlashMessage(w, "error", "content cannot be empty")
+		flash.SetFlashMessage(w, "error", err.Error())
 		h.logger.Error("failed to parse formdata", slog.Any("error", err))
 		w.WriteHeader(http.StatusNoContent)
 		return
@@ -69,10 +71,12 @@ func (h *Handler) CreateAngebot(w http.ResponseWriter, r *http.Request) {
 
 	Date_Start, err := time.Parse("2006-01-02", props.Date_start)
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		sendError(w, h.logger, "failed to parse date", err)
 	}
 	Date_Stop, err := time.Parse("2006-01-02", props.Date_stop)
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		sendError(w, h.logger, "failed to parse date", err)
 	}
 
@@ -86,6 +90,7 @@ func (h *Handler) CreateAngebot(w http.ResponseWriter, r *http.Request) {
 		db.Angebot.Anzeigen.Set(props.Anzeigen),
 	).Exec(ctx)
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		sendQueryError(w, h.logger, err)
 	}
 	host := r.Host
@@ -109,6 +114,7 @@ func (h *Handler) ToggleAngebot(w http.ResponseWriter, r *http.Request) {
 
 	status, err := h.db.Angebot.FindUnique(db.Angebot.ID.Equals(id)).Exec(ctx)
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		sendQueryError(w, h.logger, err)
 	}
 
@@ -116,6 +122,7 @@ func (h *Handler) ToggleAngebot(w http.ResponseWriter, r *http.Request) {
 		db.Angebot.Anzeigen.Set(!status.Anzeigen),
 	).Exec(ctx)
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		sendQueryError(w, h.logger, err)
 	}
 	host := r.Host
@@ -134,7 +141,7 @@ func (h *Handler) UpdateAngebot(w http.ResponseWriter, r *http.Request) {
 	var props AngeboteProps
 	err := decoder.Decode(&props, r.PostForm)
 	if err != nil {
-		flash.SetFlashMessage(w, "error", "content cannot be empty")
+		flash.SetFlashMessage(w, "error", err.Error())
 		h.logger.Error("failed to parse formdata", slog.Any("error", err))
 		w.WriteHeader(http.StatusNoContent)
 		return
@@ -142,10 +149,12 @@ func (h *Handler) UpdateAngebot(w http.ResponseWriter, r *http.Request) {
 
 	Date_Start, err := time.Parse("2006-01-02", props.Date_start)
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		sendError(w, h.logger, "failed to parse date", err)
 	}
 	Date_Stop, err := time.Parse("2006-01-02", props.Date_stop)
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		sendError(w, h.logger, "failed to parse date", err)
 	}
 
@@ -165,6 +174,7 @@ func (h *Handler) UpdateAngebot(w http.ResponseWriter, r *http.Request) {
 		db.Angebot.Anzeigen.Set(props.Anzeigen),
 	).Exec(ctx)
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		sendQueryError(w, h.logger, err)
 	}
 	host := r.Host
@@ -186,6 +196,7 @@ func (h *Handler) DeleteAngebot(w http.ResponseWriter, r *http.Request) {
 	}
 	_, err := h.db.Angebot.FindUnique(db.Angebot.ID.Equals(id)).Delete().Exec(ctx)
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		sendQueryError(w, h.logger, err)
 	}
 	host := r.Host

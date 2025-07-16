@@ -36,6 +36,7 @@ func (h *Handler) GetIndex(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	res, err := h.db.Mitarbeiter.FindMany().OrderBy(db.Mitarbeiter.Name.Order(db.SortOrderAsc)).Exec(ctx)
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		sendQueryError(w, h.logger, err)
 	}
 
@@ -55,6 +56,7 @@ func (h *Handler) NewMitarbeiter(w http.ResponseWriter, r *http.Request) {
 	uri := getPath(r.URL.Path)
 	abteilungen, err := h.getAbteilungen(ctx)
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		sendQueryError(w, h.logger, err)
 	}
 	frontend.NeuerMitarbeiter(abteilungen, uri).Render(r.Context(), w)
@@ -66,6 +68,7 @@ func (h *Handler) GetMitarbeitersWithAbteilung(w http.ResponseWriter, r *http.Re
 		db.Mitarbeiter.Abteilung.Fetch(),
 	).OrderBy(db.Mitarbeiter.Name.Order(db.SortOrderAsc)).Exec(ctx)
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		sendQueryError(w, h.logger, err)
 	}
 	uri := getPath(r.URL.Path)
@@ -82,10 +85,12 @@ func (h *Handler) GetMitarbeiter(w http.ResponseWriter, r *http.Request) {
 	}
 	res, err := h.db.Mitarbeiter.FindUnique(db.Mitarbeiter.ID.Equals(id)).Exec(ctx)
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		sendQueryError(w, h.logger, err)
 	}
 	abteilungen, err := h.getAbteilungen(ctx)
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		sendQueryError(w, h.logger, err)
 	}
 	uri := getPath(r.URL.Path)
@@ -98,7 +103,7 @@ func (h *Handler) CreateMitarbeiter(w http.ResponseWriter, r *http.Request) {
 	var mitarbeiter MitarbeiterProps
 	err := decoder.Decode(&mitarbeiter, r.PostForm)
 	if err != nil {
-		flash.SetFlashMessage(w, "error", "content cannot be empty")
+		flash.SetFlashMessage(w, "error", err.Error())
 		h.logger.Error("failed to parse formdata", slog.Any("error", err))
 		w.WriteHeader(http.StatusNoContent)
 		return
@@ -108,6 +113,7 @@ func (h *Handler) CreateMitarbeiter(w http.ResponseWriter, r *http.Request) {
 	if mitarbeiter.Geburtstag != nil && len(*mitarbeiter.Geburtstag) > 0 {
 		day, err = time.Parse("2006-01-02", *mitarbeiter.Geburtstag)
 		if err != nil {
+			flash.SetFlashMessage(w, "error", err.Error())
 			sendError(w, h.logger, "failed to parse date", err)
 		}
 		bday = &day
@@ -138,6 +144,7 @@ func (h *Handler) CreateMitarbeiter(w http.ResponseWriter, r *http.Request) {
 		db.Mitarbeiter.Sex.Set(mitarbeiter.Sex),
 	).Exec(ctx)
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		sendQueryError(w, h.logger, err)
 	}
 	host := r.Host
@@ -161,7 +168,7 @@ func (h *Handler) UpdateMitarbeiter(w http.ResponseWriter, r *http.Request) {
 	var mitarbeiter MitarbeiterProps
 	err := decoder.Decode(&mitarbeiter, r.PostForm)
 	if err != nil {
-		flash.SetFlashMessage(w, "error", "content cannot be empty")
+		flash.SetFlashMessage(w, "error", err.Error())
 		h.logger.Error("failed to parse formdata", slog.Any("error", err))
 		w.WriteHeader(http.StatusNoContent)
 		return
@@ -171,6 +178,7 @@ func (h *Handler) UpdateMitarbeiter(w http.ResponseWriter, r *http.Request) {
 	if mitarbeiter.Geburtstag != nil && len(*mitarbeiter.Geburtstag) > 0 {
 		day, err = time.Parse("2006-01-02", *mitarbeiter.Geburtstag)
 		if err != nil {
+			flash.SetFlashMessage(w, "error", err.Error())
 			sendError(w, h.logger, "failed to parse date", err)
 		}
 		bday = &day
@@ -201,6 +209,7 @@ func (h *Handler) UpdateMitarbeiter(w http.ResponseWriter, r *http.Request) {
 		db.Mitarbeiter.Sex.Set(mitarbeiter.Sex),
 	).Exec(ctx)
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		sendQueryError(w, h.logger, err)
 	}
 	host := r.Host
@@ -222,6 +231,7 @@ func (h *Handler) DeleteMitarbeiter(w http.ResponseWriter, r *http.Request) {
 	}
 	_, err := h.db.Mitarbeiter.FindUnique(db.Mitarbeiter.ID.Equals(id)).Delete().Exec(ctx)
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		sendQueryError(w, h.logger, err)
 	}
 	host := r.Host

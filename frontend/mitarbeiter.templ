@@ -3,10 +3,14 @@ package frontend
 import (
 	"fmt"
 	"github.com/computerextra/viktor/db"
+	"github.com/computerextra/viktor/internal/util/flash"
 	"time"
 )
 
 templ MitarbeiterOverview(mitarbeiter []db.MitarbeiterModel, uri string) {
+	{{
+		errMsg, errExist := flash.GetFlashMessage(ctx, "error")
+	}}
 	@Page("CMS | Mitarbeiter", uri) {
 		<div class="container mx-auto mt-10">
 			@BackButton("/CMS")
@@ -79,6 +83,13 @@ templ MitarbeiterOverview(mitarbeiter []db.MitarbeiterModel, uri string) {
 				</div>
 			</div>
 		</div>
+		if errExist {
+			<div class="container mx-auto">
+				<div class="mt-2 bg-red-500 text-sm text-white rounded-lg p-4" role="alert" tabindex="-1" aria-labelledby="hs-solid-color-danger-label">
+					<span id="hs-solid-color-danger-label" class="font-bold">Fehler</span> { errMsg }
+				</div>
+			</div>
+		}
 	}
 }
 
@@ -197,22 +208,42 @@ templ mitarbeiterRow(mitarbeiter db.MitarbeiterModel) {
 }
 
 templ NeuerMitarbeiter(abteilungen []db.AbteilungModel, uri string) {
+	{{
+		errMsg, errExist := flash.GetFlashMessage(ctx, "error")
+	}}
 	@Page("Neuer Mitarbeiter", uri) {
 		<div class="container mx-auto mt-5 mb-5">
 			@BackButton("/CMS/Mitarbeiter")
 			<h1 class="text-center">Neuen Mitarbeiter anlegen</h1>
 			@mitarbeiterForm(nil, abteilungen)
 		</div>
+		if errExist {
+			<div class="container mx-auto">
+				<div class="mt-2 bg-red-500 text-sm text-white rounded-lg p-4" role="alert" tabindex="-1" aria-labelledby="hs-solid-color-danger-label">
+					<span id="hs-solid-color-danger-label" class="font-bold">Fehler</span> { errMsg }
+				</div>
+			</div>
+		}
 	}
 }
 
 templ MitarbeiterBearbeiten(mitarbeiter *db.MitarbeiterModel, abteilungen []db.AbteilungModel, uri string) {
+	{{
+		errMsg, errExist := flash.GetFlashMessage(ctx, "error")
+	}}
 	@Page("Mitarbeiter bearbeiten", uri) {
 		<div class="container mx-auto mt-5 mb-5">
 			@BackButton("/CMS/Mitarbeiter")
 			<h1 class="text-center">{ mitarbeiter.Name } bearbeiten</h1>
 			@mitarbeiterForm(mitarbeiter, abteilungen)
 		</div>
+		if errExist {
+			<div class="container mx-auto">
+				<div class="mt-2 bg-red-500 text-sm text-white rounded-lg p-4" role="alert" tabindex="-1" aria-labelledby="hs-solid-color-danger-label">
+					<span id="hs-solid-color-danger-label" class="font-bold">Fehler</span> { errMsg }
+				</div>
+			</div>
+		}
 	}
 }
 

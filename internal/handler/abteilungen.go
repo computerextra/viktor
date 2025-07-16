@@ -21,6 +21,7 @@ func (h *Handler) GetAbteilungen(w http.ResponseWriter, r *http.Request) {
 		db.Abteilung.Name.Order(db.SortOrderAsc),
 	).Exec(ctx)
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		sendQueryError(w, h.logger, err)
 	}
 
@@ -41,6 +42,7 @@ func (h *Handler) GetAbteilung(w http.ResponseWriter, r *http.Request) {
 
 	res, err := h.db.Abteilung.FindUnique(db.Abteilung.ID.Equals(id)).Exec(ctx)
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		sendQueryError(w, h.logger, err)
 	}
 	uri := getPath(r.URL.Path)
@@ -59,7 +61,7 @@ func (h *Handler) CreateAbteilung(w http.ResponseWriter, r *http.Request) {
 	var props AbteilungProps
 	err := decoder.Decode(&props, r.PostForm)
 	if err != nil {
-		flash.SetFlashMessage(w, "error", "content cannot be empty")
+		flash.SetFlashMessage(w, "error", err.Error())
 		h.logger.Error("failed to parse formdata", slog.Any("error", err))
 		w.WriteHeader(http.StatusNoContent)
 		return
@@ -67,6 +69,7 @@ func (h *Handler) CreateAbteilung(w http.ResponseWriter, r *http.Request) {
 
 	_, err = h.db.Abteilung.CreateOne(db.Abteilung.Name.Set(props.Name)).Exec(ctx)
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		sendQueryError(w, h.logger, err)
 	}
 
@@ -86,7 +89,7 @@ func (h *Handler) UpdateAbteilung(w http.ResponseWriter, r *http.Request) {
 	var props AbteilungProps
 	err := decoder.Decode(&props, r.PostForm)
 	if err != nil {
-		flash.SetFlashMessage(w, "error", "content cannot be empty")
+		flash.SetFlashMessage(w, "error", err.Error())
 		h.logger.Error("failed to parse formdata", slog.Any("error", err))
 		w.WriteHeader(http.StatusNoContent)
 		return
@@ -102,6 +105,7 @@ func (h *Handler) UpdateAbteilung(w http.ResponseWriter, r *http.Request) {
 		db.Abteilung.Name.Set(props.Name),
 	).Exec(ctx)
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		sendQueryError(w, h.logger, err)
 	}
 	host := r.Host
@@ -125,6 +129,7 @@ func (h *Handler) DeleteAbteilung(w http.ResponseWriter, r *http.Request) {
 
 	_, err := h.db.Abteilung.FindUnique(db.Abteilung.ID.Equals(id)).Delete().Exec(ctx)
 	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
 		sendQueryError(w, h.logger, err)
 	}
 
