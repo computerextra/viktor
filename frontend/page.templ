@@ -34,12 +34,14 @@ templ Page(title string, uri string) {
 			<script src="/static/js/preline.js" defer></script>
 			// Alpine.js
 			<script src="//unpkg.com/alpinejs" defer></script>
+			// Lodash
+			<script src="/static/js/lodash.js" defer></script>
 			// Status JS
 			<script src="/static/js/status.js" defer></script>
 		</head>
 		<body class="bg-white dark:bg-neutral-600 antialiased">
 			<header class="relative flex flex-wrap sm:justify-start sm:flex-nowrap w-full bg-white text-sm py-3 dark:bg-neutral-800 print:hidden">
-				<nav class="max-w-[85rem] w-full mx-auto px-4 sm:flex sm:items-center sm:justify-between">
+				<nav class="container mx-auto px-4 sm:flex sm:items-center sm:justify-between">
 					<div class="flex items-center justify-between">
 						<a class="flex-none text-xl font-semibold dark:text-white focus:outline-hidden focus:opacity-80" href="/" aria-label="Brand">
 							Viktor
@@ -63,11 +65,6 @@ templ Page(title string, uri string) {
 									{ item.Name }
 								</a>
 							}
-							<div class="border-s-2 border-s-gray-600">
-								<p class="ms-2 text-sm">
-									<span id="status"></span>
-								</p>
-							</div>
 						</div>
 					</div>
 				</nav>
@@ -75,6 +72,13 @@ templ Page(title string, uri string) {
 			<div class="container mx-auto">
 				{ children... }
 			</div>
+			<div style="position: fixed; bottom: 1rem; right: 1rem;">
+				<p class="border border-gray-200 p-2 rounded">
+					<span id="status">LOADING ...</span>
+				</p>
+			</div>
+			<script src="https://cdn.jsdelivr.net/npm/@floating-ui/core@1.7.2"></script>
+			<script src="https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.7.2"></script>
 		</body>
 	</html>
 }

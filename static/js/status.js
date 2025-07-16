@@ -10,7 +10,7 @@ async function getStatus() {
     let statRes = ""
     switch(status) {
         case "Anwesend":
-            statRes = `<span class="flex items-center gap-x-2">
+            statRes = `<span class="flex flex-row items-center gap-x-2">
              Johannes Status: Anwesend <svg
 			xmlns="http://www.w3.org/2000/svg"
 			width="24"
@@ -26,7 +26,7 @@ async function getStatus() {
             </span>`
             break
         case "Abwesend":
-             statRes = `<span class="flex items-center gap-x-2">
+             statRes = `<span class="flex flex-row items-center gap-x-2">
              Johannes Status: Abwesend <svg
 			xmlns="http://www.w3.org/2000/svg"
 			width="24"
@@ -44,7 +44,7 @@ async function getStatus() {
 		</svg></span>`
             break
         case "Beschäftigt":
-             statRes = `<span class="flex items-center gap-x-2">
+             statRes = `<span class="flex flex-row items-center gap-x-2">
              Johannes Status: Beschäftigt <svg
 			xmlns="http://www.w3.org/2000/svg"
 			width="24"
@@ -64,7 +64,7 @@ async function getStatus() {
 		</svg></span>`
             break
         case "Am Telefonieren":
-             statRes = `<span class="flex items-center gap-x-2">
+             statRes = `<span class="flex flex-row items-center gap-x-2">
              Johannes Status: Am Telefonieren <svg
 			xmlns="http://www.w3.org/2000/svg"
 			width="24"
@@ -86,7 +86,7 @@ async function getStatus() {
 		</svg></span>`
             break
         case "Im Mittag":
-             statRes = `<span class="flex items-center gap-x-2">
+             statRes = `<span class="flex flex-row items-center gap-x-2">
              Johannes Status: Im Mittag <svg
 			xmlns="http://www.w3.org/2000/svg"
 			width="24"
@@ -106,7 +106,7 @@ async function getStatus() {
 		</svg></span>`
             break
         case "Am Rauchen":
-             statRes = `<span class="flex items-center gap-x-2">
+             statRes = `<span class="flex flex-row items-center gap-x-2">
              Johannes Status: Am Rauchen <svg
 			xmlns="http://www.w3.org/2000/svg"
 			width="24"
@@ -127,7 +127,7 @@ async function getStatus() {
 		</svg></span>`
             break
         case "Auf Silbers Platz":
-             statRes = `<span class="flex items-center gap-x-2">
+             statRes = `<span class="flex flex-row items-center gap-x-2">
              Johannes Status: Auf Silbers Platz <svg
 			xmlns="http://www.w3.org/2000/svg"
 			width="24"
@@ -147,7 +147,7 @@ async function getStatus() {
 		</svg></span>`
             break
         case "In Wartung":
-             statRes = `<span class="flex items-center gap-x-2">
+             statRes = `<span class="flex flex-row items-center gap-x-2">
              Johannes Status: In Wartung <svg
 			xmlns="http://www.w3.org/2000/svg"
 			width="24"

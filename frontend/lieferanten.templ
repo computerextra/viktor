@@ -1,6 +1,7 @@
 package frontend
 
 import (
+	"fmt"
 	"github.com/computerextra/viktor/db"
 	"github.com/computerextra/viktor/internal/util/flash"
 )
@@ -9,7 +10,65 @@ templ LieferantenOverview(lieferanten []db.LieferantModel, uri string) {
 	{{
 		errMsg, errExist := flash.GetFlashMessage(ctx, "error")
 	}}
-	@Page("Lieferanten") {
+	@Page("Lieferanten", uri) {
+		<div class="container mx-auto mt-10">
+			<h1 class="text-center">Lieferanten Übersicht</h1>
+			<a
+				class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-hidden focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
+				href="/Lieferanten/Neu"
+			>
+				Neuen Lieferanten anlegen
+			</a>
+			<div class="flex flex-col mt-5 mx-auto">
+				<div class="-m-1.5 overflow-x-auto">
+					<div class="p-1.5 min-w-full inline-block align-middle">
+						<div class="overflow-hidden">
+							<table class="min-w-full divide-y divide-gray-200 dark:divide-neutral-700">
+								<thead>
+									<tr>
+										<th
+											scope="col"
+											class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500"
+										>
+											Firma
+										</th>
+										<th
+											scope="col"
+											class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500"
+										>
+											Kundennummer
+										</th>
+										<th
+											scope="col"
+											class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500"
+										>
+											Webseite
+										</th>
+										<th
+											scope="col"
+											class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500"
+										>
+											Ansprechpartner
+										</th>
+										<th
+											scope="col"
+											class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase dark:text-neutral-500"
+										>
+											Action
+										</th>
+									</tr>
+								</thead>
+								<tbody class="divide-y divide-gray-200 dark:divide-neutral-700">
+									for _, lieferant := range lieferanten {
+										@lieferantenRow(lieferant)
+									}
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 		if errExist {
 			<div class="container mx-auto">
 				<div class="mt-2 bg-red-500 text-sm text-white rounded-lg p-4" role="alert" tabindex="-1" aria-labelledby="hs-solid-color-danger-label">
@@ -20,11 +79,16 @@ templ LieferantenOverview(lieferanten []db.LieferantModel, uri string) {
 	}
 }
 
-templ NeuerLieferant() {
+templ NeuerLieferant(uri string) {
 	{{
 		errMsg, errExist := flash.GetFlashMessage(ctx, "error")
 	}}
-	@Page("Neuer Lieferant") {
+	@Page("Neuer Lieferant", uri) {
+		<div class="container mx-auto mt-5">
+			@BackButton("/Lieferanten")
+			<h1 class="text-center">Neuen Lieferanten anlegen</h1>
+			@lieferantForm(nil)
+		</div>
 		if errExist {
 			<div class="container mx-auto">
 				<div class="mt-2 bg-red-500 text-sm text-white rounded-lg p-4" role="alert" tabindex="-1" aria-labelledby="hs-solid-color-danger-label">
@@ -35,11 +99,16 @@ templ NeuerLieferant() {
 	}
 }
 
-templ LieferantEdit() {
+templ LieferantEdit(lieferant *db.LieferantModel, uri string) {
 	{{
 		errMsg, errExist := flash.GetFlashMessage(ctx, "error")
 	}}
-	@Page("Lieferant bearbeiten") {
+	@Page("Lieferant bearbeiten", uri) {
+		<div class="container mx-auto mt-5">
+			@BackButton("/Lieferanten")
+			<h1 class="text-center">{ lieferant.Firma } bearbeiten</h1>
+			@lieferantForm(lieferant)
+		</div>
 		if errExist {
 			<div class="container mx-auto">
 				<div class="mt-2 bg-red-500 text-sm text-white rounded-lg p-4" role="alert" tabindex="-1" aria-labelledby="hs-solid-color-danger-label">
@@ -50,5 +119,278 @@ templ LieferantEdit() {
 	}
 }
 
-templ lieferantForm() {
+templ lieferantForm(lieferant *db.LieferantModel) {
+	{{
+		var action string
+		if lieferant == nil {
+			action = "/Lieferanten/Neu"
+		} else {
+			action = fmt.Sprintf("/Lieferanten/%s", lieferant.ID)
+		}
+	}}
+	<form action={ templ.SafeURL(action) } method="post" class="space-y-8">
+		<div class="max-w-sm">
+			<label
+				for="firma"
+				class="block text-sm font-medium mb-2 dark:text-white"
+			>Firma</label>
+			if lieferant == nil {
+				<input
+					type="text"
+					id="firma"
+					required
+					name="firma"
+					class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+				/>
+			} else {
+				<input
+					type="text"
+					id="firma"
+					required
+					value={ lieferant.Firma }
+					name="firma"
+					class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+				/>
+			}
+		</div>
+		<div class="max-w-sm">
+			{{
+				var Kundennummer string
+				var Kundennummer_ok bool
+				if lieferant != nil {
+					Kundennummer, Kundennummer_ok = lieferant.Kundennummer()
+				}
+			}}
+			<label
+				for="kundennummer"
+				class="block text-sm font-medium mb-2 dark:text-white"
+			>Kundennummer</label>
+			if lieferant != nil && Kundennummer_ok {
+				<input
+					type="text"
+					id="kundennummer"
+					value={ Kundennummer }
+					name="kundennummer"
+					class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+				/>
+			} else {
+				<input
+					type="text"
+					id="kundennummer"
+					name="kundennummer"
+					class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+				/>
+			}
+		</div>
+		<div class="max-w-sm">
+			{{
+				var Webseite string
+				var Webseite_ok bool
+				if lieferant != nil {
+					Webseite, Webseite_ok = lieferant.Webseite()
+				}
+			}}
+			<label
+				for="webseite"
+				class="block text-sm font-medium mb-2 dark:text-white"
+			>Webseite</label>
+			if lieferant != nil && Webseite_ok {
+				<input
+					type="text"
+					id="webseite"
+					value={ Webseite }
+					name="webseite"
+					class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+				/>
+			} else {
+				<input
+					type="text"
+					id="webseite"
+					name="webseite"
+					class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+				/>
+			}
+		</div>
+		<button
+			type="submit"
+			class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-hidden focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
+		>
+			Speichern
+		</button>
+	</form>
+}
+
+templ lieferantenRow(lieferant db.LieferantModel) {
+	{{
+		Kundennummer, Kundennummer_ok := lieferant.Kundennummer()
+		Webseite, Webseite_ok := lieferant.Webseite()
+		Ansprechpartner := lieferant.Ansprechpartner()
+	}}
+	<tr class="hover:bg-gray-100 dark:hover:bg-neutral-700">
+		<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">
+			<a href={ templ.SafeURL(fmt.Sprintf("/Lieferanten/%s", lieferant.ID)) }>
+				{ lieferant.Firma }
+			</a>
+		</td>
+		<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">
+			if Kundennummer_ok {
+				{ Kundennummer }
+			}
+		</td>
+		<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">
+			if Webseite_ok {
+				<a href={ templ.SafeURL(Webseite) } target="_blank" rel="noopener noreferrer" class="underline">
+					{ Webseite }
+				</a>
+			}
+		</td>
+		<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">
+			<div class="hs-accordion-group">
+				for idx, ap := range Ansprechpartner {
+					{{
+						buttonTrigger := fmt.Sprintf("hs-basic-active-bordered-collapse-%v", idx+1)
+						divTrigger := fmt.Sprintf("hs-active-bordered-heading-%v", idx+1)
+					}}
+					<div
+						class="hs-accordion"
+						id={ divTrigger }
+					>
+						<button
+							class="hs-accordion-toggle  inline-flex justify-between items-center gap-x-1.5 w-full text-start py-1 px-5  disabled:opacity-50 disabled:pointer-events-none  dark:focus:outline-hidden "
+							aria-expanded="false"
+							aria-controls={ buttonTrigger }
+						>
+							<span class="text-xs hs-accordion-active:underline">
+								{ ap.Name }
+							</span>
+							<svg
+								class="hs-accordion-active:hidden block size-3.5"
+								xmlns="http://www.w3.org/2000/svg"
+								width="24"
+								height="24"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							>
+								<path d="M5 12h14"></path>
+								<path d="M12 5v14"></path>
+							</svg>
+							<svg
+								class="hs-accordion-active:block hidden size-3.5"
+								xmlns="http://www.w3.org/2000/svg"
+								width="24"
+								height="24"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							>
+								<path d="M5 12h14"></path>
+							</svg>
+						</button>
+						<div
+							id={ buttonTrigger }
+							class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300"
+							role="region"
+							aria-labelledby={ divTrigger }
+						>
+							<div class="pb-2 px-5 text-xs">
+								<a
+									class="underline"
+									href={ templ.SafeURL(fmt.Sprintf("/Lieferanten/%s/%s", lieferant.ID, ap.ID)) }
+								>Bearbeiten</a>
+								<form method="post" action={ templ.SafeURL(fmt.Sprintf("/Lieferanten/%s/%s/Delete", lieferant.ID, ap.ID)) }>
+									<button type="submit" class="underline">
+										Löschen
+									</button>
+								</form>
+							</div>
+							<div class="pb-2 px-5 ">
+								{{
+								Telefon, Telefon_ok := ap.Telefon()
+								Mail, Mail_ok := ap.Mail()
+								Mobil, Mobil_ok := ap.Mobil()
+								}}
+								<p class="text-xs">
+									if Telefon_ok && len(Telefon) > 0 {
+										Telefon: <a href={ templ.SafeURL(fmt.Sprintf("tel:%s", Telefon)) } class="underline">{ Telefon }</a>
+										<br/>
+									}
+									if Mobil_ok && len(Mobil) > 0 {
+										Mobil: <a href={ templ.SafeURL(fmt.Sprintf("tel:%s", Mobil)) } class="underline">{ Mobil }</a>
+										<br/>
+									}
+									if Mail_ok && len(Mail) > 0 {
+										Mail: <a href={ templ.SafeURL(fmt.Sprintf("mailto:%s", Mail)) } class="underline">{ Mail }</a>
+									}
+								</p>
+							</div>
+						</div>
+					</div>
+				}
+			</div>
+		</td>
+		<td class="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
+			<div class="hs-dropdown relative inline-flex">
+				<button id="hs-dropdown-custom-icon-trigger" type="button" class="hs-dropdown-toggle flex justify-center items-center size-9 text-sm font-semibold rounded-lg border border-gray-200 bg-white text-gray-800 shadow-2xs hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800" aria-haspopup="menu" aria-expanded="false" aria-label="Dropdown">
+					<svg class="flex-none size-4 text-gray-600 dark:text-neutral-500" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg>
+				</button>
+				<div class="z-50 hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-60 bg-white shadow-md rounded-lg mt-2 dark:bg-neutral-800 dark:border dark:border-neutral-700" role="menu" aria-orientation="vertical" aria-labelledby="hs-dropdown-custom-icon-trigger">
+					<div class="p-1 space-y-0.5">
+						<a
+							class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700"
+							href={ templ.SafeURL(fmt.Sprintf("/Lieferanten/%s", lieferant.ID)) }
+						>
+							Bearbeiten
+						</a>
+						<div class="p-1 space-y-0.5">
+							<a
+								class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700"
+								href={ templ.SafeURL(fmt.Sprintf("/Lieferanten/%s/Neu", lieferant.ID)) }
+							>
+								Neuen Ansprechpartner anlegen
+							</a>
+						</div>
+						<div class="p-1 space-y-0.5">
+							<form action={ templ.SafeURL(fmt.Sprintf("/Lieferanten/%s/Delete", lieferant.ID)) } method="post">
+								<button
+									type="submit"
+									class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700"
+								>
+									Löschen
+								</button>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</td>
+	</tr>
+}
+
+templ ansprechpartnerRow(ansprechpartner db.AnsprechpartnerModel) {
+	{{
+		Telefon, Telefon_ok := ansprechpartner.Telefon()
+		Mobil, Mobil_ok := ansprechpartner.Mobil()
+		Mail, Mail_ok := ansprechpartner.Mail()
+	}}
+	<div>
+		if Telefon_ok && len(Telefon) > 0 {
+			Telefon: { Telefon }
+			<br/>
+		}
+		if Mobil_ok && len(Mobil) > 0 {
+			Mobil: { Mobil }
+			<br/>
+		}
+		if Mail_ok && len(Mail) > 0 {
+			Mail: { Mail }
+			<br/>
+		}
+	</div>
 }

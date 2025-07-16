@@ -120,7 +120,8 @@ func (a *App) loadPages(router *http.ServeMux) {
 	router.HandleFunc("POST /Lieferanten/{id}", h.UpdateLieferant)
 	router.HandleFunc("POST /Lieferanten/{id}/Delete", h.DeleteLieferant)
 	router.HandleFunc("GET /Lieferanten/{id}/Neu", h.NewAnsprechpartner)
-	router.HandleFunc("GET /Lieferanten/{id}/{aid}", h.EditAnsprechpartner)
+	router.HandleFunc("POST /Lieferanten/{id}/Neu", h.CreateAnsprechpartner)
+	router.HandleFunc("GET /Lieferanten/{id}/{aid}", h.GetAnsprechpartner)
 	router.HandleFunc("POST /Lieferanten/{id}/{aid}", h.UpdateAnsprechpartner)
 	router.HandleFunc("POST /Lieferanten/{id}/{aid}/Delete", h.DeleteAnsprechpartner)
 
