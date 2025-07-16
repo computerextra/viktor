@@ -1,7 +1,9 @@
 package handler
 
 import (
+	"bytes"
 	"fmt"
+	"io"
 	"log/slog"
 	"net/http"
 	"time"
@@ -18,8 +20,6 @@ type EinkaufProps struct {
 	Geld   *string `schema:"Geld"`
 	Pfand  *string `schema:"Pfand"`
 }
-
-// TODO: Image Upload
 
 func (h *Handler) GetEinkauf(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
@@ -125,10 +125,18 @@ func (h *Handler) DeleteEinkauf(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, uri, http.StatusFound)
 }
 
+// TODO: Image Upload
 func (h *Handler) UpdateEinkauf(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	mitarbeiterId := r.PathValue("id")
-	r.ParseMultipartForm(10 << 20) // Max Header size (e.g. 10MB)
+	r.ParseMultipartForm(32 << 10) // Max Header size: 32 MB
+
+	type uploadedFile struct {
+		Size        int64  `json:"size"`
+		ContentType string `json:"content_type"`
+		Filename    string `json:"filename"`
+		FileContent string `json:"file_content"`
+	}
 
 	var einkauf EinkaufProps
 	err := decoder.Decode(&einkauf, r.PostForm)
@@ -137,6 +145,51 @@ func (h *Handler) UpdateEinkauf(w http.ResponseWriter, r *http.Request) {
 		h.logger.Error("failed to parse formdata", slog.Any("error", err))
 		w.WriteHeader(http.StatusNoContent)
 		return
+	}
+
+	var files []uploadedFile
+
+	for _, fheaders := range r.MultipartForm.File {
+		for _, headers := range fheaders {
+			var newFile uploadedFile
+			file, err := headers.Open()
+			if err != nil {
+				flash.SetFlashMessage(w, "error", err.Error())
+				h.logger.Error("failed to open file", slog.Any("error", err))
+				w.WriteHeader(http.StatusNoContent)
+				return
+			}
+			defer file.Close()
+			// Detect contentType
+			buff := make([]byte, 512)
+			file.Read(buff)
+			file.Seek(0, 0)
+			contentType := http.DetectContentType(buff)
+			newFile.ContentType = contentType
+			// get file size
+			var sizeBuff bytes.Buffer
+			fileSize, err := sizeBuff.ReadFrom(file)
+			if err != nil {
+				flash.SetFlashMessage(w, "error", err.Error())
+				h.logger.Error("failed to open file", slog.Any("error", err))
+				w.WriteHeader(http.StatusNoContent)
+				return
+			}
+			file.Seek(0, 0)
+			newFile.Size = fileSize
+			newFile.Filename = headers.Filename
+			contentBuf := bytes.NewBuffer(nil)
+
+			if _, err := io.Copy(contentBuf, file); err != nil {
+				flash.SetFlashMessage(w, "error", err.Error())
+				h.logger.Error("failed to open file", slog.Any("error", err))
+				w.WriteHeader(http.StatusNoContent)
+				return
+			}
+			newFile.FileContent = contentBuf.String()
+
+			files = append(files, newFile)
+		}
 	}
 
 	mitarbeiter, err := h.db.Mitarbeiter.FindUnique(db.Mitarbeiter.ID.Equals(mitarbeiterId)).Exec(ctx)
