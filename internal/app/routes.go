@@ -129,6 +129,10 @@ func (a *App) loadPages(router *http.ServeMux) {
 	router.HandleFunc("GET /Seriennummer", h.Seriennummern)
 	router.HandleFunc("POST /Seriennummer", h.SearchSeriennummer)
 
+	// Info an Kunde
+	router.HandleFunc("GET /Info", h.Info)
+	router.HandleFunc("POST /Info", h.SendInfo)
+
 	router.HandleFunc("POST /api/health", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	})
