@@ -331,6 +331,35 @@ templ EinkaufEingabe(einkauf *db.MitarbeiterModel, uri string) {
 							>{ Dinge }</textarea>
 						</div>
 					</div>
+					<div class="grid grid-cols-3 gap-8">
+						<div>
+							<label for="bild1" class="sr-only">Choose file</label>
+							<input
+								type="file"
+								name="bild1"
+								id="bild1"
+								class="block w-full border border-gray-200 shadow-sm rounded-lg text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 file:bg-gray-50 file:border-0 file:me-4 file:py-3 file:px-4 dark:file:bg-neutral-700 dark:file:text-neutral-400"
+							/>
+						</div>
+						<div>
+							<label for="bild2" class="sr-only">Choose file</label>
+							<input
+								type="file"
+								name="bild2"
+								id="bild2"
+								class="block w-full border border-gray-200 shadow-sm rounded-lg text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 file:bg-gray-50 file:border-0 file:me-4 file:py-3 file:px-4 dark:file:bg-neutral-700 dark:file:text-neutral-400"
+							/>
+						</div>
+						<div>
+							<label for="bild3" class="sr-only">Choose file</label>
+							<input
+								type="file"
+								name="bild3"
+								id="bild3"
+								class="block w-full border border-gray-200 shadow-sm rounded-lg text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 file:bg-gray-50 file:border-0 file:me-4 file:py-3 file:px-4 dark:file:bg-neutral-700 dark:file:text-neutral-400"
+							/>
+						</div>
+					</div>
 					<button
 						class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-gray-100 text-gray-800 hover:bg-gray-200 focus:outline-hidden focus:bg-gray-200 disabled:opacity-50 disabled:pointer-events-none dark:bg-white/10 dark:text-white dark:hover:bg-white/20 dark:hover:text-white dark:focus:bg-white/20 dark:focus:text-white"
 						type="submit"

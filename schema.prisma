@@ -53,9 +53,9 @@ model Einkauf {
   Pfand       String?
   Dinge       String       @db.Text
   Abgeschickt DateTime
-  Bild1       String?
-  Bild2       String?
-  Bild3       String?
+  Bild1       String?      @db.Text
+  Bild2       String?      @db.Text
+  Bild3       String?      @db.Text
   Mitarbeiter Mitarbeiter?
 }
 

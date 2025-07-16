@@ -2,6 +2,7 @@ package handler
 
 import (
 	"bytes"
+	"encoding/base64"
 	"fmt"
 	"io"
 	"log/slog"
@@ -19,6 +20,9 @@ type EinkaufProps struct {
 	Dinge  string  `schema:"Dinge,required"`
 	Geld   *string `schema:"Geld"`
 	Pfand  *string `schema:"Pfand"`
+	Bild1  []byte  `schema:"bild1"`
+	Bild2  []byte  `schema:"bild2"`
+	Bild3  []byte  `schema:"bild3"`
 }
 
 func (h *Handler) GetEinkauf(w http.ResponseWriter, r *http.Request) {
@@ -125,18 +129,29 @@ func (h *Handler) DeleteEinkauf(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, uri, http.StatusFound)
 }
 
+// TODO: Irgendwas ist ier buggy.. Das bild wird nicht angezeigt und ist angeblich 5000x5000 px groß
+func decodeImage(contentType string, b []byte) *string {
+	var base64Encoding string
+	switch contentType {
+	case "image/jpeg":
+		base64Encoding += "data:image/jpeg;base64,"
+	case "image/png":
+		base64Encoding += "data:image/png;base64,"
+	case "image/jpg":
+		base64Encoding += "data:image/jpg;base64,"
+	case "image/webp":
+		base64Encoding += "data:image/webp;base64,"
+	}
+
+	base64Encoding += base64.StdEncoding.EncodeToString(b)
+	return &base64Encoding
+}
+
 // TODO: Image Upload
 func (h *Handler) UpdateEinkauf(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	mitarbeiterId := r.PathValue("id")
 	r.ParseMultipartForm(32 << 10) // Max Header size: 32 MB
-
-	type uploadedFile struct {
-		Size        int64  `json:"size"`
-		ContentType string `json:"content_type"`
-		Filename    string `json:"filename"`
-		FileContent string `json:"file_content"`
-	}
 
 	var einkauf EinkaufProps
 	err := decoder.Decode(&einkauf, r.PostForm)
@@ -147,11 +162,12 @@ func (h *Handler) UpdateEinkauf(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var files []uploadedFile
+	var file1 *string
+	var file2 *string
+	var file3 *string
 
-	for _, fheaders := range r.MultipartForm.File {
+	for fidx, fheaders := range r.MultipartForm.File {
 		for _, headers := range fheaders {
-			var newFile uploadedFile
 			file, err := headers.Open()
 			if err != nil {
 				flash.SetFlashMessage(w, "error", err.Error())
@@ -165,30 +181,22 @@ func (h *Handler) UpdateEinkauf(w http.ResponseWriter, r *http.Request) {
 			file.Read(buff)
 			file.Seek(0, 0)
 			contentType := http.DetectContentType(buff)
-			newFile.ContentType = contentType
-			// get file size
-			var sizeBuff bytes.Buffer
-			fileSize, err := sizeBuff.ReadFrom(file)
-			if err != nil {
-				flash.SetFlashMessage(w, "error", err.Error())
-				h.logger.Error("failed to open file", slog.Any("error", err))
-				w.WriteHeader(http.StatusNoContent)
-				return
-			}
-			file.Seek(0, 0)
-			newFile.Size = fileSize
-			newFile.Filename = headers.Filename
-			contentBuf := bytes.NewBuffer(nil)
 
+			contentBuf := bytes.NewBuffer(nil)
 			if _, err := io.Copy(contentBuf, file); err != nil {
 				flash.SetFlashMessage(w, "error", err.Error())
 				h.logger.Error("failed to open file", slog.Any("error", err))
 				w.WriteHeader(http.StatusNoContent)
 				return
 			}
-			newFile.FileContent = contentBuf.String()
-
-			files = append(files, newFile)
+			switch fidx {
+			case "bild1":
+				file1 = decodeImage(contentType, contentBuf.Bytes())
+			case "bild2":
+				file2 = decodeImage(contentType, contentBuf.Bytes())
+			case "bild3":
+				file3 = decodeImage(contentType, contentBuf.Bytes())
+			}
 		}
 	}
 
@@ -208,6 +216,9 @@ func (h *Handler) UpdateEinkauf(w http.ResponseWriter, r *http.Request) {
 		db.Einkauf.Paypal.Set(einkauf.Paypal),
 		db.Einkauf.Geld.SetIfPresent(einkauf.Geld),
 		db.Einkauf.Pfand.SetIfPresent(einkauf.Pfand),
+		db.Einkauf.Bild1.SetIfPresent(file1),
+		db.Einkauf.Bild2.SetIfPresent(file2),
+		db.Einkauf.Bild3.SetIfPresent(file3),
 		db.Einkauf.Mitarbeiter.Link(
 			db.Mitarbeiter.ID.Equals(mitarbeiterId),
 		),
@@ -216,6 +227,9 @@ func (h *Handler) UpdateEinkauf(w http.ResponseWriter, r *http.Request) {
 		db.Einkauf.Abgeschickt.Set(time.Now()),
 		db.Einkauf.Abonniert.Set(einkauf.Abo),
 		db.Einkauf.Paypal.Set(einkauf.Paypal),
+		db.Einkauf.Bild1.SetIfPresent(file1),
+		db.Einkauf.Bild2.SetIfPresent(file2),
+		db.Einkauf.Bild3.SetIfPresent(file3),
 		db.Einkauf.Geld.SetIfPresent(einkauf.Geld),
 		db.Einkauf.Pfand.SetIfPresent(einkauf.Pfand),
 	).Exec(ctx)
