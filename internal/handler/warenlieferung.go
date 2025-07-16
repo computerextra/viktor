@@ -22,6 +22,8 @@ import (
 	gomail "gopkg.in/mail.v2"
 )
 
+// TODO: Gelieferte Artikel gehen nicht!
+
 type Warenlieferung struct {
 	Name          string
 	Angelegt      time.Time
