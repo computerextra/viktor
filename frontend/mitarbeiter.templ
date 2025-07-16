@@ -7,6 +7,14 @@ import (
 	"time"
 )
 
+templ azubi() {
+	<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-graduation-cap-icon lucide-graduation-cap"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"></path><path d="M22 10v6"></path><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"></path></svg>
+}
+
+templ online() {
+	<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-globe-icon lucide-globe"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path><path d="M2 12h20"></path></svg>
+}
+
 templ MitarbeiterOverview(mitarbeiter []db.MitarbeiterModel, uri string) {
 	{{
 		errMsg, errExist := flash.GetFlashMessage(ctx, "error")
@@ -23,6 +31,17 @@ templ MitarbeiterOverview(mitarbeiter []db.MitarbeiterModel, uri string) {
 			</a>
 			<div class="flex flex-col mt-5  mx-auto">
 				<div class="-m-1.5 overflow-x-auto">
+					<p>
+						Legende:
+					</p>
+					<p class="flex gap-2 items-center p-0 m-0">
+						@azubi()
+						: Azubi
+					</p>
+					<p class="flex gap-2 items-center p-0 m-0">
+						@online()
+						: Auf Webseite angezeigt
+					</p>
 					<div class="p-1.5 min-w-full inline-block align-middle">
 						<div class="overflow-hidden">
 							<table class="min-w-full divide-y divide-gray-200 dark:divide-neutral-700">
@@ -99,6 +118,7 @@ templ mitarbeiterRow(mitarbeiter db.MitarbeiterModel) {
 	var AbteilungName string
 	var GeburtstagString string
 	Mail, Mail_ok := mitarbeiter.Mail()
+	_, Short_ok := mitarbeiter.Short()
 	Geburtstag, Geburtstag_ok := mitarbeiter.Geburtstag()
 	HomeOffice, HomeOffice_ok := mitarbeiter.HomeOffice()
 	MobilPrivat, MobilPrivat_ok := mitarbeiter.MobilPrivat()
@@ -119,7 +139,13 @@ templ mitarbeiterRow(mitarbeiter db.MitarbeiterModel) {
 	}}
 	<tr class="hover:bg-gray-100 dark:hover:bg-neutral-700">
 		<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">
-			<a href={ templ.SafeURL(fmt.Sprintf("/CMS/Mitarbeiter/%s", mitarbeiter.ID)) }>
+			<a href={ templ.SafeURL(fmt.Sprintf("/CMS/Mitarbeiter/%s", mitarbeiter.ID)) } class="flex gap-2 items-center">
+				if Mail_ok && Short_ok {
+					@online()
+				}
+				if mitarbeiter.Azubi {
+					@azubi()
+				}
 				{ mitarbeiter.Name }
 			</a>
 		</td>
