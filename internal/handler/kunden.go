@@ -10,6 +10,8 @@ import (
 	"github.com/computerextra/viktor/frontend"
 	"github.com/computerextra/viktor/internal"
 	"github.com/computerextra/viktor/internal/util/flash"
+
+	_ "github.com/denisenkom/go-mssqldb"
 )
 
 type SearchProps struct {
