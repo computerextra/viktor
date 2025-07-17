@@ -23,3 +23,10 @@ type KundenResponse struct {
 	KundUmsatz     *float64
 	LiefUmsatz     *float64
 }
+
+type AccessArtikel struct {
+	Id            int
+	Artikelnummer string
+	Artikeltext   string
+	Preis         float64
+}

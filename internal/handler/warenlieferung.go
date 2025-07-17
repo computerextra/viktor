@@ -38,6 +38,7 @@ type Artikel struct {
 	Id            int
 	Artikelnummer string
 	Suchbegriff   string
+	Preis         float64
 }
 
 type Leichen struct {
@@ -470,6 +471,21 @@ func (h *Handler) SendWarenlieferung(w http.ResponseWriter, r *http.Request) {
 	}
 	m := gomail.NewMessage()
 
+	// TODO: Testen nach Warenlieferung!
+	m.SetHeader("From", from)
+	m.SetHeader("To", "johannes.kirchner@computer-extra.de")
+	m.SetHeader("Subject", fmt.Sprintf("Warenlieferung vom %v", time.Now().Format(time.DateOnly)))
+	m.SetBody("text/html", body)
+	if err := gomail.Send(s, m); err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
+		h.logger.Error("failed to send mail", slog.Any("error", err))
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	uri := getPath(r.URL.Path)
+	frontend.Warenlieferung(uri, true, true).Render(r.Context(), w)
+	return
+
 	for _, ma := range Mitarbeiter {
 		mail, ok := ma.Mail()
 		if ok && len(mail) > 1 {
@@ -486,8 +502,8 @@ func (h *Handler) SendWarenlieferung(w http.ResponseWriter, r *http.Request) {
 			m.Reset()
 		}
 	}
-	uri := getPath(r.URL.Path)
-	frontend.Warenlieferung(uri, true, true).Render(r.Context(), w)
+	// uri := getPath(r.URL.Path)
+	// frontend.Warenlieferung(uri, true, true).Render(r.Context(), w)
 }
 
 func sortProducts(Products []db.WarenlieferungModel) ([]Warenlieferung, []Warenlieferung, []Warenlieferung, error) {
@@ -617,7 +633,7 @@ func getAllProductsFromSage() ([]Artikel, error) {
 	}
 	defer conn.Close()
 
-	rows, err := conn.Query("SELECT SG_AUF_ARTIKEL_PK, ARTNR, SUCHBEGRIFF FROM sg_auf_artikel")
+	rows, err := conn.Query("SELECT sg_auf_artikel.SG_AUF_ARTIKEL_PK, sg_auf_artikel.ARTNR, sg_auf_artikel.SUCHBEGRIFF, sg_auf_vkpreis.PR01 FROM sg_auf_artikel INNER JOIN sg_auf_vkpreis ON (sg_auf_artikel.SG_AUF_ARTIKEL_PK = sg_auf_vkpreis.SG_AUF_ARTIKEL_FK)")
 	if err != nil {
 		return nil, err
 	}
@@ -627,8 +643,9 @@ func getAllProductsFromSage() ([]Artikel, error) {
 		var art Artikel
 		var Artikelnummer sql.NullString
 		var Suchbegriff sql.NullString
+		var Price sql.NullFloat64
 
-		if err := rows.Scan(&art.Id, &Artikelnummer, &Suchbegriff); err != nil {
+		if err := rows.Scan(&art.Id, &Artikelnummer, &Suchbegriff, &Price); err != nil {
 			return nil,
 				err
 		}
@@ -638,9 +655,13 @@ func getAllProductsFromSage() ([]Artikel, error) {
 		if Suchbegriff.Valid {
 			art.Suchbegriff = Suchbegriff.String
 		}
+		if Price.Valid {
+			art.Preis = Price.Float64
+		}
 		if Suchbegriff.Valid && Artikelnummer.Valid {
 			artikel = append(artikel, art)
 		}
+
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err
