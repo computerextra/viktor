@@ -42,7 +42,6 @@ func (h *Handler) SyncAussteller(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) UploadAussteller(w http.ResponseWriter, r *http.Request) {
-	// TODO: Image Upload
 	r.ParseMultipartForm(32 << 10) // Max Header size: 32 MB
 
 	file, handler, err := r.FormFile("file-input")
@@ -114,6 +113,7 @@ func (h *Handler) UploadAussteller(w http.ResponseWriter, r *http.Request) {
 	frontend.Aussteller(getPath(r.URL.Path), false, false, fmt.Sprintf("%s/%s", domain, handler.Filename)).Render(r.Context(), w)
 }
 
+// https://bilder.computer-extra.de/data/37ad3250-af2f-498a-b640-442463099db3.jpg
 func (h *Handler) UpdateAussteller(w http.ResponseWriter, r *http.Request) {
 	r.ParseMultipartForm(32 << 10) // Max Header size: 32 MB
 	var props AusstellerProps

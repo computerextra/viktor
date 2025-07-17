@@ -5,11 +5,12 @@ templ Aussteller(uri string, updated bool, synced bool, imageUrl string) {
 		<div class="container mx-auto mt-10">
 			<h1 class="text-center">Digitale Preisschilder</h1>
 			<div class="my-10">
-				<h2 class="text-center">Datenbank aktualisieren</h2>
+				<h2 class="text-center">Datenbank aktualisieren (Funktioniert noch nicht richtig!)</h2>
 				<div class="flex justify-center">
 					<form action="/Aussteller/Sync" method="POST">
 						<button
 							type="submit"
+							disabled
 							class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-hidden focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
 						>
 							Synchronisieren
@@ -24,16 +25,16 @@ templ Aussteller(uri string, updated bool, synced bool, imageUrl string) {
 						<input
 							type="text"
 							required
-							id="artikelnummer"
-							name="artikelnummer"
+							id="Artikelnummer"
+							name="Artikelnummer"
 							placeholder="Artikelnummer"
 							class="py-2.5 sm:py-3 px-4 pe-11 block w-full border-gray-200 -mt-px -ms-px first:rounded-t-lg last:rounded-b-lg sm:first:rounded-s-lg sm:mt-0 sm:first:ms-0 sm:first:rounded-se-none sm:last:rounded-es-none sm:last:rounded-e-lg sm:text-sm relative focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
 						/>
 						<input
 							type="text"
 							required
-							id="link"
-							name="link"
+							id="Link"
+							name="Link"
 							placeholder="Link zum Bild"
 							class="py-2.5 sm:py-3 px-4 pe-11 block w-full border-gray-200 -mt-px -ms-px first:rounded-t-lg last:rounded-b-lg sm:first:rounded-s-lg sm:mt-0 sm:first:ms-0 sm:first:rounded-se-none sm:last:rounded-es-none sm:last:rounded-e-lg sm:text-sm relative focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
 						/>
