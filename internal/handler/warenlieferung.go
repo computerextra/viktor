@@ -22,8 +22,6 @@ import (
 	gomail "gopkg.in/mail.v2"
 )
 
-// TODO: Gelieferte Artikel gehen nicht!
-
 type Warenlieferung struct {
 	Name          string
 	Angelegt      time.Time
@@ -206,6 +204,8 @@ func (h *Handler) GenerateWarenlieferung(w http.ResponseWriter, r *http.Request)
 	frontend.Warenlieferung(uri, true, false).Render(r.Context(), w)
 }
 
+// TODO: Preisberechnung in Prozent geht nicht!
+// •	1101375 - VER KYOCERA TK-5270K, schwarz, ~8000 Seiten: 99.90 ➡️ 124.90 (0.00 % // 25.00 €)
 func (h *Handler) SendWarenlieferung(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	Mitarbeiter, err := h.db.Mitarbeiter.FindMany(
