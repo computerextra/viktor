@@ -170,6 +170,7 @@ func (h *Handler) GenerateWarenlieferung(w http.ResponseWriter, r *http.Request)
 	for _, item := range geliefert {
 		_, err := h.db.Warenlieferung.FindUnique(db.Warenlieferung.ID.Equals(int(item.ID))).Update(
 			db.Warenlieferung.Name.Set(item.Name),
+			db.Warenlieferung.Geliefert.Set(time.Now()),
 		).Exec(ctx)
 
 		if err != nil {
@@ -178,20 +179,21 @@ func (h *Handler) GenerateWarenlieferung(w http.ResponseWriter, r *http.Request)
 		}
 	}
 	for _, item := range neuePreise {
-		var altFloat float64
-		var neuFloat float64
+		var altFloat *float64
+		var neuFloat *float64
 		if item.Alterpreis.Valid {
-			altFloat = item.Alterpreis.Float64
+			altFloat = &item.Alterpreis.Float64
 		}
 		if item.Neuerpreis.Valid {
-			neuFloat = item.Neuerpreis.Float64
+			neuFloat = &item.Neuerpreis.Float64
 		}
-		if neuFloat > 0 && altFloat > 0 && altFloat != neuFloat {
+		if (neuFloat != nil && *neuFloat > 0) || (altFloat != nil && *altFloat > 0) {
 			_, err := h.db.Warenlieferung.FindUnique(
 				db.Warenlieferung.ID.Equals(int(item.ID)),
 			).Update(
-				db.Warenlieferung.AlterPreis.Set(altFloat),
-				db.Warenlieferung.NeuerPreis.Set(neuFloat),
+				db.Warenlieferung.AlterPreis.SetIfPresent(altFloat),
+				db.Warenlieferung.NeuerPreis.SetIfPresent(neuFloat),
+				db.Warenlieferung.Preis.Set(time.Now()),
 			).Exec(ctx)
 			if err != nil {
 				flash.SetFlashMessage(w, "error", err.Error())
