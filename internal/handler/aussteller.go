@@ -23,7 +23,7 @@ type AusstellerProps struct {
 }
 
 func (h *Handler) Aussteller(w http.ResponseWriter, r *http.Request) {
-	frontend.Aussteller(getPath(r.URL.Path), false, false).Render(r.Context(), w)
+	frontend.Aussteller(getPath(r.URL.Path), false, false, "").Render(r.Context(), w)
 }
 
 func (h *Handler) SyncAussteller(w http.ResponseWriter, r *http.Request) {
@@ -34,7 +34,12 @@ func (h *Handler) SyncAussteller(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNoContent)
 		return
 	}
-	frontend.Aussteller(getPath(r.URL.Path), false, true).Render(r.Context(), w)
+	frontend.Aussteller(getPath(r.URL.Path), false, true, "").Render(r.Context(), w)
+}
+
+func (h *Handler) UploadAussteller(w http.ResponseWriter, r *http.Request) {
+	// TODO: Image Upload
+	frontend.Aussteller(getPath(r.URL.Path), false, false, "NYI").Render(r.Context(), w)
 }
 
 func (h *Handler) UpdateAussteller(w http.ResponseWriter, r *http.Request) {
@@ -65,7 +70,7 @@ func (h *Handler) UpdateAussteller(w http.ResponseWriter, r *http.Request) {
 	}
 	defer resp.Body.Close()
 
-	frontend.Aussteller(getPath(r.URL.Path), true, false).Render(r.Context(), w)
+	frontend.Aussteller(getPath(r.URL.Path), true, false, "").Render(r.Context(), w)
 }
 
 func sync(database *db.PrismaClient, ctx context.Context) error {
