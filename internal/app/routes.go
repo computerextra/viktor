@@ -137,6 +137,11 @@ func (a *App) loadPages(router *http.ServeMux) {
 	router.HandleFunc("GET /Label", h.Label)
 	router.HandleFunc("POST /Label", h.SyncLabel)
 
+	// Aussteller
+	router.HandleFunc("GET /Aussteller", h.Aussteller)
+	router.HandleFunc("POST /Aussteller/Sync", h.SyncAussteller)
+	router.HandleFunc("POST /Aussteller/Update", h.UpdateAussteller)
+
 	router.HandleFunc("POST /api/health", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	})

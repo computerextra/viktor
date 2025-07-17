@@ -41,7 +41,7 @@ model Aussteller {
   Artikelnummer String
   Artikelname   String
   Specs         String  @db.Text
-  Preis         Decimal
+  Preis         Float   @db.Float
   Bild          String? @db.Text
 }
 

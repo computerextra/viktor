@@ -30,3 +30,11 @@ type AccessArtikel struct {
 	Artikeltext   string
 	Preis         float64
 }
+
+type AusstellerArtikel struct {
+	Id            int
+	Artikelnummer string
+	Artikelname   string
+	Specs         string
+	Preis         float64
+}
