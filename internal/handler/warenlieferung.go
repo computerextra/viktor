@@ -204,8 +204,6 @@ func (h *Handler) GenerateWarenlieferung(w http.ResponseWriter, r *http.Request)
 	frontend.Warenlieferung(uri, true, false).Render(r.Context(), w)
 }
 
-// TODO: Preisberechnung in Prozent geht nicht!
-// •	1101375 - VER KYOCERA TK-5270K, schwarz, ~8000 Seiten: 99.90 ➡️ 124.90 (0.00 % // 25.00 €)
 func (h *Handler) SendWarenlieferung(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	Mitarbeiter, err := h.db.Mitarbeiter.FindMany(
@@ -342,7 +340,7 @@ func (h *Handler) SendWarenlieferung(w http.ResponseWriter, r *http.Request) {
 				body = fmt.Sprintf("%s<li><b>%s</b> - %s: %.2f ➡️ %.2f ", body, NeuePreise[i].Artikelnummer, NeuePreise[i].Name, altFloat, neuFloat)
 
 				absolute := neuFloat - altFloat
-				prozent := ((altFloat / altFloat) * 100) - 100
+				prozent := ((neuFloat / altFloat) * 100) - 100
 				body = fmt.Sprintf("%s(%.2f %% // %.2f €)</li>", body, prozent, absolute)
 			}
 
@@ -471,21 +469,6 @@ func (h *Handler) SendWarenlieferung(w http.ResponseWriter, r *http.Request) {
 	}
 	m := gomail.NewMessage()
 
-	// TODO: Testen nach Warenlieferung!
-	m.SetHeader("From", from)
-	m.SetHeader("To", "johannes.kirchner@computer-extra.de")
-	m.SetHeader("Subject", fmt.Sprintf("Warenlieferung vom %v", time.Now().Format(time.DateOnly)))
-	m.SetBody("text/html", body)
-	if err := gomail.Send(s, m); err != nil {
-		flash.SetFlashMessage(w, "error", err.Error())
-		h.logger.Error("failed to send mail", slog.Any("error", err))
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-	uri := getPath(r.URL.Path)
-	frontend.Warenlieferung(uri, true, true).Render(r.Context(), w)
-	return
-
 	for _, ma := range Mitarbeiter {
 		mail, ok := ma.Mail()
 		if ok && len(mail) > 1 {
@@ -502,8 +485,8 @@ func (h *Handler) SendWarenlieferung(w http.ResponseWriter, r *http.Request) {
 			m.Reset()
 		}
 	}
-	// uri := getPath(r.URL.Path)
-	// frontend.Warenlieferung(uri, true, true).Render(r.Context(), w)
+	uri := getPath(r.URL.Path)
+	frontend.Warenlieferung(uri, true, true).Render(r.Context(), w)
 }
 
 func sortProducts(Products []db.WarenlieferungModel) ([]Warenlieferung, []Warenlieferung, []Warenlieferung, error) {
