@@ -5,14 +5,18 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"log/slog"
 	"net/http"
+	"os"
 	"strings"
+	"time"
 
 	"github.com/computerextra/viktor/db"
 	"github.com/computerextra/viktor/frontend"
 	"github.com/computerextra/viktor/internal"
 	"github.com/computerextra/viktor/internal/util/flash"
+	"github.com/jlaffaye/ftp"
 
 	_ "github.com/denisenkom/go-mssqldb"
 )
@@ -39,7 +43,75 @@ func (h *Handler) SyncAussteller(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) UploadAussteller(w http.ResponseWriter, r *http.Request) {
 	// TODO: Image Upload
-	frontend.Aussteller(getPath(r.URL.Path), false, false, "NYI").Render(r.Context(), w)
+	r.ParseMultipartForm(32 << 10) // Max Header size: 32 MB
+
+	file, handler, err := r.FormFile("file-input")
+	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
+		h.logger.Error("failed to parse formdata", slog.Any("error", err))
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
+	defer file.Close()
+
+	FTP_SERVER, ok := os.LookupEnv("FTP_SERVER")
+	if !ok {
+		h.logger.Error("failed to read from env: FTP_SERVER")
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
+	FTP_USER, ok := os.LookupEnv("FTP_USER")
+	if !ok {
+		h.logger.Error("failed to read from env: FTP_USER")
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
+	FTP_PASS, ok := os.LookupEnv("FTP_PASS")
+	if !ok {
+		h.logger.Error("failed to read from env: FTP_PASS")
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
+	FTP_PORT, ok := os.LookupEnv("FTP_PORT")
+	if !ok {
+		h.logger.Error("failed to read from env: FTP_PORT")
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
+	FTP_UPLOAD_PATH, ok := os.LookupEnv("FTP_UPLOAD_PATH")
+	if !ok {
+		h.logger.Error("failed to read from env: FTP_UPLOAD_PATH")
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
+
+	ftpClient, err := ftp.Dial(fmt.Sprintf("%s:%s", FTP_SERVER, FTP_PORT), ftp.DialWithTimeout(5*time.Second))
+	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
+		h.logger.Error("failed connect to ftp", slog.Any("error", err))
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	defer ftpClient.Quit()
+
+	if err := ftpClient.Login(FTP_USER, FTP_PASS); err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
+		h.logger.Error("failed login to ftp", slog.Any("error", err))
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	remotefile := FTP_UPLOAD_PATH + handler.Filename
+	if err := ftpClient.Stor(remotefile, file); err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
+		h.logger.Error("failed upload file", slog.Any("error", err))
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	domain := "https://bilder.computer-extra.de/data"
+
+	frontend.Aussteller(getPath(r.URL.Path), false, false, fmt.Sprintf("%s/%s", domain, handler.Filename)).Render(r.Context(), w)
 }
 
 func (h *Handler) UpdateAussteller(w http.ResponseWriter, r *http.Request) {

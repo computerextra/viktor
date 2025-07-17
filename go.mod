@@ -6,6 +6,7 @@ require (
 	github.com/a-h/templ v0.3.906
 	github.com/denisenkom/go-mssqldb v0.12.3
 	github.com/gorilla/schema v1.4.1
+	github.com/jlaffaye/ftp v0.2.0
 	github.com/joho/godotenv v1.5.1
 	github.com/mattn/go-adodb v0.0.1
 	github.com/shopspring/decimal v1.4.0
@@ -16,6 +17,8 @@ require (
 	github.com/go-ole/go-ole v1.3.0 // indirect
 	github.com/golang-sql/civil v0.0.0-20220223132316-b832511892a9 // indirect
 	github.com/golang-sql/sqlexp v0.1.0 // indirect
+	github.com/hashicorp/errwrap v1.0.0 // indirect
+	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	golang.org/x/crypto v0.38.0 // indirect
 	golang.org/x/net v0.39.0 // indirect
 	golang.org/x/sys v0.33.0 // indirect

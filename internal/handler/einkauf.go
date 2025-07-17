@@ -1,17 +1,18 @@
 package handler
 
 import (
-	"bytes"
 	"encoding/base64"
 	"fmt"
-	"io"
 	"log/slog"
 	"net/http"
+	"os"
+	"strings"
 	"time"
 
 	"github.com/computerextra/viktor/db"
 	"github.com/computerextra/viktor/frontend"
 	"github.com/computerextra/viktor/internal/util/flash"
+	"github.com/jlaffaye/ftp"
 )
 
 type EinkaufProps struct {
@@ -166,39 +167,152 @@ func (h *Handler) UpdateEinkauf(w http.ResponseWriter, r *http.Request) {
 	var file2 *string
 	var file3 *string
 
-	for fidx, fheaders := range r.MultipartForm.File {
-		for _, headers := range fheaders {
-			file, err := headers.Open()
-			if err != nil {
-				flash.SetFlashMessage(w, "error", err.Error())
-				h.logger.Error("failed to open file", slog.Any("error", err))
-				w.WriteHeader(http.StatusNoContent)
-				return
-			}
-			defer file.Close()
-			// Detect contentType
-			buff := make([]byte, 512)
-			file.Read(buff)
-			file.Seek(0, 0)
-			contentType := http.DetectContentType(buff)
-
-			contentBuf := bytes.NewBuffer(nil)
-			if _, err := io.Copy(contentBuf, file); err != nil {
-				flash.SetFlashMessage(w, "error", err.Error())
-				h.logger.Error("failed to open file", slog.Any("error", err))
-				w.WriteHeader(http.StatusNoContent)
-				return
-			}
-			switch fidx {
-			case "bild1":
-				file1 = decodeImage(contentType, contentBuf.Bytes())
-			case "bild2":
-				file2 = decodeImage(contentType, contentBuf.Bytes())
-			case "bild3":
-				file3 = decodeImage(contentType, contentBuf.Bytes())
-			}
-		}
+	FTP_SERVER, ok := os.LookupEnv("FTP_SERVER")
+	if !ok {
+		h.logger.Error("failed to read from env: FTP_SERVER")
+		w.WriteHeader(http.StatusNoContent)
+		return
 	}
+	FTP_USER, ok := os.LookupEnv("FTP_USER")
+	if !ok {
+		h.logger.Error("failed to read from env: FTP_USER")
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
+	FTP_PASS, ok := os.LookupEnv("FTP_PASS")
+	if !ok {
+		h.logger.Error("failed to read from env: FTP_PASS")
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
+	FTP_PORT, ok := os.LookupEnv("FTP_PORT")
+	if !ok {
+		h.logger.Error("failed to read from env: FTP_PORT")
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
+	FTP_UPLOAD_PATH, ok := os.LookupEnv("FTP_UPLOAD_PATH")
+	if !ok {
+		h.logger.Error("failed to read from env: FTP_UPLOAD_PATH")
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
+
+	ftpClient, err := ftp.Dial(fmt.Sprintf("%s:%s", FTP_SERVER, FTP_PORT), ftp.DialWithTimeout(5*time.Second))
+	if err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
+		h.logger.Error("failed connect to ftp", slog.Any("error", err))
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	defer ftpClient.Quit()
+
+	if err := ftpClient.Login(FTP_USER, FTP_PASS); err != nil {
+		flash.SetFlashMessage(w, "error", err.Error())
+		h.logger.Error("failed login to ftp", slog.Any("error", err))
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	bild1FormData, bild1Handler, err := r.FormFile("bild1")
+	if err == nil {
+		splitted := strings.Split(bild1Handler.Filename, ".")
+		fileType := splitted[len(splitted)-1]
+		filename := fmt.Sprintf("%s-1.%s", mitarbeiterId, fileType)
+		path := fmt.Sprintf("https://bilder.computer-extra.de/data/%s", filename)
+
+		remotefile := FTP_UPLOAD_PATH + filename
+
+		ftpClient.Delete(remotefile)
+
+		if err := ftpClient.Stor(remotefile, bild1FormData); err != nil {
+			flash.SetFlashMessage(w, "error", err.Error())
+			h.logger.Error("failed upload file", slog.Any("error", err))
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		file1 = &path
+		bild1FormData.Close()
+	}
+
+	bild2FormData, bild2Handler, err := r.FormFile("bild2")
+	if err == nil {
+		splitted := strings.Split(bild2Handler.Filename, ".")
+		fileType := splitted[len(splitted)-1]
+		filename := fmt.Sprintf("%s-2.%s", mitarbeiterId, fileType)
+		path := fmt.Sprintf("https://bilder.computer-extra.de/data/%s", filename)
+
+		remotefile := FTP_UPLOAD_PATH + filename
+
+		ftpClient.Delete(remotefile)
+
+		if err := ftpClient.Stor(remotefile, bild2FormData); err != nil {
+			flash.SetFlashMessage(w, "error", err.Error())
+			h.logger.Error("failed upload file", slog.Any("error", err))
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		file2 = &path
+		bild2FormData.Close()
+	}
+
+	bild3FormData, bild3Handler, err := r.FormFile("bild3")
+	if err == nil {
+		splitted := strings.Split(bild3Handler.Filename, ".")
+		fileType := splitted[len(splitted)-1]
+		filename := fmt.Sprintf("%s-3.%s", mitarbeiterId, fileType)
+		path := fmt.Sprintf("https://bilder.computer-extra.de/data/%s", filename)
+
+		remotefile := FTP_UPLOAD_PATH + filename
+
+		ftpClient.Delete(remotefile)
+
+		if err := ftpClient.Stor(remotefile, bild3FormData); err != nil {
+			flash.SetFlashMessage(w, "error", err.Error())
+			h.logger.Error("failed upload file", slog.Any("error", err))
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		file3 = &path
+		bild3FormData.Close()
+	}
+
+	// for fidx, fheaders := range r.MultipartForm.File {
+	// 	for _, headers := range fheaders {
+	// 		file, err := headers.Open()
+	// 		if err != nil {
+	// 			flash.SetFlashMessage(w, "error", err.Error())
+	// 			h.logger.Error("failed to open file", slog.Any("error", err))
+	// 			w.WriteHeader(http.StatusNoContent)
+	// 			return
+	// 		}
+	// 		defer file.Close()
+	// 		// Detect contentType
+	// 		buff := make([]byte, 512)
+	// 		file.Read(buff)
+	// 		file.Seek(0, 0)
+	// 		contentType := http.DetectContentType(buff)
+
+	// 		contentBuf := bytes.NewBuffer(nil)
+	// 		if _, err := io.Copy(contentBuf, file); err != nil {
+	// 			flash.SetFlashMessage(w, "error", err.Error())
+	// 			h.logger.Error("failed to open file", slog.Any("error", err))
+	// 			w.WriteHeader(http.StatusNoContent)
+	// 			return
+	// 		}
+	// 		switch fidx {
+	// 		case "bild1":
+	// 			file1 = decodeImage(contentType, contentBuf.Bytes())
+	// 		case "bild2":
+	// 			file2 = decodeImage(contentType, contentBuf.Bytes())
+	// 		case "bild3":
+	// 			file3 = decodeImage(contentType, contentBuf.Bytes())
+	// 		}
+	// 	}
+	// }
 
 	mitarbeiter, err := h.db.Mitarbeiter.FindUnique(db.Mitarbeiter.ID.Equals(mitarbeiterId)).Exec(ctx)
 	if err != nil {

@@ -121,15 +121,15 @@ templ Einkauf(einkauf []db.EinkaufModel, ma []db.MitarbeiterModel, uri string) {
 									</pre>
 								</div>
 							</div>
-							<div class={ "grid", templ.KV(count == 0, ""), templ.KV(count == 1, "grid-cols-1"), templ.KV(count == 2, "grid-cols-2"), templ.KV(count == 3, "grid-cols-3"), "gap-2" }>
+							<div class={ "flex flex-row gap-0.5 justify-center" }>
 								if ok_1 {
-									<img src={ Bild1 } alt="Bild-1" class="w-56 h-auto"/>
+									<img src={ Bild1 } alt="Bild-1" class="w-40 h-auto"/>
 								}
 								if ok_2 {
-									<img src={ Bild2 } alt="Bild-2" class="w-56 h-auto"/>
+									<img src={ Bild2 } alt="Bild-2" class="w-40 h-auto"/>
 								}
 								if ok_3 {
-									<img src={ Bild3 } alt="Bild-3" class="w-56 h-auto"/>
+									<img src={ Bild3 } alt="Bild-3" class="w-40 h-auto"/>
 								}
 							</div>
 						</div>
@@ -589,32 +589,22 @@ templ einkaufRow(ma db.EinkaufModel) {
 				</pre>
 			</td>
 			<td
-				class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200"
+				class="px-6 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200"
 			>
 				{{
 	Bild1, ok_1 := ma.Bild1()
 	Bild2, ok_2 := ma.Bild2()
 	Bild3, ok_3 := ma.Bild3()
-	var count int = 0
-	if ok_1 {
-		count += 1
-	}
-	if ok_2 {
-		count += 1
-	}
-	if ok_3 {
-		count += 1
-	}
 				}}
-				<div class={ "grid", templ.KV(count == 0, ""), templ.KV(count == 1, "grid-cols-1"), templ.KV(count == 2, "grid-cols-2"), templ.KV(count == 3, "grid-cols-3"), "gap-2" }>
+				<div class={ "grid grid-cols-3 gap-0" }>
 					if ok_1 {
-						<img src={ Bild1 } alt="Bild-1" class="w-56 h-auto"/>
+						<img src={ Bild1 } alt="Bild-1" class="w-35 h-auto object-contain"/>
 					}
 					if ok_2 {
-						<img src={ Bild2 } alt="Bild-2" class="w-56 h-auto"/>
+						<img src={ Bild2 } alt="Bild-2" class="w-35 h-auto object-contain"/>
 					}
 					if ok_3 {
-						<img src={ Bild3 } alt="Bild-3" class="w-56 h-auto"/>
+						<img src={ Bild3 } alt="Bild-3" class="w-35 h-auto object-contain"/>
 					}
 				</div>
 			</td>
