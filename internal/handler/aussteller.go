@@ -30,6 +30,7 @@ func (h *Handler) Aussteller(w http.ResponseWriter, r *http.Request) {
 	frontend.Aussteller(getPath(r.URL.Path), false, false, "").Render(r.Context(), w)
 }
 
+// TODO: Dauert ewig, nach 5 minuten abgebrochen! Muss komplett optimiert werden!
 func (h *Handler) SyncAussteller(w http.ResponseWriter, r *http.Request) {
 	err := sync(h.db, r.Context())
 	if err != nil {
@@ -113,7 +114,6 @@ func (h *Handler) UploadAussteller(w http.ResponseWriter, r *http.Request) {
 	frontend.Aussteller(getPath(r.URL.Path), false, false, fmt.Sprintf("%s/%s", domain, handler.Filename)).Render(r.Context(), w)
 }
 
-// https://bilder.computer-extra.de/data/37ad3250-af2f-498a-b640-442463099db3.jpg
 func (h *Handler) UpdateAussteller(w http.ResponseWriter, r *http.Request) {
 	r.ParseMultipartForm(32 << 10) // Max Header size: 32 MB
 	var props AusstellerProps

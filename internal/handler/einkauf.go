@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"encoding/base64"
 	"fmt"
 	"log/slog"
 	"net/http"
@@ -130,25 +129,6 @@ func (h *Handler) DeleteEinkauf(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, uri, http.StatusFound)
 }
 
-// TODO: Irgendwas ist ier buggy.. Das bild wird nicht angezeigt und ist angeblich 5000x5000 px groß
-func decodeImage(contentType string, b []byte) *string {
-	var base64Encoding string
-	switch contentType {
-	case "image/jpeg":
-		base64Encoding += "data:image/jpeg;base64,"
-	case "image/png":
-		base64Encoding += "data:image/png;base64,"
-	case "image/jpg":
-		base64Encoding += "data:image/jpg;base64,"
-	case "image/webp":
-		base64Encoding += "data:image/webp;base64,"
-	}
-
-	base64Encoding += base64.StdEncoding.EncodeToString(b)
-	return &base64Encoding
-}
-
-// TODO: Image Upload
 func (h *Handler) UpdateEinkauf(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	mitarbeiterId := r.PathValue("id")
