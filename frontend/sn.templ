@@ -47,7 +47,7 @@ templ Seriennummer(uri string, result string, search string) {
 					</div>
 				</form>
 			</div>
-			if len(search) > 0 && len(result) > 1 {
+			if len(search) > 0 && len(result) > 0 {
 				<hr class="my-5"/>
 				<p class="text-center" id="result">{ search }: { result }</p>
 				<p id="response" class="text-center mt-5"></p>
@@ -55,20 +55,21 @@ templ Seriennummer(uri string, result string, search string) {
 			<script>
 			const delay = ms => new Promise(res => setTimeout(res, ms));
 
-			function copy() {
+			function x() {
 				const res = document.querySelector("#result")
 				const response = document.querySelector("#response")
-				if(res == null) return
+				if(res == null || response == null) return
 				const resText = res.innerHTML
 				if (resText.length > 3) {
 					navigator.clipboard.writeText(resText)
 					response.innerHTML = "Text in Zwischenablage Kopiert."
-					delay(2000)
-					response.innerHTML = ""
-					res.innerHTML = ""
+					setTimeout(() => {
+						response.innerHTML = ""
+						res.innerHTML = ""
+					}, 2000)
 				}
 			}
-				copy()
+			x()
 			</script>
 		</div>
 		if errExist {
