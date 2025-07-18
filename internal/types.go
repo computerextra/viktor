@@ -38,3 +38,9 @@ type AusstellerArtikel struct {
 	Specs         string
 	Preis         float64
 }
+
+type User struct {
+	Kundennummer string
+	Name         string
+	Vorname      string
+}

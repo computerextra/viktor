@@ -14,6 +14,7 @@ func Auth(next http.HandlerFunc) http.HandlerFunc {
 		if !ok {
 			w.Header().Set("WWW-Authenticate", `Basic realm="restricted", charset="UTF-8"`)
 			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+
 		}
 		AUTH_PASS, ok := os.LookupEnv("AUTH_PASS")
 		if !ok {
@@ -35,6 +36,7 @@ func Auth(next http.HandlerFunc) http.HandlerFunc {
 				return
 			}
 		}
+
 		w.Header().Set("WWW-Authenticate", `Basic realm="restricted", charset="UTF-8"`)
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 	})

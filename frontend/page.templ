@@ -13,6 +13,7 @@ templ Page(title string, uri string) {
 			{Name: "Einkauf", Link: "/Einkauf"},
 			{Name: "Mitarbeiter", Link: "/Mitarbeiter"},
 			{Name: "Lieferanten", Link: "/Lieferanten"},
+			{Name: "Formulare", Link: "/Formular"},
 			{Name: "CE Archiv", Link: "/Archiv"},
 			{Name: "Kunden", Link: "/Kunden"},
 			{Name: "Warenlieferung", Link: "/Warenlieferung"},
@@ -72,7 +73,7 @@ templ Page(title string, uri string) {
 			<div class="container mx-auto">
 				{ children... }
 			</div>
-			<div style="position: fixed; bottom: 1rem; right: 1rem;">
+			<div style="position: fixed; bottom: 1rem; right: 1rem;" class="print:hidden">
 				<p class="border border-gray-200 p-2 rounded">
 					<span id="status">LOADING ...</span>
 				</p>

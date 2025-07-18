@@ -30,7 +30,6 @@ func (h *Handler) Aussteller(w http.ResponseWriter, r *http.Request) {
 	frontend.Aussteller(getPath(r.URL.Path), false, false, "").Render(r.Context(), w)
 }
 
-// TODO: Dauert ewig, nach 5 minuten abgebrochen! Muss komplett optimiert werden!
 func (h *Handler) SyncAussteller(w http.ResponseWriter, r *http.Request) {
 	err := sync(h.db, r.Context())
 	if err != nil {
