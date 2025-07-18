@@ -1,0 +1,128 @@
+package frontend
+
+import "fmt"
+
+templ Page(title string, uri string) {
+	{{
+		type NavItem struct {
+			Name string
+			Link string
+		}
+		navItems := []NavItem{
+			{Name: "Start", Link: "/"},
+			{Name: "Einkauf", Link: "/Einkauf"},
+			{Name: "Mitarbeiter", Link: "/Mitarbeiter"},
+			{Name: "Lieferanten", Link: "/Lieferanten"},
+			{Name: "Formulare", Link: "/Formular"},
+			{Name: "CE Archiv", Link: "/Archiv"},
+			{Name: "Kunden", Link: "/Kunden"},
+			{Name: "Warenlieferung", Link: "/Warenlieferung"},
+			{Name: "CMS", Link: "/CMS"},
+			{Name: "SN", Link: "/Seriennummer"},
+			{Name: "Info", Link: "/Info"},
+			{Name: "Label", Link: "/Label"},
+			{Name: "Aussteller", Link: "/Aussteller"},
+		}
+	}}
+	<!DOCTYPE html>
+	<html lang="de">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<link href="/static/css/style.css" rel="stylesheet"/>
+			<title>Viktor | { title }</title>
+			// Preline
+			<script src="/static/js/preline.js" defer></script>
+			// Alpine.js
+			<script src="//unpkg.com/alpinejs" defer></script>
+			// Lodash
+			<script src="/static/js/lodash.js" defer></script>
+			// Status JS
+			<script src="/static/js/status.js" defer></script>
+		</head>
+		<body class="bg-white dark:bg-neutral-600 antialiased">
+			<header class="relative flex flex-wrap sm:justify-start sm:flex-nowrap w-full bg-white text-sm py-3 dark:bg-neutral-800 print:hidden">
+				<nav class="container mx-auto px-4 sm:flex sm:items-center sm:justify-between">
+					<div class="flex items-center justify-between">
+						<a class="flex-none text-xl font-semibold dark:text-white focus:outline-hidden focus:opacity-80" href="/" aria-label="Brand">
+							Viktor
+						</a>
+						<div class="sm:hidden">
+							<button type="button" class="hs-collapse-toggle relative size-9 flex justify-center items-center gap-x-2 rounded-lg border border-gray-200 bg-white text-gray-800 shadow-2xs hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-transparent dark:border-neutral-700 dark:text-white dark:hover:bg-white/10 dark:focus:bg-white/10" id="hs-navbar-example-collapse" aria-expanded="false" aria-controls="hs-navbar-example" aria-label="Toggle navigation" data-hs-collapse="#hs-navbar-example">
+								<svg class="hs-collapse-open:hidden shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" x2="21" y1="6" y2="6"></line><line x1="3" x2="21" y1="12" y2="12"></line><line x1="3" x2="21" y1="18" y2="18"></line></svg>
+								<svg class="hs-collapse-open:block hidden shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+								<span class="sr-only">Toggle navigation</span>
+							</button>
+						</div>
+					</div>
+					<div id="hs-navbar-example" class="hidden hs-collapse overflow-hidden transition-all duration-300 basis-full grow sm:block" aria-labelledby="hs-navbar-example-collapse">
+						<div class="flex flex-col gap-5 mt-5 sm:flex-row sm:items-center sm:justify-end sm:mt-0 sm:ps-5">
+							for idx, item := range navItems {
+								<a
+									data-idx={ idx }
+									class={ "font-medium", templ.KV("!text-blue-500 focus:outline-hidden", fmt.Sprintf("/%s", uri) == item.Link), templ.KV("!text-gray-600 !hover:text-gray-400 focus:outline-hidden !focus:text-gray-400 !dark:text-neutral-400 !dark:hover:text-blue-800 !dark:focus:text-blue-800", fmt.Sprintf("/%s", uri) != item.Link) }
+									href={ templ.SafeURL(item.Link) }
+								>
+									{ item.Name }
+								</a>
+							}
+						</div>
+					</div>
+				</nav>
+			</header>
+			<div class="container mx-auto">
+				{ children... }
+			</div>
+			<div style="position: fixed; bottom: 1rem; right: 1rem;" class="print:hidden">
+				<p class="border border-gray-200 p-2 rounded">
+					<span id="status">LOADING ...</span>
+				</p>
+			</div>
+			<script src="https://cdn.jsdelivr.net/npm/@floating-ui/core@1.7.2"></script>
+			<script src="https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.7.2"></script>
+		</body>
+	</html>
+}
+
+templ Yes() {
+	<div class="">
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			width="24"
+			height="24"
+			viewBox="0 0 24 24"
+			fill="none"
+			stroke="currentColor"
+			stroke-width="2"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+			class="lucide lucide-check-icon lucide-check !text-green-500"
+		><path class="!text-green-500" d="M20 6 9 17l-5-5"></path></svg>
+	</div>
+}
+
+templ No() {
+	<div class="">
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			width="24"
+			height="24"
+			viewBox="0 0 24 24"
+			fill="none"
+			stroke="currentColor"
+			stroke-width="2"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+			class="lucide lucide-cross-icon lucide-cross !text-red-500 rotate-45"
+		><path class="!text-red-500" d="M4 9a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h4a1 1 0 0 1 1 1v4a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-4a1 1 0 0 1 1-1h4a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2h-4a1 1 0 0 1-1-1V4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4a1 1 0 0 1-1 1z"></path></svg>
+	</div>
+}
+
+templ BackButton(href string) {
+	<a
+		href={ templ.SafeURL(href) }
+		class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-hidden focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
+	>
+		Zurück
+	</a>
+}

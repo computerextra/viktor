@@ -1,0 +1,758 @@
+package frontend
+
+import "github.com/computerextra/viktor/internal"
+
+templ Formulare(uri string, auswahl string, kunde *internal.User) {
+	{{
+	Dienste := []string{
+		"AOMEI",
+		"Apple",
+		"GData",
+		"Google",
+		"Microsoft",
+		"Telekom",
+	}
+	}}
+	@Page("Formulare", uri) {
+		<div class="container mx-auto mt-10">
+			<h1 class="text-center print:hidden">Formular Generator</h1>
+			<form action="/Formular" method="post" class="max-w-sm mt-5 mx-auto print:hidden">
+				<div>
+					<label for="auswahl" class="sr-only">Label</label>
+					<div class="flex rounded-lg">
+						<select
+							if="auswahl"
+							name="auswahl"
+							class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-s-lg sm:text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+						>
+							if auswahl == "" {
+								<option selected value="">Bitte wählen</option>
+							}
+							for _, x := range Dienste {
+								if auswahl == x {
+									<option value={ x } selected>{ x }</option>
+								} else {
+									<option value={ x }>{ x }</option>
+								}
+							}
+						</select>
+						<button type="submit" class="py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-e-md border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-hidden focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
+							Auswählen
+						</button>
+					</div>
+				</div>
+			</form>
+			if auswahl != "" {
+				<form action="/Formular/Kunde" method="post" class="max-w-sm mt-5 mx-auto print:hidden">
+					<select
+						if="auswahl"
+						name="auswahl"
+						class="hidden"
+					>
+						for _, x := range Dienste {
+							if auswahl == x {
+								<option value={ x } selected>{ x }</option>
+							} else {
+								<option value={ x }>{ x }</option>
+							}
+						}
+					</select>
+					<div>
+						<label for="kundennummer" class="sr-only">Label</label>
+						<div class="flex rounded-lg">
+							if kunde != nil && len(kunde.Kundennummer) > 0 {
+								<input
+									type="text"
+									id="kundennummer"
+									name="kundennummer"
+									value={ kunde.Kundennummer }
+									class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-s-lg sm:text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+								/>
+							} else {
+								<input
+									type="text"
+									id="kundennummer"
+									name="kundennummer"
+									placeholder="Kundennummer wie im SAGE"
+									class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-s-lg sm:text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+								/>
+							}
+							<button type="submit" class="py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-e-md border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-hidden focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
+								Auswählen
+							</button>
+						</div>
+					</div>
+				</form>
+			}
+			if kunde != nil {
+				switch auswahl {
+					case "AOMEI":
+						@aomei(*kunde)
+					case "Apple":
+						@apple(*kunde)
+					case "GData":
+						@gdata(*kunde)
+					case "Google":
+						@google(*kunde)
+					case "Microsoft":
+						@microsoft(*kunde)
+					case "Telekom":
+						@telekom(*kunde)
+				}
+			}
+		</div>
+	}
+}
+
+templ aomei(kunde internal.User) {
+	<form class="my-10 print:hidden space-y-4 max-w-sm mx-auto" id="aomeiform">
+		<div class="max-w-sm">
+			<label for="lizenz" class="block text-sm font-medium mb-2 dark:text-white">Lizenz</label>
+			<input
+				type="text"
+				id="lizenz"
+				class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+				required
+			/>
+		</div>
+		<div class="max-w-sm">
+			<label for="nummer" class="block text-sm font-medium mb-2 dark:text-white">Gerätenummer</label>
+			<input
+				type="text"
+				id="nummer"
+				class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+				required
+			/>
+		</div>
+		<button type="submit" class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-hidden focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
+			Drucken
+		</button>
+	</form>
+	<div class="hidden print:block">
+		<div class="mt-24 !text-black">
+			<h1 class="text-center">
+				AOMEI Backupper Pro
+				<br/>
+				für 2 Computer
+			</h1>
+			<img
+				src="/static/images/aomei.png"
+				style="height: 30vh; max-height: 500px; margin-inline: auto; object-fit: contain; width: auto;"
+				class="my-12"
+			/>
+			<div class="mt-4 text-center">
+				<p id="print-p1">
+					<b>Lizenzschlüssel:</b>
+					<br/>
+					<span id="printlizenz"></span>
+				</p>
+				<p id="print-p2">
+					<b>Installiert auf Gerät:</b>
+					<br/>
+					<span id="printnummer"></span>
+				</p>
+				<div class="max-w-[40%] mx-auto mt-10">
+					<small class="mt-6 text-gray-500">
+						Bitte heben Sie diese Zugangsdaten sorgfältig auf, sie werden
+						benötigt, wenn Sie sich erneut in AOMEI anmelden möchten.
+					</small>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+    const form = document.querySelector("#aomeiform")
+    form.addEventListener("submit", function (e) {
+            e.preventDefault();
+            
+            const lizenzElem = document.querySelector("#lizenz")
+            const nummerElem = document.querySelector("#nummer")
+
+            const lizenz = lizenzElem.value
+            const nummer = nummerElem.value
+
+            document.querySelector("#printlizenz").innerHTML = lizenz
+            document.querySelector("#printnummer").innerHTML = nummer
+            
+            window.print()
+        });
+    </script>
+}
+
+templ apple(kunde internal.User) {
+	<form class="my-10 print:hidden space-y-4 max-w-sm mx-auto" id="appleform">
+		<div class="max-w-sm">
+			<label for="Benutzername" class="block text-sm font-medium mb-2 dark:text-white">Benutzername</label>
+			<input
+				type="text"
+				id="Benutzername"
+				class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+				required
+			/>
+		</div>
+		<div class="max-w-sm">
+			<label for="Passwort" class="block text-sm font-medium mb-2 dark:text-white">Passwort</label>
+			<input
+				type="text"
+				id="Passwort"
+				class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+				required
+			/>
+		</div>
+		<button type="submit" class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-hidden focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
+			Drucken
+		</button>
+	</form>
+	<div class="hidden print:block">
+		<div class="mt-24 !text-black">
+			<h1 class="text-center">Apple ID Zugangsdaten</h1>
+			<img
+				src="/static/images/apple.png"
+				style="height: 30vh; max-height: 500px; margin-inline: auto; object-fit: contain; width: auto;"
+				class="my-12"
+			/>
+			<div class="text-center">
+				<p id="print-p1">
+					<b>Kundennummer:</b>
+					<br/>
+					{ kunde.Kundennummer }
+				</p>
+				<p id="print-p2">
+					<b>Name:</b>
+					<br/>
+					{ kunde.Vorname } { kunde.Name }
+				</p>
+				<p id="print-p3">
+					<b>Benutzername:</b>
+					<br/>
+					<span id="printname"></span>
+				</p>
+				<p id="print-p4">
+					<b>Passwort:</b>
+					<br/>
+					<span id="printpass"></span>
+				</p>
+				<div class="max-w-[40%] mx-auto mt-8">
+					<small class="mt-6 text-gray-500">
+						Bitte heben Sie diese Zugangsdaten sorgfältig auf, sie werden
+						benötigt, wenn Sie sich erneut bei Apple anmelden möchten.
+					</small>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+    const form = document.querySelector("#appleform")
+    form.addEventListener("submit", function (e) {
+            e.preventDefault();
+            
+            const BenutzernameElem = document.querySelector("#Benutzername")
+            const PasswortElem = document.querySelector("#Passwort")
+
+            const Benutzername = BenutzernameElem.value
+            const Passwort = PasswortElem.value
+
+            document.querySelector("#printname").innerHTML = Benutzername
+            document.querySelector("#printpass").innerHTML = Passwort
+            
+            window.print()
+        });
+    </script>
+}
+
+templ gdata(kunde internal.User) {
+	{{
+	Versions := []string{
+		"Anti-Virus",
+		"MES",
+		"Internet Security",
+		"Internet Security Attached",
+		"Mobile Internet Security",
+		"Mobile Security",
+		"Total Security",
+	}
+	}}
+	<form class="my-10 print:hidden space-y-4 max-w-sm mx-auto" id="gdataform">
+		<div class="max-w-sm">
+			<label for="Benutzername" class="block text-sm font-medium mb-2 dark:text-white">Benutzername</label>
+			<input
+				type="text"
+				id="Benutzername"
+				class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+				required
+			/>
+		</div>
+		<div class="max-w-sm">
+			<label for="Passwort" class="block text-sm font-medium mb-2 dark:text-white">Passwort</label>
+			<input
+				type="text"
+				id="Passwort"
+				class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+				required
+			/>
+		</div>
+		<div class="max-w-sm">
+			<label for="Benutzer" class="block text-sm font-medium mb-2 dark:text-white">Anzahl der Benutzer</label>
+			<input
+				type="text"
+				id="Benutzer"
+				class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+				required
+			/>
+		</div>
+		<div class="relative">
+			<select
+				id="Version"
+				name="Version"
+				class="peer p-4 pe-9 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:focus:ring-neutral-600 focus:pt-6 focus:pb-2 not-placeholder-shown:pt-6 not-placeholder-shown:pb-2 autofill:pt-6 autofill:pb-2"
+			>
+				<option selected="">Open this select menu</option>
+				for _, x := range Versions {
+					<option value={ x }>{ x }</option>
+				}
+			</select>
+			<label
+				class="absolute top-0 start-0 p-4 h-full truncate pointer-events-none transition ease-in-out duration-100 border border-transparent  peer-disabled:opacity-50 peer-disabled:pointer-events-none     peer-focus:text-xs   peer-focus:-translate-y-1.5     peer-focus:text-gray-500 dark:peer-focus:text-neutral-500     peer-not-placeholder-shown:text-xs     peer-not-placeholder-shown:-translate-y-1.5     peer-not-placeholder-shown:text-gray-500 dark:peer-not-placeholder-shown:text-neutral-500 dark:text-neutral-500"
+			>Anwendungen</label>
+		</div>
+		<div class="max-w-sm">
+			<label for="Lizenz" class="block text-sm font-medium mb-2 dark:text-white">Lizenz</label>
+			<input
+				type="text"
+				id="Lizenz"
+				class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+				required
+			/>
+		</div>
+		<button type="submit" class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-hidden focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
+			Drucken
+		</button>
+	</form>
+	<div class="hidden print:block">
+		<div class="mt-24 !text-black">
+			<h1 class="text-center">G Data <span id="#printversion"></span> Zugangsdaten</h1>
+			<img
+				src="/static/images/gdata.png"
+				style="height: 30vh; max-height: 500px; margin-inline: auto; object-fit: contain; width: auto;"
+				class="my-12"
+			/>
+			<div class="mt-8 text-center">
+				<p>
+					G Data <span id="printversion"></span> für <span id="printbenutzer"></span> Benutzer
+				</p>
+				<p>
+					<b>Lizenzschlüssel:</b>
+					<br/>
+					<span id="printlizenz"></span>
+				</p>
+				<p>
+					<b>Benutzername:</b>
+					<br/>
+					<span id="printbentzername"></span>
+				</p>
+				<p>
+					<b>Passwort:</b>
+					<br/>
+					<span id="printpasswort"></span>
+				</p>
+				<div class="max-w-[40%] mx-auto mt-8">
+					<small class="mt-6 text-gray-500">
+						Bitte heben Sie diese Zugangsdaten sorgfältig auf, sie werden
+						benötigt, wenn Sie sich erneut in G Data anmelden möchten.
+					</small>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+    const form = document.querySelector("#gdataform")
+    form.addEventListener("submit", function (e) {
+            e.preventDefault();
+            
+            const BenutzernameElem = document.querySelector("#Benutzername")
+            const PasswortElem = document.querySelector("#Passwort")
+            const BenutzerAnzElem = document.querySelector("#Benutzer")
+            const versionElemet = document.querySelector("#Version")
+            const LizenzElem = document.querySelector("#Lizenz")
+
+            const Benutzername = BenutzernameElem.value
+            const Passwort = PasswortElem.value
+            const BenutzerAnz = BenutzerAnzElem.value
+            const Version = versionElemet.value
+            const Lizenz = LizenzElem.value
+
+            const versionElemes = document.querySelectorAll("#printversion")
+            versionElemes.forEach(x => {
+                x.innerHTML = Version
+            })
+            document.querySelector("#printbenutzer").innerHTML = BenutzerAnz
+            document.querySelector("#printlizenz").innerHTML = Lizenz
+            document.querySelector("#printbentzername").innerHTML = Benutzername
+            document.querySelector("#printpasswort").innerHTML = Passwort
+            
+            window.print()
+        });
+    </script>
+}
+
+templ google(kunde internal.User) {
+	<form class="my-10 print:hidden space-y-4 max-w-sm mx-auto" id="googleform">
+		<div class="max-w-sm">
+			<label for="Benutzername" class="block text-sm font-medium mb-2 dark:text-white">Benutzername</label>
+			<input
+				type="text"
+				id="Benutzername"
+				class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+				required
+			/>
+		</div>
+		<div class="max-w-sm">
+			<label for="Passwort" class="block text-sm font-medium mb-2 dark:text-white">Passwort</label>
+			<input
+				type="text"
+				id="Passwort"
+				class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+				required
+			/>
+		</div>
+		<button type="submit" class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-hidden focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
+			Drucken
+		</button>
+	</form>
+	<div class="hidden print:block">
+		<div class="mt-24 !text-black">
+			<h1 class="text-center">Google Zugangsdaten</h1>
+			<img
+				src="/static/images/google.png"
+				style="height: 30vh; max-height: 500px; margin-inline: auto; object-fit: contain; width: auto;"
+				class="my-12"
+			/>
+			<div class="text-center">
+				<p id="print-p1">
+					<b>Kundennummer:</b>
+					<br/>
+					{ kunde.Kundennummer }
+				</p>
+				<p id="print-p2">
+					<b>Name:</b>
+					<br/>
+					{ kunde.Vorname } { kunde.Name }
+				</p>
+				<p id="print-p3">
+					<b>Benutzername:</b>
+					<br/>
+					<span id="printbenutzername"></span>
+				</p>
+				<p id="print-p4">
+					<b>Passwort:</b>
+					<br/>
+					<span id="printpasswort"></span>
+				</p>
+				<div class="max-w-[40%] mx-auto mt-8">
+					<small class="mt-6 text-gray-500">
+						Bitte heben Sie diese Zugangsdaten sorgfältig auf, sie werden
+						benötigt, wenn Sie sich erneut bei Google anmelden möchten.
+					</small>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+    const form = document.querySelector("#googleform")
+    form.addEventListener("submit", function (e) {
+            e.preventDefault();
+            
+            const BenutzernameElem = document.querySelector("#Benutzername")
+            const PasswortElem = document.querySelector("#Passwort")
+
+            const Benutzername = BenutzernameElem.value
+            const Passwort = PasswortElem.value
+
+            document.querySelector("#printbenutzername").innerHTML = Benutzername
+            document.querySelector("#printpasswort").innerHTML = Passwort
+            
+            window.print()
+        });
+    </script>
+}
+
+templ microsoft(kunde internal.User) {
+	<form class="my-10 print:hidden space-y-4 max-w-sm mx-auto" id="microsoftform">
+		<div class="max-w-sm">
+			<label for="Benutzername" class="block text-sm font-medium mb-2 dark:text-white">Benutzername</label>
+			<input
+				type="text"
+				id="Benutzername"
+				class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+				required
+			/>
+		</div>
+		<div class="max-w-sm">
+			<label for="Passwort" class="block text-sm font-medium mb-2 dark:text-white">Passwort</label>
+			<input
+				type="text"
+				id="Passwort"
+				class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+				required
+			/>
+		</div>
+		<div class="max-w-sm">
+			<label for="Email" class="block text-sm font-medium mb-2 dark:text-white">Email</label>
+			<input
+				type="text"
+				id="Email"
+				class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+				required
+			/>
+		</div>
+		<div class="max-w-sm">
+			<label for="Mobil" class="block text-sm font-medium mb-2 dark:text-white">Mobil</label>
+			<input
+				type="text"
+				id="Mobil"
+				class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+				required
+			/>
+		</div>
+		<button type="submit" class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-hidden focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
+			Drucken
+		</button>
+	</form>
+	<div class="hidden print:block">
+		<div class="mt-24 !text-black">
+			<h1 class="text-center">Microsoft Zugangsdaten</h1>
+			<img
+				src="/static/images/microsoft.jpg"
+				style="height: 30vh; max-height: 500px; margin-inline: auto; object-fit: contain; width: auto;"
+				class="my-12"
+			/>
+			<div class="mt-4 text-center">
+				<p id="print-p1">
+					<b>Kundennummer:</b>
+					<br/>
+					{ kunde.Kundennummer }
+				</p>
+				<p id="print-p2">
+					<b>Name:</b>
+					<br/>
+					{ kunde.Vorname } { kunde.Name }
+				</p>
+				<p id="print-p3">
+					<b>Benutzername:</b>
+					<br/>
+					<span id="printbenutzername"></span>
+				</p>
+				<p id="print-p4">
+					<b>Passwort:</b>
+					<br/>
+					<span id="printpasswort"></span>
+				</p>
+				<p id="print-p5">
+					<b>Alternative E-Mail-Adresse:</b>
+					<br/>
+					<span id="printemail"></span>
+				</p>
+				<p id="print-p6">
+					<b>Mobilfunk:</b>
+					<br/>
+					<span id="printmobil"></span>
+				</p>
+				<div class="max-w-[40%] mx-auto mt-8">
+					<small class="mt-6 text-gray-500">
+						Bitte heben Sie diese Zugangsdaten sorgfältig auf, sie werden
+						benötigt, wenn Sie sich erneut bei Microsoft anmelden möchten.
+					</small>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+    const form = document.querySelector("#microsoftform")
+    form.addEventListener("submit", function (e) {
+            e.preventDefault();
+            
+            const BenutzernameElem = document.querySelector("#Benutzername")
+            const PasswortElem = document.querySelector("#Passwort")
+            const EmailElem = document.querySelector("#Email")
+            const MobilElem = document.querySelector("#Mobil")
+
+            const Benutzername = BenutzernameElem.value
+            const Passwort = PasswortElem.value
+            const Email = EmailElem.value
+            const Mobil = MobilElem.value
+
+            document.querySelector("#printbenutzername").innerHTML = Benutzername
+            document.querySelector("#printpasswort").innerHTML = Passwort
+            document.querySelector("#printemail").innerHTML = Email
+            document.querySelector("#printmobil").innerHTML = Mobil
+            
+            window.print()
+        });
+    </script>
+}
+
+templ telekom(kunde internal.User) {
+	{{
+	Fragen := []string{
+		"Wie lautet der Beruf Ihres Großvaters?",
+		"Wo haben Sie Ihren Partner kennengelernt?",
+		"Wie lautet der Name Ihrer Grundschule?",
+		"Wie lautet Ihre Lieblingsfigur aus der Geschichte?",
+		"Wie lautet der Name Ihrer Grundschule?",
+		"Was ist Ihr Lieblingshobby?",
+		"Wie lautet der Geburtsname Ihrer Mutter?",
+		"Welche ist Ihre Lieblingsmannschaft?",
+		"Was war Ihr erstes Auto?",
+		"Wie hieß der beste Freund aus Ihrer Kindheit?",
+		"Wie heißt oder hieß Ihr erstes Haustier?",
+		"Wie ist der Name Ihres Lieblingslehrers?",
+		"Wie hieß der Titel Ihres ersten Musik-Albums?",
+		"Was war Ihr erstes Faschingskostüm?",
+		"Wie hieß Ihr erstes Buch?",
+		"Wie hieß Ihr erstes Plüschtier?",
+		"Wo waren Sie bei Ihrem ersten Kuss?",
+		"Was war Ihr schönstes Weihnachtsgeschenk?",
+		"Wie heißt die Antwort auf die Frage aller Fragen?",
+	}
+	}}
+	<form class="my-10 print:hidden space-y-4 max-w-sm mx-auto" id="telekomform">
+		<div class="max-w-sm">
+			<label for="Benutzername" class="block text-sm font-medium mb-2 dark:text-white">Benutzername</label>
+			<input
+				type="text"
+				id="Benutzername"
+				class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+				required
+			/>
+		</div>
+		<div class="max-w-sm">
+			<label for="Passwort" class="block text-sm font-medium mb-2 dark:text-white">Passwort</label>
+			<input
+				type="text"
+				id="Passwort"
+				class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+				required
+			/>
+		</div>
+		<div class="max-w-sm">
+			<label for="Mobil" class="block text-sm font-medium mb-2 dark:text-white">Mobil</label>
+			<input
+				type="text"
+				id="Mobil"
+				class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+				required
+			/>
+		</div>
+		<div class="max-w-sm">
+			<label for="Geburtstag" class="block text-sm font-medium mb-2 dark:text-white">Geburtstag</label>
+			<input
+				required
+				type="date"
+				name="Geburtstag"
+				id="Geburtstag"
+				class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-200 dark:placeholder-neutral-400 dark:focus:ring-neutral-600"
+				placeholder="Geburtstag"
+			/>
+		</div>
+		<div class="max-w-sm">
+			<label for="Sicherheitsfrage" class="block text-sm font-medium mb-2 dark:text-white">Sicherheitsfrage</label>
+			<select
+				id="Sicherheitsfrage"
+				required
+				name="Sicherheitsfrage"
+				class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-s-lg sm:text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+			>
+				<option value="">Bitte wählen</option>
+				for _, x := range Fragen {
+					<option value={ x }>{ x }</option>
+				}
+			</select>
+		</div>
+		<div class="max-w-sm">
+			<label for="Antwort" class="block text-sm font-medium mb-2 dark:text-white">Antwort</label>
+			<input
+				type="text"
+				id="Antwort"
+				class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+				required
+			/>
+		</div>
+		<button type="submit" class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-hidden focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
+			Drucken
+		</button>
+	</form>
+	<div class="hidden print:block">
+		<div class="mt-24 !text-black">
+			<h1 class="text-center">Telekom E-Mail Zugangsdaten</h1>
+			<img
+				src="/static/images/telekom.jpg"
+				style="height: 30vh; max-height: 500px; margin-inline: auto; object-fit: contain; width: auto;"
+				class="my-12"
+			/>
+			<div class="text-center">
+				<p id="text-center">
+					Für: 
+					<br/>
+					{ kunde.Kundennummer } - { kunde.Vorname } { kunde.Name }
+					<br/>
+					<b>Benutzername:</b>
+					<br/>
+					<span id="printbenutzername"></span>
+					<br/>
+					<b>Passwort:</b>
+					<br/>
+					<span id="printpasswort"></span>
+					<br/>
+					<b>Mobilfunk:</b>
+					<br/>
+					<span id="printmobil"></span>
+					<br/>
+					<b>Geburtstag:</b>
+					<br/>
+					<span id="printGeburtstag"></span>
+					<br/>
+					<b>Sicherheitsfrage:</b>
+					<br/>
+					<span id="printfrage"></span>
+					<br/>
+					<b>Antwort:</b> <span id="printantwort"></span>
+				</p>
+				<div class="max-w-[40%] mx-auto mt-4 text-center">
+					<small class="mt-6 text-gray-500 text-center">
+						Bitte heben Sie diese Zugangsdaten sorgfältig auf, sie werden
+						benötigt, wenn Sie sich erneut bei Telekom anmelden möchten.
+					</small>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+    const form = document.querySelector("#telekomform")
+    form.addEventListener("submit", function (e) {
+            e.preventDefault();
+            
+           const BenutzernameElem = document.querySelector("#Benutzername")
+		   const PasswortElem = document.querySelector("#Passwort")
+		   const MobilElem = document.querySelector("#Mobil")
+		   const GeburtstagElem = document.querySelector("#Geburtstag")
+		   const SicherheitsfrageElem = document.querySelector("#Sicherheitsfrage")
+		   const AntwortElem = document.querySelector("#Antwort")
+
+			const Benutzername = BenutzernameElem.value
+			const Passwort = PasswortElem.value
+			const Mobil = MobilElem.value
+			const Geburtstag = GeburtstagElem.value
+			const Sicherheitsfrage = SicherheitsfrageElem.value
+			const Antwort = AntwortElem.value
+
+            document.querySelector("#printbenutzername").innerHTML = Benutzername
+			document.querySelector("#printpasswort").innerHTML = Passwort
+			document.querySelector("#printmobil").innerHTML = Mobil
+			document.querySelector("#printGeburtstag").innerHTML = new Date(Geburtstag).toLocaleDateString("de-DE")
+			document.querySelector("#printfrage").innerHTML = Sicherheitsfrage
+			document.querySelector("#printantwort").innerHTML = Antwort
+            
+            window.print()
+        });
+    </script>
+}

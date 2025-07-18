@@ -1,8 +1,8 @@
 dev:
-	wails dev
+	go mod tidy
+	air
 
 build:
-	wails build -clean
-
-windows:
-	wails build -clean -nsis -trimpath -upx
+	go mod tidy
+	go generate
+	go build

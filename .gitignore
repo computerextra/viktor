@@ -1,9 +1,8 @@
-.task
-bin
-frontend/dist
-frontend/node_modules
-build/linux/appimage/build
-build/windows/nsis/MicrosoftEdgeWebview2Setup.exe
-
-config/config.toml
-userlist.md
+.env
+*_templ.go
+*_templ.txt
+node_modules
+/tmp/
+viktor.exe
+server.crt
+server.key

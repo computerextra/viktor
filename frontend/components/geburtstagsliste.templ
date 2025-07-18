@@ -1,0 +1,139 @@
+package components
+
+import "github.com/computerextra/viktor/db"
+import "time"
+import "math"
+import "sort"
+
+type Geburtstag struct {
+	Name string
+	Diff float64
+	Date time.Time
+}
+
+templ Geburtstagsliste(Mitarbeiter []db.MitarbeiterModel) {
+	{{
+	loc, _ := time.LoadLocation("Europe/Berlin")
+	var Heute []Geburtstag
+	var Zukunft []Geburtstag
+	var Vergangen []Geburtstag
+
+	now := time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), 0, 0, 0, 0, loc)
+	nowStr := now.Format("02.01.2006")
+	Year := now.Year()
+	for _, ma := range Mitarbeiter {
+		geb, ok := ma.Geburtstag()
+		if ok {
+			maGeburtstag := time.Date(Year, geb.Month(), geb.Day(), 0, 0, 0, 0, loc)
+			since := math.Ceil(now.Sub(maGeburtstag).Hours() / 24)
+
+			if since == 0 {
+				Heute = append(Heute, Geburtstag{
+					Name: ma.Name,
+					Diff: since,
+					Date: maGeburtstag,
+				})
+			} else if since < 0 {
+				Zukunft = append(Zukunft, Geburtstag{
+					Name: ma.Name,
+					Diff: since,
+					Date: maGeburtstag,
+				})
+			} else {
+				Vergangen = append(Vergangen, Geburtstag{
+					Name: ma.Name,
+					Diff: since,
+					Date: maGeburtstag,
+				})
+			}
+		}
+	}
+	sort.SliceStable(Heute, func(i, j int) bool {
+		return Heute[i].Diff > Heute[j].Diff
+	})
+	sort.SliceStable(Zukunft, func(i, j int) bool {
+		return Zukunft[i].Diff > Zukunft[j].Diff
+	})
+	sort.SliceStable(Vergangen, func(i, j int) bool {
+		return Vergangen[i].Diff < Vergangen[j].Diff
+	})
+	}}
+	<div class="container mx-auto mt-5">
+		<h2>Heute ist der { nowStr } - <span id="time"></span></h2>
+		if len(Heute) > 0 {
+			<div class="my-5">
+				for _, ma := range Heute {
+					<div class="bg-teal-50 border-t-2 border-teal-500 rounded-lg p-4 dark:bg-teal-800/30" role="alert" tabindex="-1" aria-labelledby="hs-bordered-success-style-label">
+						<div class="flex">
+							<div class="shrink-0">
+								<span class="inline-flex justify-center items-center size-8 rounded-full border-4 border-teal-100 bg-teal-200 text-teal-800 dark:border-teal-900 dark:bg-teal-800 dark:text-teal-400">
+									<svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+										<path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path>
+										<path d="m9 12 2 2 4-4"></path>
+									</svg>
+								</span>
+							</div>
+							<div class="ms-3">
+								<h3 id="hs-bordered-success-style-label" class="text-gray-800 font-semibold dark:text-white">
+									{ ma.Name }
+								</h3>
+								<p class="text-sm text-gray-700 dark:text-neutral-400">
+									hat heute Geburtstag
+								</p>
+							</div>
+						</div>
+					</div>
+				}
+			</div>
+		}
+		if len(Zukunft) > 0 {
+			<h1>Zukünftige Geburtstage</h1>
+			<div class="w-full grid grid-cols-2 gap-4 mt-5">
+				for _, ma := range Zukunft {
+					<div>
+						@geburtstagsToast(ma.Name, ma.Diff, ma.Date)
+					</div>
+				}
+			</div>
+		}
+		if len(Zukunft) > 0 {
+			<h1>Vergangene Geburtstage</h1>
+			<div class="grid grid-cols-2 gap-4 mt-5">
+				for _, ma := range Vergangen {
+					<div>
+						@geburtstagsToast(ma.Name, ma.Diff, ma.Date)
+					</div>
+				}
+			</div>
+		}
+	</div>
+	<script>
+		function startTime() {
+			const today = new Date();
+			let h = today.getHours();
+			let m = today.getMinutes();
+			let s = today.getSeconds();
+			m = checkTime(m);
+			s = checkTime(s);
+			document.getElementById('time').innerHTML =  h + ":" + m + ":" + s;
+			setTimeout(startTime, 1000);
+		}
+
+		function checkTime(i) {
+			if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
+			return i;
+		}
+		startTime()
+	</script>
+}
+
+templ geburtstagsToast(Name string, diff float64, date time.Time) {
+	<div class="bg-gray-50 border border-gray-200 text-sm text-gray-600 rounded-lg p-4 dark:bg-white/10 dark:border-white/10 dark:text-neutral-400" role="alert" tabindex="-1" aria-labelledby="hs-soft-color-secondary-label">
+		<span id="hs-soft-color-secondary-label" class="font-bold">{ Name } - { date.Format("02.01.2006") }</span>
+		if diff > 0 {
+			<span>Vor { diff } Tagen</span>
+		} else {
+			<span>In { diff*-1 } Tagen</span>
+		}
+	</div>
+}
