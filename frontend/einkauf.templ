@@ -4,6 +4,7 @@ import "github.com/computerextra/viktor/internal/util/flash"
 import "github.com/computerextra/viktor/db"
 import "fmt"
 
+// TODO: Hier gibt es ein Problem: Es werden einkäufe von gestern angezeigt, das geht nicht, muss angepasst werden!
 templ Einkauf(einkauf []db.EinkaufModel, ma []db.MitarbeiterModel, uri string) {
 	{{
 	errMsg, errExist := flash.GetFlashMessage(ctx, "error")
