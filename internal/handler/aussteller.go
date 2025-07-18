@@ -182,24 +182,21 @@ func sync(database *db.PrismaClient, ctx context.Context) error {
 		}
 	}
 
-	for _, item := range Sage {
-		_, err := database.Aussteller.UpsertOne(
-			db.Aussteller.ID.Equals(item.Id),
-		).Create(
-			db.Aussteller.ID.Set(item.Id),
-			db.Aussteller.Artikelnummer.Set(item.Artikelnummer),
-			db.Aussteller.Artikelname.Set(strings.ReplaceAll(item.Artikelname, "'", "\"")),
-			db.Aussteller.Specs.Set(strings.ReplaceAll(item.Specs, "'", "\"")),
-			db.Aussteller.Preis.Set(item.Preis),
-		).Update(
-			db.Aussteller.Artikelnummer.Set(item.Artikelnummer),
-			db.Aussteller.Artikelname.Set(strings.ReplaceAll(item.Artikelname, "'", "\"")),
-			db.Aussteller.Specs.Set(strings.ReplaceAll(item.Specs, "'", "\"")),
-			db.Aussteller.Preis.Set(item.Preis),
-		).Exec(ctx)
-		if err != nil {
-			return err
+	rawUpsertQuery := "INSERT INTO Aussteller (id, Artikelnummer, Artikelname, Specs, Preis) VALUES"
+
+	for idx, item := range Sage {
+		if idx == len(Sage)-1 {
+			rawUpsertQuery = fmt.Sprintf("%s (%d, '%s', '%s', '%s', %.2f)", rawUpsertQuery, item.Id, item.Artikelnummer, strings.ReplaceAll(item.Artikelname, "'", "\""), strings.ReplaceAll(item.Specs, "'", "\""), item.Preis)
+		} else {
+			rawUpsertQuery = fmt.Sprintf("%s (%d, '%s', '%s', '%s', %.2f),", rawUpsertQuery, item.Id, item.Artikelnummer, strings.ReplaceAll(item.Artikelname, "'", "\""), strings.ReplaceAll(item.Specs, "'", "\""), item.Preis)
 		}
+	}
+
+	rawUpsertQuery = fmt.Sprintf("%s ON DUPLICATE KEY UPDATE Artikelnummer = VALUES(Artikelnummer), Artikelname = VALUES(Artikelname), Specs = VALUES(Specs), Preis = VALUES(Preis);", rawUpsertQuery)
+
+	_, err = database.Prisma.ExecuteRaw(rawUpsertQuery).Exec(ctx)
+	if err != nil {
+		return err
 	}
 
 	return nil
