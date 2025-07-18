@@ -51,22 +51,19 @@ templ Seriennummer(uri string, result string, search string) {
 				<hr class="my-5"/>
 				<p class="text-center" id="result">{ search }: { result }</p>
 				<p id="response" class="text-center mt-5"></p>
-			} else {
-				<p class="text-center" id="result"></p>
-				<p id="response" class="text-center mt-5"></p>
 			}
 			<script>
 			const delay = ms => new Promise(res => setTimeout(res, ms));
 
-			async function copy() {
+			function copy() {
 				const res = document.querySelector("#result")
 				const response = document.querySelector("#response")
 				if(res == null) return
 				const resText = res.innerHTML
 				if (resText.length > 3) {
-					await navigator.clipboard.writeText(resText)
+					navigator.clipboard.writeText(resText)
 					response.innerHTML = "Text in Zwischenablage Kopiert."
-					await delay(2000)
+					delay(2000)
 					response.innerHTML = ""
 					res.innerHTML = ""
 				}
