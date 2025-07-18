@@ -61,7 +61,9 @@ templ Seriennummer(uri string, result string, search string) {
 				if(res == null || response == null) return
 				const resText = res.innerHTML
 				if (resText.length > 3) {
-					navigator.clipboard.writeText(resText)
+					resText.select();
+					document.execCommand("coy")
+					// navigator.clipboard.writeText(resText)
 					response.innerHTML = "Text in Zwischenablage Kopiert."
 					setTimeout(() => {
 						response.innerHTML = ""
