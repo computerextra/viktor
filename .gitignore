@@ -4,3 +4,5 @@
 node_modules
 /tmp/
 viktor.exe
+server.crt
+server.key

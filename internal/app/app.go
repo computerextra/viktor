@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io/fs"
+	"log"
 	"log/slog"
 	"net/http"
 	"os"
@@ -23,6 +24,13 @@ type App struct {
 	db     *db.PrismaClient
 }
 
+func redirectToTls(w http.ResponseWriter, r *http.Request) {
+	host := r.Host
+	scheme := "https"
+	uri := fmt.Sprintf("%s://%s:443%s", scheme, host, r.RequestURI)
+	http.Redirect(w, r, uri, http.StatusMovedPermanently)
+}
+
 func New(logger *slog.Logger, config Config, files fs.FS) (*App, error) {
 	client := db.NewClient()
 	if err := client.Prisma.Connect(); err != nil {
@@ -38,6 +46,8 @@ func New(logger *slog.Logger, config Config, files fs.FS) (*App, error) {
 }
 
 func (a *App) Start(ctx context.Context) error {
+	cert := "server.cert"
+	key := "server.key"
 	router, err := a.loadRoutes()
 	if err != nil {
 		return fmt.Errorf("failed when loading routes: %w", err)
@@ -58,7 +68,13 @@ func (a *App) Start(ctx context.Context) error {
 	errCh := make(chan error, 1)
 
 	go func() {
-		err := srv.ListenAndServe()
+		if err := http.ListenAndServe(":80", http.HandlerFunc(redirectToTls)); err != nil {
+			log.Fatalf("ListenAndServe error: %v", err)
+		}
+	}()
+
+	go func() {
+		err := srv.ListenAndServeTLS(cert, key)
 		if err != nil && !errors.Is(err, http.ErrServerClosed) {
 			errCh <- fmt.Errorf("failed to listen and serve: %w", err)
 		}
