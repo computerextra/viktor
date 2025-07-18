@@ -46,7 +46,6 @@ func (h *Handler) GetEinkauf(w http.ResponseWriter, r *http.Request) {
 	frontend.EinkaufEingabe(mitarbeiter, uri).Render(ctx, w)
 }
 
-// TODO: Hier gibt es ein Problem: Es werden einkäufe von gestern angezeigt, das geht nicht, muss angepasst werden!
 func (h *Handler) GetListe(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 

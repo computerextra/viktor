@@ -51,6 +51,9 @@ templ Seriennummer(uri string, result string, search string) {
 				<hr class="my-5"/>
 				<p class="text-center" id="result">{ search }: { result }</p>
 				<p id="response" class="text-center mt-5"></p>
+			} else {
+				<p class="text-center" id="result"></p>
+				<p id="response" class="text-center mt-5"></p>
 			}
 			<script>
 			const delay = ms => new Promise(res => setTimeout(res, ms));
