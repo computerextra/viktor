@@ -46,7 +46,7 @@ func New(logger *slog.Logger, config Config, files fs.FS) (*App, error) {
 }
 
 func (a *App) Start(ctx context.Context) error {
-	cert := "server.cert"
+	cert := "server.crt"
 	key := "server.key"
 	router, err := a.loadRoutes()
 	if err != nil {
