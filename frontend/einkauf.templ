@@ -123,13 +123,13 @@ templ Einkauf(einkauf []db.EinkaufModel, ma []db.MitarbeiterModel, uri string) {
 								</div>
 							</div>
 							<div class={ "flex flex-row gap-0.5 justify-center" }>
-								if ok_1 {
+								if ok_1 && len(Bild1) > 0 {
 									<img src={ Bild1 } alt="Bild-1" class="w-40 h-auto"/>
 								}
-								if ok_2 {
+								if ok_2 && len(Bild2) > 0 {
 									<img src={ Bild2 } alt="Bild-2" class="w-40 h-auto"/>
 								}
-								if ok_3 {
+								if ok_3 && len(Bild3) > 0 {
 									<img src={ Bild3 } alt="Bild-3" class="w-40 h-auto"/>
 								}
 							</div>
@@ -598,13 +598,13 @@ templ einkaufRow(ma db.EinkaufModel) {
 	Bild3, ok_3 := ma.Bild3()
 				}}
 				<div class={ "grid grid-cols-3 gap-0" }>
-					if ok_1 {
+					if ok_1 && len(Bild1) > 0 {
 						<img src={ Bild1 } alt="Bild-1" class="w-35 h-auto object-contain"/>
 					}
-					if ok_2 {
+					if ok_2 && len(Bild2) > 0 {
 						<img src={ Bild2 } alt="Bild-2" class="w-35 h-auto object-contain"/>
 					}
-					if ok_3 {
+					if ok_3 && len(Bild3) > 0 {
 						<img src={ Bild3 } alt="Bild-3" class="w-35 h-auto object-contain"/>
 					}
 				</div>

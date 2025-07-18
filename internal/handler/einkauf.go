@@ -49,14 +49,18 @@ func (h *Handler) GetEinkauf(w http.ResponseWriter, r *http.Request) {
 // TODO: Hier gibt es ein Problem: Es werden einkäufe von gestern angezeigt, das geht nicht, muss angepasst werden!
 func (h *Handler) GetListe(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
+
+	loc, _ := time.LoadLocation("Europe/Berlin")
+	abgeschickt := time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), 0, 0, 0, 0, loc)
+
 	einkauf, err := h.db.Einkauf.FindMany(db.Einkauf.Or(
 		db.Einkauf.And(
-			db.Einkauf.Abgeschickt.Lte(time.Now()),
-			db.Einkauf.Abgeschickt.Gte(time.Now().AddDate(0, 0, -1)),
+			db.Einkauf.Abgeschickt.Lte(abgeschickt),
+			db.Einkauf.Abgeschickt.Gt(abgeschickt.AddDate(0, 0, -1)),
 		),
 		db.Einkauf.And(
 			db.Einkauf.Abonniert.Equals(true),
-			db.Einkauf.Abgeschickt.Lte(time.Now()),
+			db.Einkauf.Abgeschickt.Lte(abgeschickt),
 		),
 	)).With(
 		db.Einkauf.Mitarbeiter.Fetch(),
@@ -261,39 +265,8 @@ func (h *Handler) UpdateEinkauf(w http.ResponseWriter, r *http.Request) {
 		bild3FormData.Close()
 	}
 
-	// for fidx, fheaders := range r.MultipartForm.File {
-	// 	for _, headers := range fheaders {
-	// 		file, err := headers.Open()
-	// 		if err != nil {
-	// 			flash.SetFlashMessage(w, "error", err.Error())
-	// 			h.logger.Error("failed to open file", slog.Any("error", err))
-	// 			w.WriteHeader(http.StatusNoContent)
-	// 			return
-	// 		}
-	// 		defer file.Close()
-	// 		// Detect contentType
-	// 		buff := make([]byte, 512)
-	// 		file.Read(buff)
-	// 		file.Seek(0, 0)
-	// 		contentType := http.DetectContentType(buff)
-
-	// 		contentBuf := bytes.NewBuffer(nil)
-	// 		if _, err := io.Copy(contentBuf, file); err != nil {
-	// 			flash.SetFlashMessage(w, "error", err.Error())
-	// 			h.logger.Error("failed to open file", slog.Any("error", err))
-	// 			w.WriteHeader(http.StatusNoContent)
-	// 			return
-	// 		}
-	// 		switch fidx {
-	// 		case "bild1":
-	// 			file1 = decodeImage(contentType, contentBuf.Bytes())
-	// 		case "bild2":
-	// 			file2 = decodeImage(contentType, contentBuf.Bytes())
-	// 		case "bild3":
-	// 			file3 = decodeImage(contentType, contentBuf.Bytes())
-	// 		}
-	// 	}
-	// }
+	loc, _ := time.LoadLocation("Europe/Berlin")
+	abgeschickt := time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), 0, 0, 0, 0, loc)
 
 	mitarbeiter, err := h.db.Mitarbeiter.FindUnique(db.Mitarbeiter.ID.Equals(mitarbeiterId)).Exec(ctx)
 	if err != nil {
@@ -302,29 +275,41 @@ func (h *Handler) UpdateEinkauf(w http.ResponseWriter, r *http.Request) {
 	}
 	einkauId, _ := mitarbeiter.EinkaufID()
 
+	var bild1, bild2, bild3 string = "", "", ""
+
+	if file1 != nil {
+		bild1 = *file1
+	}
+	if file2 != nil {
+		bild2 = *file2
+	}
+	if file3 != nil {
+		bild3 = *file3
+	}
+
 	_, err = h.db.Einkauf.UpsertOne(
 		db.Einkauf.ID.Equals(einkauId),
 	).Create(
 		db.Einkauf.Dinge.Set(einkauf.Dinge),
-		db.Einkauf.Abgeschickt.Set(time.Now()),
+		db.Einkauf.Abgeschickt.Set(abgeschickt),
 		db.Einkauf.Abonniert.Set(einkauf.Abo),
 		db.Einkauf.Paypal.Set(einkauf.Paypal),
 		db.Einkauf.Geld.SetIfPresent(einkauf.Geld),
 		db.Einkauf.Pfand.SetIfPresent(einkauf.Pfand),
-		db.Einkauf.Bild1.SetIfPresent(file1),
-		db.Einkauf.Bild2.SetIfPresent(file2),
-		db.Einkauf.Bild3.SetIfPresent(file3),
+		db.Einkauf.Bild1.Set(bild1),
+		db.Einkauf.Bild2.Set(bild2),
+		db.Einkauf.Bild3.Set(bild3),
 		db.Einkauf.Mitarbeiter.Link(
 			db.Mitarbeiter.ID.Equals(mitarbeiterId),
 		),
 	).Update(
 		db.Einkauf.Dinge.Set(einkauf.Dinge),
-		db.Einkauf.Abgeschickt.Set(time.Now()),
+		db.Einkauf.Abgeschickt.Set(abgeschickt),
 		db.Einkauf.Abonniert.Set(einkauf.Abo),
 		db.Einkauf.Paypal.Set(einkauf.Paypal),
-		db.Einkauf.Bild1.SetIfPresent(file1),
-		db.Einkauf.Bild2.SetIfPresent(file2),
-		db.Einkauf.Bild3.SetIfPresent(file3),
+		db.Einkauf.Bild1.Set(bild1),
+		db.Einkauf.Bild2.Set(bild2),
+		db.Einkauf.Bild3.Set(bild3),
 		db.Einkauf.Geld.SetIfPresent(einkauf.Geld),
 		db.Einkauf.Pfand.SetIfPresent(einkauf.Pfand),
 	).Exec(ctx)
