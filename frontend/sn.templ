@@ -2,7 +2,6 @@ package frontend
 
 import "github.com/computerextra/viktor/internal/util/flash"
 
-// TODO: Copy in Zwischenablage geht nicht!
 templ Seriennummer(uri string, result string, search string) {
 	{{
 		errMsg, errExist := flash.GetFlashMessage(ctx, "error")
