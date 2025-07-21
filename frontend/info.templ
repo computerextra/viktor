@@ -9,7 +9,7 @@ templ InfoAnKunde(uri string, send bool) {
 	@Page("Info an Kunde", uri) {
 		<div class="container mx-auto mt-10">
 			<h1 class="text-center">Info an Kunde</h1>
-			<form action="/Info" method="post" class="my-10 space-y-8" id="form">
+			<form action="/Info" method="post" class="my-10 space-y-8">
 				<div class="">
 					<label
 						for="mail"
@@ -70,24 +70,5 @@ templ InfoAnKunde(uri string, send bool) {
 				</div>
 			</div>
 		}
-		<script>
-			const genForm = document.querySelector("#form")
-			if (genForm != null) {
-				genForm.addEventListener("submit", (e) => {
-					const btn = document.querySelector("#btn")
-					const mail = document.querySelector("#mail")
-					const auftrag = document.querySelector("#auftrag")
-
-					if (btn == null) return
-					btn.disabled = true
-					mail.disabled = true
-					auftrag.disabled = true
-					
-					btn.innerHTML = "Loading..."
-					
-				})
-			}
-			
-		</script>
 	}
 }
