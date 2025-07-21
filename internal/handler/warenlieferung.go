@@ -142,6 +142,7 @@ func (h *Handler) GenerateWarenlieferung(w http.ResponseWriter, r *http.Request)
 
 	AlleArtikel, err := h.db.Warenlieferung.FindMany().Exec(ctx)
 	if err != nil {
+		h.logger.Error("LINE 145", slog.Any("error", err))
 		flash.SetFlashMessage(w, "error", err.Error())
 		sendQueryError(w, h.logger, err)
 	}
@@ -149,6 +150,7 @@ func (h *Handler) GenerateWarenlieferung(w http.ResponseWriter, r *http.Request)
 	neueArtikel, geliefert, neuePreise, err := sortProducts(AlleArtikel)
 	if err != nil {
 		flash.SetFlashMessage(w, "error", err.Error())
+		h.logger.Error("LINE 153", slog.Any("error", err))
 		h.logger.Error("failed to connect to sage", slog.Any("error", err))
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -162,6 +164,7 @@ func (h *Handler) GenerateWarenlieferung(w http.ResponseWriter, r *http.Request)
 		).Exec(ctx)
 
 		if err != nil {
+			h.logger.Error("LINE 167", slog.Any("error", err))
 			flash.SetFlashMessage(w, "error", err.Error())
 			sendQueryError(w, h.logger, err)
 		}
@@ -173,6 +176,7 @@ func (h *Handler) GenerateWarenlieferung(w http.ResponseWriter, r *http.Request)
 		).Exec(ctx)
 
 		if err != nil {
+			h.logger.Error("LINE 179", slog.Any("error", err))
 			flash.SetFlashMessage(w, "error", err.Error())
 			sendQueryError(w, h.logger, err)
 		}
@@ -195,8 +199,9 @@ func (h *Handler) GenerateWarenlieferung(w http.ResponseWriter, r *http.Request)
 				db.Warenlieferung.Preis.Set(time.Now()),
 			).Exec(ctx)
 			if err != nil {
+				h.logger.Error("LINE 202", slog.Any("error", err), slog.Any("id", item.ID))
 				flash.SetFlashMessage(w, "error", err.Error())
-				sendQueryError(w, h.logger, err)
+				// sendQueryError(w, h.logger, err)
 			}
 		}
 	}

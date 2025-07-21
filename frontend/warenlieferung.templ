@@ -11,15 +11,15 @@ templ Warenlieferung(uri string, generated bool, send bool) {
 			<h1 class="text-center">Warenlieferung</h1>
 			<div class="flex justify-center mt-10">
 				if !generated && !send {
-					<form action="/Warenlieferung/Generate" method="post">
-						<button type="submit" class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-hidden focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
+					<form action="/Warenlieferung/Generate" method="post" id="generateform">
+						<button type="submit" id="genbtn" class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-hidden focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
 							Generieren
 						</button>
 					</form>
 				}
 				if generated && !send {
-					<form action="/Warenlieferung/Send" method="post">
-						<button type="submit" class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-hidden focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
+					<form action="/Warenlieferung/Send" method="post" id="sendform">
+						<button type="submit" id="sendbtn" class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-hidden focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
 							Senden
 						</button>
 					</form>
@@ -36,5 +36,27 @@ templ Warenlieferung(uri string, generated bool, send bool) {
 				</div>
 			</div>
 		}
+		<script>
+			const genForm = document.querySelector("#generateform")
+			if (genForm != null) {
+				genForm.addEventListener("submit", (e) => {
+					const btn = document.querySelector("#genbtn")
+					if (btn == null) return
+					btn.disabled = true
+					btn.innerHTML = "Loading..."
+					
+				})
+			}
+			const sendForm = document.querySelector("#sendform")
+			if (sendForm != null) {
+				sendForm.addEventListener("submit", (e) => {
+					const btn = document.querySelector("#sendbtn")
+					if (btn == null) return
+					btn.disabled = true
+					btn.innerHTML = "Loading..."
+					
+				})
+			}
+		</script>
 	}
 }

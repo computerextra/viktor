@@ -5,9 +5,10 @@ templ Label(uri string, synced bool) {
 		<div class="container mx-auto mt-10">
 			<h1 class="text-center">Preis Label Sync</h1>
 			<div class="flex justify-center mt-5">
-				<form action="/Label" method="POST">
+				<form action="/Label" method="POST" id="form">
 					<button
 						type="submit"
+						id="btn"
 						class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-hidden focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
 					>
 						Synchronisieren
@@ -18,5 +19,17 @@ templ Label(uri string, synced bool) {
 				<p class="text-center text-2xl mt-10">Label Synchronisiert</p>
 			}
 		</div>
+		<script>
+			const genForm = document.querySelector("#form")
+			if (genForm != null) {
+				genForm.addEventListener("submit", (e) => {
+					const btn = document.querySelector("#btn")
+					if (btn == null) return
+					btn.disabled = true
+					btn.innerHTML = "Loading..."
+					
+				})
+			}
+		</script>
 	}
 }
