@@ -1,38 +1,88 @@
-//go:generate bun install
-//go:generate bunx @tailwindcss/cli -i ./input.css -o ./static/css/style.css --minify
-//go:generate templ generate
-//go:generate go run github.com/steebchen/prisma-client-go generate
 package main
 
 import (
-	"context"
 	"embed"
-	"log/slog"
-	"os"
-	"os/signal"
+	"reflect"
+	"strconv"
+	"strings"
 
-	"github.com/computerextra/viktor/internal/app"
-	"github.com/joho/godotenv"
+	"github.com/wailsapp/wails/v2"
+	"github.com/wailsapp/wails/v2/pkg/options"
+	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
 )
 
-//go:embed static
-var files embed.FS
+//go:embed all:frontend/build
+var assets embed.FS
+
+//go:embed .env
+var envStr string
+
+type Env struct {
+	DATABASE_URL    string
+	SAGE_URL        string
+	ACCESS_DB       string
+	SMTP_HOST       string
+	SMTP_PORT       int
+	SMTP_USER       string
+	SMTP_PASS       string
+	SMTP_FROM       string
+	ArchivePath     string
+	FTP_UPLOAD_PATH string
+	FTP_SERVER      string
+	FTP_USER        string
+	FTP_PASS        string
+	FTP_PORT        int
+	AUTH_USER       string
+	AUTH_PASS       string
+}
 
 func main() {
-	godotenv.Load()
+	_instance := &Env{}
+	v := reflect.ValueOf(_instance).Elem()
 
-	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	lines := strings.Split(envStr, "\n")
+	for _, line := range lines {
+		if strings.TrimSpace(line) == "" || strings.HasPrefix(line, "#") {
+			continue
+		}
+		line = strings.SplitN(line, "#", 2)[0]
+		parts := strings.SplitN(line, "=", 2)
+		if len(parts) != 2 {
+			continue
+		}
+		key := strings.TrimSpace(parts[0])
+		value := strings.TrimSpace(parts[1])
+		f := v.FieldByName(key)
+		if f.IsValid() {
+			if f.CanInt() {
+				val, _ := strconv.Atoi(value)
+				f.SetInt(int64(val))
+			} else {
+				f.SetString(value)
+			}
+		}
+	}
 
-	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
-	defer cancel()
+	// Create an instance of the app structure
+	app := NewApp(_instance)
 
-	app, err := app.New(logger, app.Config{}, files)
+	// Create application with options
+	err := wails.Run(&options.App{
+		Title:  "Viktor",
+		Width:  1500,
+		Height: 800,
+		AssetServer: &assetserver.Options{
+			Assets: assets,
+		},
+		BackgroundColour: &options.RGBA{R: 27, G: 38, B: 54, A: 1},
+		OnStartup:        app.startup,
+		Bind: []interface{}{
+			app,
+		},
+	})
 
 	if err != nil {
-		logger.Error("failed to create app", slog.Any("error", err))
+		println("Error:", err.Error())
 	}
 
-	if err := app.Start(ctx); err != nil {
-		logger.Error("failed to start app", slog.Any("error", err))
-	}
 }

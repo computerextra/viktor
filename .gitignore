@@ -1,8 +1,5 @@
-.env
-*_templ.go
-*_templ.txt
+build/bin
 node_modules
-/tmp/
-viktor.exe
-server.crt
-server.key
+frontend/build
+
+.env

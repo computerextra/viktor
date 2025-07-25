@@ -1,33 +1,16 @@
-# Viktor
+# README
 
-##### Generate private key (.key)
+## About
 
-```sh
-# Key considerations for algorithm "RSA" ≥ 2048-bit
-openssl genrsa -out server.key 2048
+This is the official Wails Svelte-TS template.
 
-# Key considerations for algorithm "ECDSA" (X25519 || ≥ secp384r1)
-# https://safecurves.cr.yp.to/
-# List ECDSA the supported curves (openssl ecparam -list_curves)
-openssl ecparam -genkey -name secp384r1 -out server.key
-```
+## Live Development
 
-##### Generation of self-signed(x509) public key (PEM-encodings `.pem`|`.crt`) based on the private (`.key`)
+To run in live development mode, run `wails dev` in the project directory. This will run a Vite development
+server that will provide very fast hot reload of your frontend changes. If you want to develop in a browser
+and have access to your Go methods, there is also a dev server that runs on http://localhost:34115. Connect
+to this in your browser, and you can call your Go code from devtools.
 
-```sh
-openssl req -new -x509 -sha256 -key server.key -out server.crt -days 3650
-```
+## Building
 
-##### .env file erstellen
-
-##### generate and run server
-
-```sh
-make dev
-```
-
-##### build executeable
-
-```sh
-make build
-```
+To build a redistributable, production mode package, use `wails build`.
