@@ -1,0 +1,224 @@
+package frontend
+
+templ Versand(uri string) {
+	@Page("Versand", uri) {
+		<div class="container mx-auto mt-10">
+			<h1 class="text-center">Versand berechnung</h1>
+			<h3>Aktuelle Preise</h3>
+			<small>Falls sich Preise unterscheiden, bitte Johannes bescheid geben, damit die Tabelle angepasst werden kann.</small>
+			<div class="grid grid-cols-2 gap-8">
+				<div class="flex flex-col mt-5 mx-auto">
+					<h4 class="text-center">DHL</h4>
+					<div class="-m-1.5 overflow-x-auto">
+						<div class="p-1.5 min-w-full inline-block align-middle">
+							<div class="overflow-hidden">
+								<table class="min-w-full divide-y divide-gray-200 dark:divide-neutral-700">
+									<thead>
+										<tr>
+											<th
+												scope="col"
+												class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500"
+											>
+												Gewicht in kg
+											</th>
+											<th
+												scope="col"
+												class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500"
+											>
+												Kosten netto in €
+											</th>
+										</tr>
+									</thead>
+									<tbody id="dhl-preise" class="divide-y divide-gray-200 dark:divide-neutral-700"></tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="flex flex-col mt-5 mx-auto">
+					<h4 class="text-center">GLS</h4>
+					<div class="-m-1.5 overflow-x-auto">
+						<div class="p-1.5 min-w-full inline-block align-middle">
+							<div class="overflow-hidden">
+								<table class="min-w-full divide-y divide-gray-200 dark:divide-neutral-700">
+									<thead>
+										<tr>
+											<th
+												scope="col"
+												class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500"
+											>
+												Gewicht in kg
+											</th>
+											<th
+												scope="col"
+												class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500"
+											>
+												Kosten netto in €
+											</th>
+										</tr>
+									</thead>
+									<tbody id="gls-preise" class="divide-y divide-gray-200 dark:divide-neutral-700"></tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<h3 class="text-center">Rechner</h3>
+		<div class="grid grid-cols-4 gap-8 my-2">
+			<div class="max-w-sm">
+				<label for="Höhe" class="block text-sm font-medium mb-2 dark:text-white">Höhe</label>
+				<input type="text" id="Höhe" class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"/>
+			</div>
+			<div class="max-w-sm">
+				<label for="Breite" class="block text-sm font-medium mb-2 dark:text-white">Breite</label>
+				<input type="text" id="Breite" class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"/>
+			</div>
+			<div class="max-w-sm">
+				<label for="Tiefe" class="block text-sm font-medium mb-2 dark:text-white">Tiefe</label>
+				<input type="text" id="Tiefe" class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"/>
+			</div>
+			<div class="max-w-sm">
+				<label for="Gewicht" class="block text-sm font-medium mb-2 dark:text-white">Gewicht</label>
+				<input type="text" id="Gewicht" class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"/>
+			</div>
+			<div class="flex items-center gap-x-3">
+				<label for="privat" class="relative inline-block w-11 h-6 cursor-pointer">
+					<input type="checkbox" id="privat" class="peer sr-only"/>
+					<span class="absolute inset-0 bg-gray-200 rounded-full transition-colors duration-200 ease-in-out peer-checked:bg-blue-600 dark:bg-neutral-700 dark:peer-checked:bg-blue-500 peer-disabled:opacity-50 peer-disabled:pointer-events-none"></span>
+					<span class="absolute top-1/2 start-0.5 -translate-y-1/2 size-5 bg-white rounded-full shadow-xs transition-transform duration-200 ease-in-out peer-checked:translate-x-full dark:bg-neutral-400 dark:peer-checked:bg-white"></span>
+				</label>
+				<label for="privat" class="text-sm text-gray-500 dark:text-neutral-400">Privatkunde</label>
+			</div>
+		</div>
+		<p id="versand">Noch keine gültige Eingabe</p>
+		<script>
+            const VersandText = document.querySelector("#versand")
+            const Breite = document.querySelector("#Breite")
+            const Tiefe = document.querySelector("#Tiefe")
+            const Höhe = document.querySelector("#Höhe")
+            const Gewicht = document.querySelector("#Gewicht")
+            const Privat = document.querySelector("#privat")
+            
+
+            let breitefloat = 0
+            let tiefefloat = 0
+            let höhefloat = 0
+            let gewichtFloat = 0
+
+            function setVersand() {
+                let dhl_versand = 0
+                let gls_versand = 0
+
+                for (const x of DHL) {
+                    if(gewichtFloat <= x.Gewicht) {
+                        dhl_versand = x.Kosten
+                        break
+                    }
+                }
+                for (const x of GLS) {
+                    if(gewichtFloat <= x.Gewicht) {
+                        gls_versand = x.Kosten
+                        break
+                    }
+                }
+                
+                if (gewichtFloat <= 31.5) 
+                    dhl_versand = (DHL_Zusatz.Maut + DHL_Zusatz.Peak + DHL_Zusatz.GoGreen + dhl_versand) * ((DHL_Zusatz.Treibstoff / 100) + 1)
+                
+                if (gewichtFloat <= 40)
+                    gls_versand = (GLS_Zusatz.Wiegen + GLS_Zusatz.Maut + gls_versand) * ((GLS_Zusatz.Treibstoff / 100) + 1) * ((GLS_Zusatz.Klima / 100) + 1) * ((GLS_Zusatz.Peak / 100) + 1)
+
+                if(Privat.checked) 
+                    gls_versand += GLS_Zusatz.Privat
+                
+
+                if(dhl_versand < gls_versand && dhl_versand > 0) {
+                    VersandText.innerHTML = "DHL ist günstiger: Kosten: " + dhl_versand.toFixed(2) + "€"
+                } else if(gls_versand > 0 && gls_versand <= 40) {
+                    VersandText.innerHTML = "GLS ist günstiger: Kosten: " + gls_versand.toFixed(2)  + "€"
+                } else {
+                    VersandText.innerHTML = "Zu schwer, können wir nicht verschicken!"
+                }
+            }
+
+            Breite.addEventListener("change", (e) => {
+                
+                const x = parseFloat(e.target.value)
+                if (x != null && x != 0) {
+                    breitefloat = x
+                }
+
+                if (breitefloat == 0 || tiefefloat == 0 || höhefloat == 0 || gewichtFloat == 0) return
+                setVersand()
+            })
+            Tiefe.addEventListener("change", (e) => {
+                
+                const x = parseFloat(e.target.value)
+                if (x != null && x != 0) {
+                    tiefefloat = x
+                }
+
+                if (breitefloat == 0 || tiefefloat == 0 || höhefloat == 0 || gewichtFloat == 0) return
+                setVersand()
+            })
+            Gewicht.addEventListener("change", (e) => {
+                
+                const x = parseFloat(e.target.value)
+                if (x != null && x != 0) {
+                    gewichtFloat = x
+                }
+
+                if (breitefloat == 0 || tiefefloat == 0 || höhefloat == 0 || gewichtFloat == 0) return
+                setVersand()
+            })
+            Höhe.addEventListener("change", (e) => {
+                
+                const x = parseFloat(e.target.value)
+                if (x != null && x != 0) {
+                    höhefloat = x
+                }
+
+                if (breitefloat == 0 || tiefefloat == 0 || höhefloat == 0 || gewichtFloat == 0) return
+                setVersand()
+            })
+
+            function versandkosten() {
+                const DHL_Div = document.querySelector("#dhl-preise")
+                const GLS_Div = document.querySelector("#gls-preise")
+
+                if (DHL_Div == null) return;
+                if (GLS_Div == null) return;
+
+                DHL.forEach(x => {
+                    const tr = document.createElement("tr")
+                    const td_gewicht = document.createElement("td")
+                    const td_kosten = document.createElement("td")
+                    td_gewicht.classList.add(["hover:bg-gray-100", "dark:hover:bg-neutral-700"])
+                    td_kosten.classList.add(["hover:bg-gray-100", "dark:hover:bg-neutral-700"])
+                    td_gewicht.innerHTML = x.Gewicht
+                    tr.appendChild(td_gewicht)
+                    td_kosten.innerHTML = x.Kosten
+                    tr.appendChild(td_kosten)
+                    DHL_Div.appendChild(tr)
+                })
+                GLS.forEach(x => {
+                    const tr = document.createElement("tr")
+                    const td_gewicht = document.createElement("td")
+                    const td_kosten = document.createElement("td")
+                    td_gewicht.classList.add(["hover:bg-gray-100", "dark:hover:bg-neutral-700"])
+                    td_kosten.classList.add(["hover:bg-gray-100", "dark:hover:bg-neutral-700"])
+                    td_gewicht.innerHTML = x.Gewicht
+                    tr.appendChild(td_gewicht)
+                    td_kosten.innerHTML = x.Kosten
+                    tr.appendChild(td_kosten)
+                    GLS_Div.appendChild(tr)
+                })
+            }
+            
+            versandkosten()
+
+        </script>
+	}
+}

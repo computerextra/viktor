@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/computerextra/viktor/db"
+	"github.com/computerextra/viktor/frontend"
 
 	"github.com/a-h/templ"
 	"github.com/gorilla/schema"
@@ -31,6 +32,10 @@ func Component(comp templ.Component) http.Handler {
 		w.Header().Add("Content-Type", "text/html")
 		comp.Render(r.Context(), w)
 	})
+}
+
+func (h *Handler) Versand(w http.ResponseWriter, r *http.Request) {
+	frontend.Versand(getPath(r.URL.Path)).Render(r.Context(), w)
 }
 
 var decoder = schema.NewDecoder()
