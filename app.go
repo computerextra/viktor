@@ -2,9 +2,11 @@ package main
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
+	"log"
+	"viktor/ent"
 
+	"entgo.io/ent/dialect"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -12,14 +14,15 @@ import (
 type App struct {
 	ctx         context.Context
 	environment *Env
-	db          *sql.DB
+	db          *ent.Client
 }
 
 // NewApp creates a new App application struct
 func NewApp(env *Env) *App {
-	client, err := sql.Open("mysql", env.DATABASE_URL)
+
+	client, err := ent.Open(dialect.MySQL, "d043fb41:9Vm7chP99iD4uSwupQKs@tcp(computer-extra.de:3306)/d043fb41?parseTime=True")
 	if err != nil {
-		panic(err)
+		log.Fatalf("failed opening connection to mysql: %v", err)
 	}
 
 	return &App{

@@ -1,40 +1,28 @@
 export namespace main {
 	
 	export class Mitarbeiter {
-	    ID: string;
-	    Name: string;
-	    // Go type: sql
-	    Short: any;
-	    Image: boolean;
-	    // Go type: sql
-	    Sex: any;
-	    // Go type: sql
-	    Focus: any;
-	    // Go type: sql
-	    Mail: any;
-	    // Go type: sql
-	    Abteilungid: any;
-	    // Go type: sql
-	    Einkaufid: any;
-	    Azubi: boolean;
-	    // Go type: sql
-	    Geburtstag: any;
-	    // Go type: sql
-	    Gruppenwahl: any;
-	    // Go type: sql
-	    Homeoffice: any;
-	    // Go type: sql
-	    MobilBusiness: any;
-	    // Go type: sql
-	    MobilPrivat: any;
-	    // Go type: sql
-	    TelefonBusiness: any;
-	    // Go type: sql
-	    TelefonIntern1: any;
-	    // Go type: sql
-	    TelefonIntern2: any;
-	    // Go type: sql
-	    TelefonPrivat: any;
+	    id?: string;
+	    name?: string;
+	    short?: string;
+	    image?: boolean;
+	    sex?: string;
+	    focus?: string;
+	    mail?: string;
+	    abteilungId?: string;
+	    einkaufId?: string;
+	    Azubi?: boolean;
+	    // Go type: time
+	    Geburtstag?: any;
+	    Gruppenwahl?: string;
+	    HomeOffice?: string;
+	    Mobil_Business?: string;
+	    Mobil_Privat?: string;
+	    Telefon_Business?: string;
+	    Telefon_Intern_1?: string;
+	    Telefon_Intern_2?: string;
+	    Telefon_Privat?: string;
+	    // Go type: ent
+	    edges: any;
 	    Diff: number;
 	
 	    static createFrom(source: any = {}) {
@@ -43,25 +31,26 @@ export namespace main {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.ID = source["ID"];
-	        this.Name = source["Name"];
-	        this.Short = this.convertValues(source["Short"], null);
-	        this.Image = source["Image"];
-	        this.Sex = this.convertValues(source["Sex"], null);
-	        this.Focus = this.convertValues(source["Focus"], null);
-	        this.Mail = this.convertValues(source["Mail"], null);
-	        this.Abteilungid = this.convertValues(source["Abteilungid"], null);
-	        this.Einkaufid = this.convertValues(source["Einkaufid"], null);
+	        this.id = source["id"];
+	        this.name = source["name"];
+	        this.short = source["short"];
+	        this.image = source["image"];
+	        this.sex = source["sex"];
+	        this.focus = source["focus"];
+	        this.mail = source["mail"];
+	        this.abteilungId = source["abteilungId"];
+	        this.einkaufId = source["einkaufId"];
 	        this.Azubi = source["Azubi"];
 	        this.Geburtstag = this.convertValues(source["Geburtstag"], null);
-	        this.Gruppenwahl = this.convertValues(source["Gruppenwahl"], null);
-	        this.Homeoffice = this.convertValues(source["Homeoffice"], null);
-	        this.MobilBusiness = this.convertValues(source["MobilBusiness"], null);
-	        this.MobilPrivat = this.convertValues(source["MobilPrivat"], null);
-	        this.TelefonBusiness = this.convertValues(source["TelefonBusiness"], null);
-	        this.TelefonIntern1 = this.convertValues(source["TelefonIntern1"], null);
-	        this.TelefonIntern2 = this.convertValues(source["TelefonIntern2"], null);
-	        this.TelefonPrivat = this.convertValues(source["TelefonPrivat"], null);
+	        this.Gruppenwahl = source["Gruppenwahl"];
+	        this.HomeOffice = source["HomeOffice"];
+	        this.Mobil_Business = source["Mobil_Business"];
+	        this.Mobil_Privat = source["Mobil_Privat"];
+	        this.Telefon_Business = source["Telefon_Business"];
+	        this.Telefon_Intern_1 = source["Telefon_Intern_1"];
+	        this.Telefon_Intern_2 = source["Telefon_Intern_2"];
+	        this.Telefon_Privat = source["Telefon_Privat"];
+	        this.edges = this.convertValues(source["edges"], null);
 	        this.Diff = source["Diff"];
 	    }
 	
