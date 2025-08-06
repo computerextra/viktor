@@ -76,7 +76,7 @@ templ Versand(uri string) {
 				<input type="text" id="Breite" class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"/>
 			</div>
 			<div class="max-w-sm">
-				<label for="Tiefe" class="block text-sm font-medium mb-2 dark:text-white">Tiefe</label>
+				<label for="Tiefe" class="block text-sm font-medium mb-2 dark:text-white">Länge</label>
 				<input type="text" id="Tiefe" class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"/>
 			</div>
 			<div class="max-w-sm">
@@ -92,14 +92,33 @@ templ Versand(uri string) {
 				<label for="privat" class="text-sm text-gray-500 dark:text-neutral-400">Privatkunde</label>
 			</div>
 		</div>
+		<p id="volumen"></p>
 		<p id="versand">Noch keine gültige Eingabe</p>
+		<p id="fehler"></p>
 		<script>
+            const MonthNames = [
+                "Januar",
+                "Februar",
+                "März",
+                "April",
+                "Mai",
+                "Juni",
+                "Juli",
+                "August",
+                "September",
+                "Oktober",
+                "November",
+                "Dezember"
+            ]
+
             const VersandText = document.querySelector("#versand")
             const Breite = document.querySelector("#Breite")
             const Tiefe = document.querySelector("#Tiefe")
             const Höhe = document.querySelector("#Höhe")
             const Gewicht = document.querySelector("#Gewicht")
             const Privat = document.querySelector("#privat")
+            const Fehler = document.querySelector("#fehler")
+            const Volumen = document.querySelector("#volumen")
             
 
             let breitefloat = 0
@@ -108,8 +127,16 @@ templ Versand(uri string) {
             let gewichtFloat = 0
 
             function setVersand() {
+                Fehler.innerHTML = ""
+                let fehlertext = ""
+
                 let dhl_versand = 0
                 let gls_versand = 0
+
+                const month = new Date().getMonth()
+                const volumengewicht = (tiefefloat * breitefloat * höhefloat) / 6000
+                
+                Volumen.innerHTML = "Berechnetes Volumengewicht: " + volumengewicht + ` / Berechnung: (HxBxL / 6000) = (${höhefloat} * ${breitefloat} * ${tiefefloat}) / 6000`
 
                 for (const x of DHL) {
                     if(gewichtFloat <= x.Gewicht) {
@@ -118,29 +145,102 @@ templ Versand(uri string) {
                     }
                 }
                 for (const x of GLS) {
-                    if(gewichtFloat <= x.Gewicht) {
+                    let realw = 0
+                    if(gewichtFloat <= 30) {
+                        if(volumengewicht <= 30) {
+                            realw = volumengewicht
+                        } else {
+                            realw = gewichtFloat
+                        }
+                    } else {
+                        realw = gewichtFloat
+                    }
+
+                    if (realw <= x.Gewicht) {
                         gls_versand = x.Kosten
                         break
                     }
                 }
+
                 
-                if (gewichtFloat <= 31.5) 
-                    dhl_versand = (DHL_Zusatz.Maut + DHL_Zusatz.Peak + DHL_Zusatz.GoGreen + dhl_versand) * ((DHL_Zusatz.Treibstoff / 100) + 1)
+                if (gewichtFloat <= 31.5) {
+                    dhl_versand = (DHL_Zusatz.Maut + DHL_Zusatz.GoGreen + dhl_versand) * ((DHL_Zusatz.Treibstoff / 100) + 1)
+                    for (const m of DHL_Zusatz.Peak_Seasson) {
+                        if (MonthNames[month] == m) {
+                            dhl_versand += DHL_Zusatz.Peak
+                        }
+                    }
+                } else {
+                    fehlertext = "Paket ist zu schwer für einen Versand mit DHL<br>"
+                }
+
+                if (gewichtFloat > 40) {
+                    fehlertext = "Paket ist zu schwer für einen Versand mit GLS<br>"
+                }
+
                 
-                if (gewichtFloat <= 40)
+                
+                if (gewichtFloat <= 30 && volumengewicht <= 30) {
+                    // Berechnung nach Volumengewicht!
+                    if (gewichtFloat < volumengewicht) {
+                        gls_versand = (GLS_Zusatz.Wiegen + GLS_Zusatz.Maut + gls_versand) * ((GLS_Zusatz.Treibstoff / 100) + 1) * ((GLS_Zusatz.Klima / 100) + 1) * ((GLS_Zusatz.Peak / 100) + 1)
+                    } else {
+                        // Berechnung nach real Gewicht...
+                        gls_versand = (GLS_Zusatz.Wiegen + GLS_Zusatz.Maut + gls_versand) * ((GLS_Zusatz.Treibstoff / 100) + 1) * ((GLS_Zusatz.Klima / 100) + 1) * ((GLS_Zusatz.Peak / 100) + 1)
+                    }
+
+
+                } else if (gewichtFloat <= 40) {
+                    // Berechnung nach real Gewicht
                     gls_versand = (GLS_Zusatz.Wiegen + GLS_Zusatz.Maut + gls_versand) * ((GLS_Zusatz.Treibstoff / 100) + 1) * ((GLS_Zusatz.Klima / 100) + 1) * ((GLS_Zusatz.Peak / 100) + 1)
+                } else {
+                    fehlertext = "Paket ist zu schwer für einen Versand mit GLS<br>"
+                }
+
 
                 if(Privat.checked) 
                     gls_versand += GLS_Zusatz.Privat
                 
-
-                if(dhl_versand < gls_versand && dhl_versand > 0) {
-                    VersandText.innerHTML = "DHL ist günstiger: Kosten: " + dhl_versand.toFixed(2) + "€"
-                } else if(gls_versand > 0 && gls_versand <= 40) {
-                    VersandText.innerHTML = "GLS ist günstiger: Kosten: " + gls_versand.toFixed(2)  + "€"
-                } else {
-                    VersandText.innerHTML = "Zu schwer, können wir nicht verschicken!"
+                
+                if (tiefefloat > DHL_Zusatz.Max_Länge) {
+                    dhl_versand = 0
+                    fehlertext = "Paket ist zu lang für einen Versand mit DHL. Maximallänge ist: " + DHL_Zusatz.Max_Länge + " cm.<br>"
                 }
+                if (tiefefloat < DHL_Zusatz.Min_Länge) {
+                    dhl_versand = 0
+                    fehlertext = "Paket ist zu kurz für einen Versand mit DHL. Mindestlänge ist: " + DHL_Zusatz.Min_Länge + " cm.<br>"
+                }
+                if (breitefloat < DHL_Zusatz.Min_Breite) {
+                    dhl_versand = 0
+                    fehlertext = "Paket ist nicht breit genug für einen Versand mit DHL. Mindestbreite ist: " + DHL_Zusatz.Min_Breite + " cm.<br>"
+                }
+                if (breitefloat > DHL_Zusatz.Max_Breite) {
+                    dhl_versand = 0
+                    fehlertext = "Paket ist zu breit für einen Versand mit DHL. Maximalbreite ist: " + DHL_Zusatz.Max_Breite + " cm.<br>"
+                }
+                if (höhefloat < DHL_Zusatz.Min_Höhe) {
+                    dhl_versand = 0
+                    fehlertext = "Paket ist nicht hoch genug für einen Versand mit DHL. Mindesthöhe ist: " + DHL_Zusatz.Min_Höhe + " cm.<br>"
+                }
+                if (höhefloat > DHL_Zusatz.Max_Höhe) {
+                    dhl_versand = 0
+                    fehlertext = "Paket ist zu hoch für einen Versand mit DHL. Maximalhöhe ist: " + DHL_Zusatz.Max_Höhe + " cm.<br>"
+                }
+
+                
+                let text = ""
+                if(dhl_versand < gls_versand && dhl_versand > 0) {
+                     text = "DHL ist günstiger<br>"
+                } else if(gls_versand > 0 && gls_versand <= 40) {
+                    text = "GLS ist günstiger<br>"
+                } else {
+                    text = "Zu schwer, können wir nicht verschicken!<br>"
+                }
+                text += "Kosten DHL: " + dhl_versand.toFixed(2) + " €<br>"
+                text += "Kosten GLS: " + gls_versand.toFixed(2) + " €<br>"
+                VersandText.innerHTML = text
+
+                Fehler.innerHTML = fehlertext
             }
 
             Breite.addEventListener("change", (e) => {

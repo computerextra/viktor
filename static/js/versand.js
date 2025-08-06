@@ -31,6 +31,12 @@ const DHL_Zusatz = {
   Peak_Seasson: ["November", "Dezember"],
   GoGreen: 0.12,
   Treibstoff: 19.5, // Prozent
+  Min_Höhe: 1,
+  Min_Breite: 11,
+  Min_Länge: 15,
+  Max_Höhe: 60,
+  Max_Breite: 60,
+  Max_Länge: 120,
 };
 
 const GLS = [
