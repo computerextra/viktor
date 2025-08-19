@@ -32,10 +32,11 @@ model Angebot {
 }
 
 model Referenzen {
-  id       String @id @default(cuid())
+  id       String  @id @default(cuid())
   Name     String
   Webseite String
   Bild     String
+  Online   Boolean @default(false)
 }
 
 model Ansprechpartner {
