@@ -31,6 +31,13 @@ model Angebot {
   anzeigen   Boolean  @default(false)
 }
 
+model Referenzen {
+  id       String @id @default(cuid())
+  Name     String
+  Webseite String
+  Bild     String
+}
+
 model Ansprechpartner {
   id          String    @id @default(cuid())
   name        String
