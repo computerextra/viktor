@@ -17,7 +17,7 @@ model User {
 model Abteilung {
   id          String        @id @default(cuid())
   name        String
-  index       Int?
+  idx         Int?
   Mitarbeiter Mitarbeiter[]
 }
 
