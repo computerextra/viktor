@@ -82,6 +82,7 @@ model Jobs {
   Beschreibung String? @db.Text
   Aufgaben     String? @db.Text // Als Array einlesen und als string speichern mit trennzeichen
   Profil       String? @db.Text // Als Array einlesen und als string speichern mit trennzeichen
+  isAusbilung  Boolean @default(false)
 }
 
 model Lieferant {
