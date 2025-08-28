@@ -79,9 +79,9 @@ model Jobs {
   id           String  @id @default(cuid())
   name         String
   online       Boolean @default(false)
-  Beschreibung String?
-  Aufgaben     String? // Als Array einlesen und als string speichern mit trennzeichen
-  Profil       String? // Als Array einlesen und als string speichern mit trennzeichen
+  Beschreibung String? @db.Text
+  Aufgaben     String? @db.Text // Als Array einlesen und als string speichern mit trennzeichen
+  Profil       String? @db.Text // Als Array einlesen und als string speichern mit trennzeichen
 }
 
 model Lieferant {
