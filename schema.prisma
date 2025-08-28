@@ -76,9 +76,12 @@ model Einkauf {
 }
 
 model Jobs {
-  id     String  @id @default(cuid())
-  name   String
-  online Boolean @default(false)
+  id           String  @id @default(cuid())
+  name         String
+  online       Boolean @default(false)
+  Beschreibung String?
+  Aufgaben     String? // Als Array einlesen und als string speichern mit trennzeichen
+  Profil       String? // Als Array einlesen und als string speichern mit trennzeichen
 }
 
 model Lieferant {
@@ -94,6 +97,7 @@ model Mitarbeiter {
   name             String     @unique
   short            String?
   image            Boolean    @default(false)
+  Bild             String?
   sex              String?
   focus            String?
   mail             String?    @unique
