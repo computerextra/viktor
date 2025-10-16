@@ -33,6 +33,8 @@ func (h *Handler) SendInfo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Auftragsinhalt finden
+
 	ok := sendMail(props.Mail, props.Augtrag)
 	frontend.InfoAnKunde(getPath(r.URL.Path), ok).Render(r.Context(), w)
 }
