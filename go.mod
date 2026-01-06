@@ -3,7 +3,7 @@ module github.com/computerextra/viktor
 go 1.24.4
 
 require (
-	github.com/a-h/templ v0.3.906
+	github.com/a-h/templ v0.3.977
 	github.com/denisenkom/go-mssqldb v0.12.3
 	github.com/gorilla/schema v1.4.1
 	github.com/jlaffaye/ftp v0.2.0
@@ -19,9 +19,9 @@ require (
 	github.com/golang-sql/sqlexp v0.1.0 // indirect
 	github.com/hashicorp/errwrap v1.0.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
-	golang.org/x/crypto v0.38.0 // indirect
-	golang.org/x/net v0.39.0 // indirect
-	golang.org/x/sys v0.33.0 // indirect
+	golang.org/x/crypto v0.40.0 // indirect
+	golang.org/x/net v0.42.0 // indirect
+	golang.org/x/sys v0.34.0 // indirect
 	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
 )
 

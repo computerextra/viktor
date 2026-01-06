@@ -49,6 +49,9 @@ func (a *App) loadPages(router *http.ServeMux) {
 	router.HandleFunc("GET /{$}", h.GetIndex)
 	router.HandleFunc("GET /Mitarbeiter", h.GetMitarbeitersWithAbteilung)
 
+	// Sepa
+	router.HandleFunc("GET /Sepa", h.GetMandate)
+
 	// Status
 	router.HandleFunc("GET /Status", h.GetStatus)
 

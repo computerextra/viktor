@@ -1,0 +1,60 @@
+package frontend
+
+import (
+	"github.com/computerextra/viktor/internal"
+	"github.com/computerextra/viktor/internal/util/flash"
+)
+
+templ Sepa(sepa []internal.Sepa, uri string) {
+	{{
+		errMsg, errExist := flash.GetFlashMessage(ctx, "error")
+	}}
+	@Page("CMS", uri) {
+		<div class="container mx-auto mt-10">
+			<h1 class="text-center">
+				SEPA
+			</h1>
+			<div class="flex flex-col mt-5 max-w-[60%] mx-auto">
+				<div class="-m-1.5 overflow-x-auto">
+					<div class="p-1.5 min-w-full inline-block align-middle">
+						<div class="overflow-hidden">
+							<table class="min-w-full divide-y divide-gray-200 dark:divide-neutral-700">
+								<thead>
+									<tr>
+										<th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Kundennummer</th>
+										<th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Firma</th>
+										<th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Name</th>
+										<th scope="col" class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Angelegt</th>
+										<th scope="col" class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Aktiviert</th>
+									</tr>
+								</thead>
+								<tbody class="divide-y divide-gray-200 dark:divide-neutral-700">
+								for _, x := range sepa {
+									@sepaRow(x)
+								}
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		if errExist {
+			<div class="container mx-auto">
+				<div class="mt-2 bg-red-500 text-sm text-white rounded-lg p-4" role="alert" tabindex="-1" aria-labelledby="hs-solid-color-danger-label">
+					<span id="hs-solid-color-danger-label" class="font-bold">Fehler</span> { errMsg }
+				</div>
+			</div>
+		}
+	}
+}
+
+templ sepaRow(mandat internal.Sepa) {
+	<tr class="hover:bg-gray-100 dark:hover:bg-neutral-700">
+		<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">{ mandat.Kundennummer }</td>
+		<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{ mandat.Firma }</td>
+		<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{ mandat.Vorname } { mandat.Nachname }</td>
+		<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{ mandat.Angelegt }</td>
+		<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{ mandat.Aktiviert }</td>
+	</tr>
+}

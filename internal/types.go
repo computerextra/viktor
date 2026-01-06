@@ -44,3 +44,12 @@ type User struct {
 	Name         string
 	Vorname      string
 }
+
+type Sepa struct {
+	Kundennummer string `json:"kundennummer,omitempty"`
+	Firma        string `json:"firma,omitempty"`
+	Nachname     string `json:"nachname,omitempty"`
+	Vorname      string `json:"vorname,omitempty"`
+	Angelegt     string `json:"angelegt,omitempty"`
+	Aktiviert    string `json:"aktiviert,omitempty"`
+}
