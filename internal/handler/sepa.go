@@ -59,7 +59,7 @@ func (h *Handler) SetOfflineMandat(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	jsonData := []byte(fmt.Sprintf(`{"kundennummer": "%s", "firma": "%s", "name": "%s", "mail": "%s"}`, props.Kundennummer, *props.Firma, props.Name))
+	jsonData := []byte(fmt.Sprintf(`{"kundennummer": "%s", "firma": "%s", "name": "%s", "mail": "%s"}`, props.Kundennummer, *props.Firma, props.Name, props.Email))
 
 	// Post zur API
 	_, err = http.Post("https://api.computer-extra.com", "application/json", bytes.NewBuffer(jsonData))
