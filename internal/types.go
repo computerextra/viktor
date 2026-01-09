@@ -52,4 +52,5 @@ type Sepa struct {
 	Vorname      string `json:"vorname,omitempty"`
 	Angelegt     string `json:"angelegt,omitempty"`
 	Aktiviert    string `json:"aktiviert,omitempty"`
+	Offline      int    `json:"offline"`
 }

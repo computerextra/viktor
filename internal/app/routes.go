@@ -51,6 +51,7 @@ func (a *App) loadPages(router *http.ServeMux) {
 
 	// Sepa
 	router.HandleFunc("GET /Sepa", h.GetMandate)
+	router.HandleFunc("POST /Sepa", h.SetOfflineMandat)
 
 	// Status
 	router.HandleFunc("GET /Status", h.GetStatus)

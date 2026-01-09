@@ -6,14 +6,79 @@ import (
 )
 
 templ Sepa(sepa []internal.Sepa, uri string) {
-	{{
-		errMsg, errExist := flash.GetFlashMessage(ctx, "error")
-	}}
+	{{ errMsg, errExist := flash.GetFlashMessage(ctx, "error") }}
 	@Page("CMS", uri) {
 		<div class="container mx-auto mt-10">
 			<h1 class="text-center">
 				SEPA
 			</h1>
+			<h2>Offline SEPA Nachtragen</h2>
+			<form action={ templ.SafeURL("/Sepa") } method="post" class="space-y-4">
+				<div class="grid grid-cols-5">
+					<div class="max-w-sm">
+						<label
+							for="kundennummer"
+							class="block text-sm font-medium mb-2 dark:text-white"
+						>Kundennummer*</label>
+						<input
+							type="text"
+							id="kundennummer"
+							name="kundennummer"
+							required
+							class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+							placeholder="D12321"
+						/>
+					</div>
+					<div class="max-w-sm">
+						<label
+							for="firma"
+							class="block text-sm font-medium mb-2 dark:text-white"
+						>Firma</label>
+						<input
+							type="text"
+							id="firma"
+							name="firma"
+							class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+							placeholder="Max Muster"
+						/>
+					</div>
+					<div class="max-w-sm">
+						<label
+							for="name"
+							class="block text-sm font-medium mb-2 dark:text-white"
+						>Name*</label>
+						<input
+							type="text"
+							id="name"
+							required
+							name="name"
+							class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+							placeholder="Max Muster"
+						/>
+					</div>
+					<div class="max-w-sm">
+						<label
+							for="email"
+							class="block text-sm font-medium mb-2 dark:text-white"
+						>E-Mail*</label>
+						<input
+							type="email"
+							id="email"
+							required
+							name="email"
+							class="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+							placeholder="Max Muster"
+						/>
+					</div>
+					<button
+						type="submit"
+						class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-hidden focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
+					>
+						Anlegen
+					</button>
+				</div>
+			</form>
+			<h2>Aktuelle Liste</h2>
 			<div class="flex flex-col mt-5 max-w-[60%] mx-auto">
 				<div class="-m-1.5 overflow-x-auto">
 					<div class="p-1.5 min-w-full inline-block align-middle">
@@ -26,12 +91,13 @@ templ Sepa(sepa []internal.Sepa, uri string) {
 										<th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Name</th>
 										<th scope="col" class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Angelegt</th>
 										<th scope="col" class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Aktiviert</th>
+										<th scope="col" class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase dark:text-neutral-500">Offline</th>
 									</tr>
 								</thead>
 								<tbody class="divide-y divide-gray-200 dark:divide-neutral-700">
-								for _, x := range sepa {
-									@sepaRow(x)
-								}
+									for _, x := range sepa {
+										@sepaRow(x)
+									}
 								</tbody>
 							</table>
 						</div>
@@ -56,5 +122,12 @@ templ sepaRow(mandat internal.Sepa) {
 		<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{ mandat.Vorname } { mandat.Nachname }</td>
 		<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{ mandat.Angelegt }</td>
 		<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{ mandat.Aktiviert }</td>
+		<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">
+			if mandat.Offline == 0 {
+				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-thumbs-down-icon lucide-thumbs-down"><path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88Z"></path><path d="M17 14V2"></path></svg>
+			} else {
+				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-thumbs-up-icon lucide-thumbs-up"><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"></path><path d="M7 10v12"></path></svg>
+			}
+		</td>
 	</tr>
 }
